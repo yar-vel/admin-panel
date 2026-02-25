@@ -12,23 +12,6 @@ services:
     environment:
       - TZ
 
-  nginx:
-    restart: unless-stopped
-    environment:
-      - TZ
-      - NGINX_HOST
-      - NGINX_PORT
-      - NGINX_SSL_PORT
-      - API_HOST
-      - API_PORT
-      - API_URL
-      - PANEL_REACT_HOST
-      - PANEL_REACT_PORT
-      - PANEL_REACT_URL
-      - PANEL_VUE_HOST
-      - PANEL_VUE_PORT
-      - PANEL_VUE_URL
-
   rabbitmq:
     restart: unless-stopped
     environment:
@@ -64,6 +47,23 @@ services:
   redis-exporter:
     restart: unless-stopped
 
+  nginx:
+    restart: unless-stopped
+    environment:
+      - TZ
+      - NGINX_HOST
+      - NGINX_PORT
+      - NGINX_SSL_PORT
+      - API_HOST
+      - API_PORT
+      - API_URL
+      - PANEL_REACT_HOST
+      - PANEL_REACT_PORT
+      - PANEL_REACT_URL
+      - PANEL_VUE_HOST
+      - PANEL_VUE_PORT
+      - PANEL_VUE_URL
+
   api:
     build:
       target: production
@@ -72,6 +72,7 @@ services:
       - TZ
       - API_HOST
       - API_PORT
+      - API_URL
       - API_ACCESS_TOKEN_LIFETIME
       - API_REFRESH_TOKEN_LIFETIME
       - NGINX_HOST
@@ -124,6 +125,8 @@ services:
         - API_HOST
         - API_PORT
         - API_URL
+        - NGINX_HOST
+        - NGINX_PORT
         - GOOGLE_CLIENT_ID
     restart: unless-stopped
     deploy:
@@ -143,6 +146,8 @@ services:
         - API_HOST
         - API_PORT
         - API_URL
+        - NGINX_HOST
+        - NGINX_PORT
         - GOOGLE_CLIENT_ID
     restart: unless-stopped
     deploy:

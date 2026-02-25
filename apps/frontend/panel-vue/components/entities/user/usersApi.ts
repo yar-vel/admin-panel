@@ -1,6 +1,6 @@
 class UsersApi {
   create = (payload: TFetchPayload<TUserCreate>) =>
-    useAPI<IUser>(ROUTES.api.users, {
+    useAPI<IUser>(ROUTES.api.users._, {
       immediate: false,
       watch: false,
       method: 'POST',
@@ -9,7 +9,7 @@ class UsersApi {
     })
 
   getOne = (payload: TFetchPayload<IUser['id']>) =>
-    useAPI<IUser>(() => ROUTES.api.user(unref(payload)), {
+    useAPI<IUser>(() => ROUTES.api.users.user(unref(payload)), {
       immediate: false,
       watch: false,
       method: 'GET',
@@ -17,7 +17,7 @@ class UsersApi {
     })
 
   getList = (payload?: TFetchPayload<TUserReqList>) =>
-    useAPI<TUserResList>(ROUTES.api.users, {
+    useAPI<TUserResList>(ROUTES.api.users._, {
       immediate: false,
       watch: false,
       method: 'GET',
@@ -26,7 +26,7 @@ class UsersApi {
     })
 
   update = (payload: TFetchPayload<IFetchUpdate<TUserUpdate, IUser['id']>>) =>
-    useAPI(() => ROUTES.api.user(unref(unref(payload).id)), {
+    useAPI(() => ROUTES.api.users.user(unref(unref(payload).id)), {
       immediate: false,
       watch: false,
       method: 'PATCH',
@@ -35,7 +35,7 @@ class UsersApi {
     })
 
   updateRoles = (payload: TFetchPayload<IFetchUpdate<IReqItems<IUsersRoles>, IUser['id']>>) =>
-    useAPI(() => ROUTES.api.userRoles(unref(unref(payload).id)), {
+    useAPI(() => ROUTES.api.users.userRoles(unref(unref(payload).id)), {
       immediate: false,
       watch: false,
       method: 'PATCH',
@@ -44,7 +44,7 @@ class UsersApi {
     })
 
   delete = (payload: TFetchPayload<IReqItems<IUser['id']>>) =>
-    useAPI(ROUTES.api.users, {
+    useAPI(ROUTES.api.users._, {
       immediate: false,
       watch: false,
       method: 'DELETE',

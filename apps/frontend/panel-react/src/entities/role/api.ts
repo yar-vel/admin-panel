@@ -10,10 +10,10 @@ import {
   TRoleResList,
   TRoleReqList,
 } from "@ap/shared/dist/types";
-import baseQueryWithReauth from "@/app/api/baseQueryWithReauth";
-import rolesService from "./service";
+import { baseQueryWithReauth } from "@/app/api/baseQueryWithReauth";
+import { rolesService } from "./service";
 
-const rolesApi = createApi({
+export const rolesApi = createApi({
   reducerPath: "roles",
   baseQuery: baseQueryWithReauth,
   tagTypes: ["CountedEntities", "Entities", "Entity"],
@@ -37,7 +37,7 @@ const rolesApi = createApi({
       {
         query: rolesService.updateArgs,
         invalidatesTags: ["Entity"],
-      }
+      },
     ),
 
     updateRights: builder.mutation<
@@ -54,4 +54,3 @@ const rolesApi = createApi({
     }),
   }),
 });
-export default rolesApi;

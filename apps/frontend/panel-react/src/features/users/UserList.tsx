@@ -1,28 +1,27 @@
 import { FC, useEffect, useRef, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import { useTranslation } from "react-i18next";
 
-import FormButton from "@/shared/ui/form/FormButton";
-import useRights from "@/shared/hooks/useRights";
+import { FormButton } from "@/shared/ui/form/FormButton";
+import { useRights } from "@/shared/hooks/useRights";
 import { useAppDispatch } from "@/app/store/hooks";
 import { addAlert } from "@/app/store/main/main";
-import useTranslate from "@/shared/hooks/useTranslate";
-import useLanguageRef from "@/shared/hooks/useLanguageRef";
 import { IUser } from "@ap/shared/dist/types";
-import { getErrorText, ROUTES } from "@ap/shared/dist/libs";
-import UserTable from "@/entities/user/UserTable";
-import usersApi from "@/entities/user/api";
+import { getErrorText } from "@ap/shared/dist/libs";
+import { UserTable } from "@/entities/user/UserTable";
+import { usersApi } from "@/entities/user/api";
 import { IEntityList } from "@/shared/lib/types";
+import { ROUTES } from "@/shared/lib/constants";
 
-const UserList: FC<IEntityList<IUser>> = ({
+export const UserList: FC<IEntityList<IUser>> = ({
   initialRows,
   initialMeta,
   onMetaUpdate,
 }) => {
   const dispatch = useAppDispatch();
-  const lRef = useLanguageRef();
-  const t = useTranslate();
-  const rights = useRights(ROUTES.api.users);
+  const { t, i18n } = useTranslation();
+  const rights = useRights(ROUTES.api.users._);
   const [getList, getListReq] = usersApi.useLazyGetListQuery();
   const [destroy, destroyReq] = usersApi.useDeleteMutation();
   const [selectedRows, setSelectedRows] = useState<IUser["id"][]>([]);
@@ -58,11 +57,11 @@ const UserList: FC<IEntityList<IUser>> = ({
       dispatch(
         addAlert({
           type: "error",
-          text: getErrorText(getListReq.error, lRef.current),
-        })
+          text: getErrorText(getListReq.error, i18n.language),
+        }),
       );
     }
-  }, [dispatch, getListReq.error, lRef]);
+  }, [dispatch, getListReq.error, i18n]);
 
   useEffect(() => {
     if (destroyReq.isSuccess) {
@@ -79,11 +78,11 @@ const UserList: FC<IEntityList<IUser>> = ({
       dispatch(
         addAlert({
           type: "error",
-          text: getErrorText(destroyReq.error, lRef.current),
-        })
+          text: getErrorText(destroyReq.error, i18n.language),
+        }),
       );
     }
-  }, [dispatch, destroyReq.error, lRef]);
+  }, [dispatch, destroyReq.error, i18n]);
 
   return (
     <>
@@ -93,7 +92,7 @@ const UserList: FC<IEntityList<IUser>> = ({
         disabled={!rights.creating}
         href={ROUTES.ui.newUser}
       >
-        {t.create}
+        {t("create")}
       </FormButton>
       <FormButton
         color="error"
@@ -102,7 +101,7 @@ const UserList: FC<IEntityList<IUser>> = ({
         loading={destroyReq.isLoading}
         onClick={() => destroy({ items: selectedRows })}
       >
-        {t.delete}
+        {t("delete")}
       </FormButton>
       <UserTable
         initialState={{
@@ -122,7 +121,7 @@ const UserList: FC<IEntityList<IUser>> = ({
             rowSelectionModel.ids
               .values()
               .toArray()
-              .map((value) => value.toString())
+              .map((value) => value.toString()),
           )
         }
         onPaginationModelChange={(model) =>
@@ -132,4 +131,3 @@ const UserList: FC<IEntityList<IUser>> = ({
     </>
   );
 };
-export default UserList;

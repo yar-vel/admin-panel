@@ -16,7 +16,7 @@ const code = ref('')
 const codeIsValid = (value: string) =>
   value.length > 0 || `${t('codeFromEmail')} (${props.email})`
 const { status, error, execute } = profileApi.changeEmailConfirm({ code })
-const rights = useRights(ROUTES.api.profile)
+const rights = useRights(ROUTES.api.profile._)
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event

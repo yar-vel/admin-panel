@@ -1,24 +1,24 @@
 import { FC, useEffect, useState } from "react";
 import Skeleton from "@mui/material/Skeleton";
+import { useTranslation } from "react-i18next";
 
-import SessionForm from "@/features/profile/SessionForm";
+import { SessionForm } from "@/features/profile/SessionForm";
 import { addAlert } from "@/app/store/main/main";
 import { useAppDispatch } from "@/app/store/hooks";
-import useLanguageRef from "@/shared/hooks/useLanguageRef";
 import { TSessionExternal } from "@ap/shared/dist/types";
 import { getErrorText } from "@ap/shared/dist/libs";
-import profileApi from "@/entities/profile/api";
+import { profileApi } from "@/entities/profile/api";
 
-const ProfileSessions: FC = () => {
+export const ProfileSessions: FC = () => {
   const dispatch = useAppDispatch();
-  const lRef = useLanguageRef();
+  const { i18n } = useTranslation();
   const { data, isLoading, error } = profileApi.useGetSessionsQuery();
   const [sessions, setSessions] = useState<TSessionExternal[]>();
 
   useEffect(() => {
     setSessions(
       data &&
-        Array.from(data).sort((a, b) => (!a.current && b.current ? 1 : -1))
+        Array.from(data).sort((a, b) => (!a.current && b.current ? 1 : -1)),
     );
   }, [data]);
 
@@ -27,11 +27,11 @@ const ProfileSessions: FC = () => {
       dispatch(
         addAlert({
           type: "error",
-          text: getErrorText(error, lRef.current),
-        })
+          text: getErrorText(error, i18n.language),
+        }),
       );
     }
-  }, [dispatch, error, lRef]);
+  }, [dispatch, error, i18n]);
 
   return (
     <>
@@ -50,4 +50,3 @@ const ProfileSessions: FC = () => {
     </>
   );
 };
-export default ProfileSessions;

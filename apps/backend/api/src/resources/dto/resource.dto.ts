@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsArray,
   IsBoolean,
   IsUUID,
   Length,
@@ -42,7 +43,8 @@ export class ResourceDto implements IResource {
   @IsBoolean()
   default: boolean;
 
-  @ApiProperty({ type: [RightsDto] })
+  @ApiProperty({ type: () => [RightsDto] })
+  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => RightsDto)
   rights: RightsDto[];

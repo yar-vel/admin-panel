@@ -6,24 +6,24 @@ import WidgetsIcon from "@mui/icons-material/Widgets";
 import GroupIcon from "@mui/icons-material/Group";
 import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
 import ApiIcon from "@mui/icons-material/Api";
+import { useTranslation } from "react-i18next";
 
-import useTranslate from "@/shared/hooks/useTranslate";
-import useRights from "@/shared/hooks/useRights";
-import SidebarMenuItem from "./SidebarMenuItem";
-import { ROUTES } from "@ap/shared/dist/libs";
+import { useRights } from "@/shared/hooks/useRights";
 import { IMenuItem } from "@ap/shared/dist/types";
+import { ROUTES } from "@/shared/lib/constants";
+import { SidebarMenuItem } from "./SidebarMenuItem";
 
-const SideBarMenu: FC = () => {
-  const t = useTranslate();
-  const profileRights = useRights(ROUTES.api.profile);
-  const usersRights = useRights(ROUTES.api.users);
-  const rolesRights = useRights(ROUTES.api.roles);
-  const resourcesRights = useRights(ROUTES.api.resources);
+export const SideBarMenu: FC = () => {
+  const { t } = useTranslation();
+  const profileRights = useRights(ROUTES.api.profile._);
+  const usersRights = useRights(ROUTES.api.users._);
+  const rolesRights = useRights(ROUTES.api.roles._);
+  const resourcesRights = useRights(ROUTES.api.resources._);
 
   const menu = useMemo(() => {
     const root: IMenuItem<ReactNode>[] = [
       {
-        title: t.home,
+        title: t("home"),
         icon: <HomeIcon />,
         href: ROUTES.ui.home,
       },
@@ -31,21 +31,21 @@ const SideBarMenu: FC = () => {
 
     if (profileRights.reading) {
       root.push({
-        title: t.profile,
+        title: t("profile"),
         icon: <AccountBoxIcon />,
         href: ROUTES.ui.profile,
       });
     }
 
     const mainMenu: IMenuItem<ReactNode> = {
-      title: t.main,
+      title: t("main"),
       icon: <WidgetsIcon />,
       childs: [],
     };
 
     if (usersRights.reading) {
       mainMenu.childs!.push({
-        title: t.users,
+        title: t("users"),
         icon: <GroupIcon />,
         href: ROUTES.ui.users,
       });
@@ -53,7 +53,7 @@ const SideBarMenu: FC = () => {
 
     if (rolesRights.reading) {
       mainMenu.childs!.push({
-        title: t.roles,
+        title: t("roles"),
         icon: <SupervisedUserCircleIcon />,
         href: ROUTES.ui.roles,
       });
@@ -61,7 +61,7 @@ const SideBarMenu: FC = () => {
 
     if (resourcesRights.reading) {
       mainMenu.childs!.push({
-        title: t.resources,
+        title: t("resources"),
         icon: <ApiIcon />,
         href: ROUTES.ui.resources,
       });
@@ -85,4 +85,3 @@ const SideBarMenu: FC = () => {
     </List>
   );
 };
-export default SideBarMenu;

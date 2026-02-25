@@ -3,27 +3,28 @@ import { Metadata } from "next/types";
 import { notFound } from "next/navigation";
 
 import { IAppPage } from "@/app/types";
-import { getT } from "@ap/shared/dist/locales";
-import EditResourcePage from "@/views/panel/resources/EditResourcePage";
-import resourcesService from "@/entities/resource/service";
+import { EditResourcePage } from "@/_pages/panel/resources/EditResourcePage";
+import { resourcesService } from "@/entities/resource/service";
+import { getServerT } from "@/shared/config/i18n/server";
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = getT();
+  const t = await getServerT();
+
   return {
-    title: t.resource,
-    description: t.resource,
+    title: t("resource"),
+    description: t("resource"),
   };
 };
 
 const Page: FC<IAppPage> = async ({ params }) => {
-  const t = getT();
+  const t = await getServerT();
   const { id } = await params;
 
   if (id) {
     const { data } = await resourcesService.getOne(id);
 
     if (data) {
-      return <EditResourcePage h1={t.resource} data={data} />;
+      return <EditResourcePage h1={t("resource")} data={data} />;
     }
   }
 

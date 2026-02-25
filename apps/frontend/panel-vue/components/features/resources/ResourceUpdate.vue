@@ -9,7 +9,7 @@ const emit = defineEmits<{
 }>()
 
 const { t, locale } = useI18n()
-const rights = useRights(ROUTES.api.resources)
+const rights = useRights(ROUTES.api.resources._)
 const mainStore = useMainStore()
 const cachedData = ref<IResource>(props.data)
 const updatedValues = ref<TResourceUpdate>({})

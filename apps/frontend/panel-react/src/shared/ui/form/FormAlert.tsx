@@ -1,7 +1,7 @@
 import Alert, { AlertProps } from '@mui/material/Alert';
 import { FC } from 'react';
 
-const FormAlert: FC<AlertProps> = (props: AlertProps) => {
+export const FormAlert: FC<AlertProps> = (props: AlertProps) => {
   return (
     <Alert
       sx={{
@@ -17,4 +17,3 @@ const FormAlert: FC<AlertProps> = (props: AlertProps) => {
     />
   );
 };
-export default FormAlert;

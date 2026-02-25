@@ -10,7 +10,7 @@ const emailIsValid = (value: string) =>
   value.length > 0 || t('emailValidationI18N')
 const { status, error, execute } = profileApi.changeEmailRequest({ newEmail: email })
 const confirmModal = ref(false)
-const rights = useRights(ROUTES.api.profile)
+const rights = useRights(ROUTES.api.profile._)
 
 async function submitHandler(event: SubmitEventPromise) {
   const results = await event

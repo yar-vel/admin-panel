@@ -1,39 +1,40 @@
 import { FC, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
-import useRights from "@/shared/hooks/useRights";
+import { useRights } from "@/shared/hooks/useRights";
 import { useAppDispatch } from "@/app/store/hooks";
 import { addAlert } from "@/app/store/main/main";
-import useLanguageRef from "@/shared/hooks/useLanguageRef";
-import useTranslateRef from "@/shared/hooks/useTranslateRef";
-import { getErrorText, ROUTES } from "@ap/shared/dist/libs";
-import UserForm from "@/entities/user/UserForm";
+import { getErrorText } from "@ap/shared/dist/libs";
+import { UserForm } from "@/entities/user/UserForm";
 import { IUser } from "@ap/shared/dist/types";
-import usersApi from "@/entities/user/api";
+import { usersApi } from "@/entities/user/api";
+import { ROUTES } from "@/shared/lib/constants";
 
-const UserCreate: FC<{ onCreate?: (data: IUser) => void }> = ({ onCreate }) => {
+export const UserCreate: FC<{ onCreate?: (data: IUser) => void }> = ({
+  onCreate,
+}) => {
   const dispatch = useAppDispatch();
-  const tRef = useTranslateRef();
-  const lRef = useLanguageRef();
+  const { t, i18n } = useTranslation();
   const [create, createReq] = usersApi.useCreateMutation();
-  const rights = useRights(ROUTES.api.users);
+  const rights = useRights(ROUTES.api.users._);
 
   useEffect(() => {
     if (createReq.data) {
-      dispatch(addAlert({ type: "success", text: tRef.current.success }));
+      dispatch(addAlert({ type: "success", text: t("success") }));
       onCreate?.(createReq.data);
     }
-  }, [createReq.data, dispatch, onCreate, tRef]);
+  }, [createReq.data, dispatch, onCreate, t]);
 
   useEffect(() => {
     if (createReq.error) {
       dispatch(
         addAlert({
           type: "error",
-          text: getErrorText(createReq.error, lRef.current),
-        })
+          text: getErrorText(createReq.error, i18n.language),
+        }),
       );
     }
-  }, [createReq.error, dispatch, lRef]);
+  }, [createReq.error, dispatch, i18n]);
 
   return (
     <UserForm
@@ -43,4 +44,3 @@ const UserCreate: FC<{ onCreate?: (data: IUser) => void }> = ({ onCreate }) => {
     />
   );
 };
-export default UserCreate;

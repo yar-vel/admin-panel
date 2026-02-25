@@ -1,6 +1,6 @@
 class ResourcesApi {
   create = (payload: TFetchPayload<TResourceCreate>) =>
-    useAPI<IResource>(ROUTES.api.resources, {
+    useAPI<IResource>(ROUTES.api.resources._, {
       immediate: false,
       watch: false,
       method: 'POST',
@@ -9,7 +9,7 @@ class ResourcesApi {
     })
 
   getOne = (payload: TFetchPayload<IResource['id']>) =>
-    useAPI<IResource>(() => ROUTES.api.resource(unref(payload)), {
+    useAPI<IResource>(() => ROUTES.api.resources.resource(unref(payload)), {
       immediate: false,
       watch: false,
       method: 'GET',
@@ -17,7 +17,7 @@ class ResourcesApi {
     })
 
   getList = (payload?: TFetchPayload<TResourceReqList>) =>
-    useAPI<TResourceResList>(ROUTES.api.resources, {
+    useAPI<TResourceResList>(ROUTES.api.resources._, {
       immediate: false,
       watch: false,
       method: 'GET',
@@ -26,7 +26,7 @@ class ResourcesApi {
     })
 
   update = (payload: TFetchPayload<IFetchUpdate<TResourceUpdate, IResource['id']>>) =>
-    useAPI(() => ROUTES.api.resource(unref(unref(payload).id)), {
+    useAPI(() => ROUTES.api.resources.resource(unref(unref(payload).id)), {
       immediate: false,
       watch: false,
       method: 'PATCH',
@@ -35,7 +35,7 @@ class ResourcesApi {
     })
 
   delete = (payload: TFetchPayload<IReqItems<IResource['id']>>) =>
-    useAPI(ROUTES.api.resources, {
+    useAPI(ROUTES.api.resources._, {
       immediate: false,
       watch: false,
       method: 'DELETE',

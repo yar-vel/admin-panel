@@ -35,7 +35,9 @@ watch(
   </Head>
   <v-card :loading="loading">
     <v-layout class="content">
-      <Sidebar />
+      <ClientOnly>
+        <Sidebar />
+      </ClientOnly>
       <v-app-bar
         density="comfortable"
         :flat="true"

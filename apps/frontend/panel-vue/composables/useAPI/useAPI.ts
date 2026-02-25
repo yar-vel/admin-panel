@@ -39,7 +39,7 @@ export function useAPI<T>(
     async onResponseError({ response, options }) {
       if (response.status === 401) {
         try {
-          const refresh = await $fetch.raw<boolean>(ROUTES.api.refresh, {
+          const refresh = await $fetch.raw<boolean>(ROUTES.api.auth.refresh, {
             baseURL,
             method: 'GET',
             headers: options.headers,

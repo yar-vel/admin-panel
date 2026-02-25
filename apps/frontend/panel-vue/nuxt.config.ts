@@ -21,13 +21,22 @@ export default defineNuxtConfig({
     },
   ],
   devtools: { enabled: true },
+  app: {
+    baseURL:
+      process.env.PANEL_VUE_URL === '/'
+      || !process.env.PANEL_VUE_URL?.startsWith('/')
+        ? undefined
+        : process.env.PANEL_VUE_URL,
+  },
   runtimeConfig: {
     public: {
-      host: process.env.PANEL_VUE_URL || 'vue.localhost.com',
-      apiHostInternal: `http://${process.env.API_HOST || 'localhost'}:${
+      host: process.env.PANEL_VUE_URL || 'localhost',
+      apiHostInternal: `http://${process.env.API_HOST || 'api'}:${
         process.env.API_PORT || '3000'
       }`,
-      apiHostExternal: `https://${process.env.API_URL || 'api.localhost.com'}`,
+      apiHostExternal: process.env.API_URL?.startsWith('/')
+        ? process.env.API_URL
+        : `https://${process.env.API_URL}`,
       googleClientId: process.env.GOOGLE_CLIENT_ID || '',
     },
   },
@@ -37,7 +46,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   vite: {
     server: {
-      allowedHosts: [process.env.PANEL_VUE_URL || 'vue.localhost.com'],
+      allowedHosts: [
+        process.env.PANEL_VUE_URL?.startsWith('/')
+          ? `${process.env.NGINX_HOST}:${process.env.NGINX_PORT}`
+          : process.env.PANEL_VUE_URL || 'localhost',
+      ],
     },
     vue: {
       template: {

@@ -8,14 +8,14 @@ import {
   TRoleResList,
   IFetchUpdate,
 } from "@ap/shared/dist/types";
-import { ROUTES } from "@ap/shared/dist/libs";
 import { IFetchArgs, IFetchRes } from "@/app/api/types";
-import serverFetch from "@/app/api/serverFetch";
+import { serverFetch } from "@/app/api/serverFetch";
+import { ROUTES } from "@/shared/lib/constants";
 
 class RolesService {
   createArgs(payload: TRoleCreate): IFetchArgs {
     return {
-      url: ROUTES.api.roles,
+      url: ROUTES.api.roles._,
       method: "POST",
       credentials: "include",
       body: payload,
@@ -24,7 +24,7 @@ class RolesService {
 
   getOneArgs(payload: IRole["id"]): IFetchArgs {
     return {
-      url: ROUTES.api.role(payload),
+      url: ROUTES.api.roles.role(payload),
       method: "GET",
       credentials: "include",
     };
@@ -36,7 +36,7 @@ class RolesService {
 
   getListArgs(payload?: TRoleReqList): IFetchArgs {
     return {
-      url: ROUTES.api.roles,
+      url: ROUTES.api.roles._,
       method: "GET",
       credentials: "include",
       params: payload as Record<string, unknown>,
@@ -49,7 +49,7 @@ class RolesService {
 
   updateArgs(payload: IFetchUpdate<TRoleUpdate, IRole["id"]>): IFetchArgs {
     return {
-      url: ROUTES.api.role(payload.id),
+      url: ROUTES.api.roles.role(payload.id),
       method: "PATCH",
       credentials: "include",
       body: payload.fields,
@@ -57,10 +57,10 @@ class RolesService {
   }
 
   updateRightsArgs(
-    payload: IFetchUpdate<IReqItems<IRights>, IRole["id"]>
+    payload: IFetchUpdate<IReqItems<IRights>, IRole["id"]>,
   ): IFetchArgs {
     return {
-      url: ROUTES.api.roleRights(payload.id),
+      url: ROUTES.api.roles.roleRights(payload.id),
       method: "PATCH",
       credentials: "include",
       body: payload.fields,
@@ -69,7 +69,7 @@ class RolesService {
 
   deleteArgs(payload: IReqItems<IRole["id"]>): IFetchArgs {
     return {
-      url: ROUTES.api.roles,
+      url: ROUTES.api.roles._,
       method: "DELETE",
       credentials: "include",
       body: payload,
@@ -77,5 +77,4 @@ class RolesService {
   }
 }
 
-const rolesService = new RolesService();
-export default rolesService;
+export const rolesService = new RolesService();

@@ -11,7 +11,7 @@ import { MailService } from './mail.service';
   imports: [
     MailerModule.forRootAsync({
       useFactory: async () => {
-        let host = cfg.host;
+        let host: string = cfg.host;
         let port = cfg.port;
         let secure = port === 587;
         let user = cfg.smtp.user;

@@ -1,19 +1,21 @@
-import { Metadata } from 'next/types';
-import { FC } from 'react';
+import { Metadata } from "next/types";
+import { FC } from "react";
 
-import ForgotPasswordPage from '@/views/auth/ForgotPasswordPage';
-import { getT } from '@ap/shared/dist/locales';
+import { ForgotPasswordPage } from "@/_pages/auth/ForgotPasswordPage";
+import { getServerT } from "@/shared/config/i18n/server";
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = getT();
+  const t = await getServerT();
+
   return {
-    title: t.forgotPassword,
-    description: t.forgotPassword,
+    title: t("forgotPassword"),
+    description: t("forgotPassword"),
   };
 };
 
 const Page: FC = async () => {
-  const t = getT();
-  return <ForgotPasswordPage h1={t.forgotPassword} />;
+  const t = await getServerT();
+
+  return <ForgotPasswordPage h1={t("forgotPassword")} />;
 };
 export default Page;

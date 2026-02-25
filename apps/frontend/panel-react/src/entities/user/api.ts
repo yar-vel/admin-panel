@@ -10,10 +10,10 @@ import {
   TUserResList,
   TUserReqList,
 } from "@ap/shared/dist/types";
-import baseQueryWithReauth from "@/app/api/baseQueryWithReauth";
-import usersService from "./service";
+import { baseQueryWithReauth } from "@/app/api/baseQueryWithReauth";
+import { usersService } from "./service";
 
-const usersApi = createApi({
+export const usersApi = createApi({
   reducerPath: "users",
   baseQuery: baseQueryWithReauth,
   tagTypes: ["CountedEntities", "Entities", "Entity"],
@@ -37,7 +37,7 @@ const usersApi = createApi({
       {
         query: usersService.updateArgs,
         invalidatesTags: ["Entity"],
-      }
+      },
     ),
 
     updateRoles: builder.mutation<
@@ -54,4 +54,3 @@ const usersApi = createApi({
     }),
   }),
 });
-export default usersApi;

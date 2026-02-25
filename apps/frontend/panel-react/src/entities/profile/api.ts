@@ -9,10 +9,10 @@ import {
   TSessionExternal,
   TUserUpdate,
 } from "@ap/shared/dist/types";
-import profileService from "./service";
-import baseQueryWithReauth from "@/app/api/baseQueryWithReauth";
+import { profileService } from "./service";
+import { baseQueryWithReauth } from "@/app/api/baseQueryWithReauth";
 
-const profileApi = createApi({
+export const profileApi = createApi({
   reducerPath: "profile",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
@@ -48,5 +48,3 @@ const profileApi = createApi({
     }),
   }),
 });
-
-export default profileApi;

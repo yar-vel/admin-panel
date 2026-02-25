@@ -13,7 +13,7 @@ const newData = ref<TRoleCreate>({
 })
 const { data, error, execute, status } = rolesApi.create(newData)
 const mainStore = useMainStore()
-const rights = useRights(ROUTES.api.roles)
+const rights = useRights(ROUTES.api.roles._)
 
 watch(data, () => {
   if (data.value) {

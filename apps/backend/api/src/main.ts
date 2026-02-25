@@ -22,6 +22,15 @@ async function bootstrap() {
   await app.register(fastifyCookie);
   await app.register(fastifyHelmet);
 
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      errorHttpStatusCode: 400,
+    }),
+  );
+
   const config = new DocumentBuilder()
     .setTitle(getT().adminPanel)
     .setDescription(getT().adminPanelAPIDescription)
@@ -32,23 +41,26 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, documentFactory);
 
   app.enableCors({
-    origin: [
-      `https://www.${cfg.urls.main}`,
-      `https://${cfg.urls.panelReact}`,
-      `https://${cfg.urls.panelVue}`,
-    ],
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
-    credentials: true,
-  });
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-      errorHttpStatusCode: 400,
-    }),
-  );
+      const hostname = new URL(origin).hostname;
+      const allowedHosts = [cfg.urls.nginx];
+
+      if (!cfg.urls.panelReact.startsWith('/')) {
+        allowedHosts.push(cfg.urls.panelReact);
+      }
+
+      if (!cfg.urls.panelVue.startsWith('/')) {
+        allowedHosts.push(cfg.urls.panelVue);
+      }
+
+      callback(null, allowedHosts.includes(hostname));
+    },
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  });
 
   await app.listen(cfg.port, cfg.host);
 }

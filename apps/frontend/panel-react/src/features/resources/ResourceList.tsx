@@ -1,28 +1,27 @@
 import { FC, useEffect, useRef, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
+import { useTranslation } from "react-i18next";
 
-import FormButton from "@/shared/ui/form/FormButton";
-import useRights from "@/shared/hooks/useRights";
+import { FormButton } from "@/shared/ui/form/FormButton";
+import { useRights } from "@/shared/hooks/useRights";
 import { useAppDispatch } from "@/app/store/hooks";
 import { addAlert } from "@/app/store/main/main";
-import useTranslate from "@/shared/hooks/useTranslate";
-import useLanguageRef from "@/shared/hooks/useLanguageRef";
 import { IResource } from "@ap/shared/dist/types";
-import { getErrorText, ROUTES } from "@ap/shared/dist/libs";
-import ResourceTable from "@/entities/resource/ResourceTable";
-import resourcesApi from "@/entities/resource/api";
+import { getErrorText } from "@ap/shared/dist/libs";
+import { ResourceTable } from "@/entities/resource/ResourceTable";
+import { resourcesApi } from "@/entities/resource/api";
 import { IEntityList } from "@/shared/lib/types";
+import { ROUTES } from "@/shared/lib/constants";
 
-const ResourceList: FC<IEntityList<IResource>> = ({
+export const ResourceList: FC<IEntityList<IResource>> = ({
   initialRows,
   initialMeta,
   onMetaUpdate,
 }) => {
   const dispatch = useAppDispatch();
-  const lRef = useLanguageRef();
-  const t = useTranslate();
-  const rights = useRights(ROUTES.api.resources);
+  const { t, i18n } = useTranslation();
+  const rights = useRights(ROUTES.api.resources._);
   const [getList, getListReq] = resourcesApi.useLazyGetListQuery();
   const [destroy, destroyReq] = resourcesApi.useDeleteMutation();
   const [selectedRows, setSelectedRows] = useState<IResource["id"][]>([]);
@@ -58,11 +57,11 @@ const ResourceList: FC<IEntityList<IResource>> = ({
       dispatch(
         addAlert({
           type: "error",
-          text: getErrorText(getListReq.error, lRef.current),
-        })
+          text: getErrorText(getListReq.error, i18n.language),
+        }),
       );
     }
-  }, [dispatch, getListReq.error, lRef]);
+  }, [dispatch, getListReq.error, i18n]);
 
   useEffect(() => {
     if (destroyReq.isSuccess) {
@@ -79,11 +78,11 @@ const ResourceList: FC<IEntityList<IResource>> = ({
       dispatch(
         addAlert({
           type: "error",
-          text: getErrorText(destroyReq.error, lRef.current),
-        })
+          text: getErrorText(destroyReq.error, i18n.language),
+        }),
       );
     }
-  }, [dispatch, destroyReq.error, lRef]);
+  }, [dispatch, destroyReq.error, i18n]);
 
   return (
     <>
@@ -93,7 +92,7 @@ const ResourceList: FC<IEntityList<IResource>> = ({
         disabled={!rights.creating}
         href={ROUTES.ui.newResource}
       >
-        {t.create}
+        {t("create")}
       </FormButton>
       <FormButton
         color="error"
@@ -102,7 +101,7 @@ const ResourceList: FC<IEntityList<IResource>> = ({
         loading={destroyReq.isLoading}
         onClick={() => destroy({ items: selectedRows })}
       >
-        {t.delete}
+        {t("delete")}
       </FormButton>
       <ResourceTable
         initialState={{
@@ -122,7 +121,7 @@ const ResourceList: FC<IEntityList<IResource>> = ({
             rowSelectionModel.ids
               .values()
               .toArray()
-              .map((value) => value.toString())
+              .map((value) => value.toString()),
           )
         }
         onPaginationModelChange={(model) =>
@@ -132,4 +131,3 @@ const ResourceList: FC<IEntityList<IResource>> = ({
     </>
   );
 };
-export default ResourceList;

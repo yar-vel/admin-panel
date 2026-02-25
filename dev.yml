@@ -23,15 +23,6 @@ services:
     volumes:
       - ./infrastructure/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
-  nginx:
-    restart: no
-    env_file:
-      - .env
-    volumes:
-      - ./infrastructure/nginx/html:/usr/share/nginx/html
-      - ./infrastructure/nginx/ssl:/usr/share/nginx/ssl
-      - ./infrastructure/nginx/templates:/etc/nginx/templates
-
   rabbitmq:
     restart: no
     ports:
@@ -85,6 +76,16 @@ services:
       - ./infrastructure/redis/redis-stack.conf:/redis-stack.conf
   redis-exporter:
     restart: no
+
+  nginx:
+    restart: no
+    env_file:
+      - .env
+    volumes:
+      - ./infrastructure/nginx/html:/usr/share/nginx/html
+      - ./infrastructure/nginx/ssl:/usr/share/nginx/ssl
+      - ./infrastructure/nginx/snippets:/etc/nginx/snippets
+      - ./infrastructure/nginx/templates:/etc/nginx/templates
 
   api:
     build:

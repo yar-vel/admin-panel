@@ -1,10 +1,10 @@
 <script setup lang="ts">
 const route = useRoute()
 const { t } = useI18n()
-const profileRights = useRights(ROUTES.api.profile)
-const usersRights = useRights(ROUTES.api.users)
-const rolesRights = useRights(ROUTES.api.roles)
-const resourcesRights = useRights(ROUTES.api.resources)
+const profileRights = useRights(ROUTES.api.profile._)
+const usersRights = useRights(ROUTES.api.users._)
+const rolesRights = useRights(ROUTES.api.roles._)
+const resourcesRights = useRights(ROUTES.api.resources._)
 
 const menu: IMenuItem<string>[] = [{
   title: t('home'),

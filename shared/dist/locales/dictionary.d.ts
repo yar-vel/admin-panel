@@ -1,4 +1,4 @@
-export declare const d: {
+export declare const dictionary: {
     readonly en: {
         readonly langCode: "en";
         readonly langCodeFull: "en-US";
@@ -27,7 +27,7 @@ export declare const d: {
         readonly resources: "Resources";
         readonly resource: "Resource";
         readonly newResource: "New resource";
-        readonly defaultResource: (resourceName: string) => string;
+        readonly defaultResource: "Default resource";
         readonly entityCreation: "Creating an entity";
         readonly getEntity: "Get entity";
         readonly getEntities: "Get entities";

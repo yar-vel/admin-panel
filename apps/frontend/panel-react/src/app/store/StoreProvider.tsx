@@ -6,7 +6,7 @@ import { Provider } from "react-redux";
 import { AppStore, makeStore } from "@/app/store/store";
 import { setProfile } from "@/app/store/main/main";
 
-const StoreProvider: FC<
+export const StoreProvider: FC<
   PropsWithChildren & { profileJson?: string | null }
 > = ({ children, profileJson }) => {
   const storeRef = useRef<AppStore>(undefined);
@@ -17,7 +17,7 @@ const StoreProvider: FC<
     if (profileJson) {
       try {
         storeRef.current.dispatch(
-          setProfile(JSON.parse(decodeURIComponent(profileJson)))
+          setProfile(JSON.parse(decodeURIComponent(profileJson))),
         );
       } catch {}
     }
@@ -25,4 +25,3 @@ const StoreProvider: FC<
 
   return <Provider store={storeRef.current}>{children}</Provider>;
 };
-export default StoreProvider;

@@ -14,7 +14,7 @@ const newData = ref<TResourceCreate>({
 })
 const { data, error, execute, status } = resourcesApi.create(newData)
 const mainStore = useMainStore()
-const rights = useRights(ROUTES.api.resources)
+const rights = useRights(ROUTES.api.resources._)
 
 watch(data, () => {
   if (data.value) {

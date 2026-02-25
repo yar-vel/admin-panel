@@ -26,11 +26,11 @@ import { ChangeEmailConfirmDto } from './dto/change-email-confirm.dto';
 import { ReqItemsDto } from 'src/database/dto/req-items.dto';
 import { UserExternalDto } from 'src/users/dto/user-external.dto';
 import { SessionExternalDto } from './dto/session-external.dto';
-import { ROUTES } from '@ap/shared/dist/libs';
 import { getT } from '@ap/shared/dist/locales';
 import { IUser, TSessionExternal } from '@ap/shared/dist/types';
+import { API_ROUTES } from '@ap/shared/dist/libs';
 
-const route = ROUTES.api.profile.substring(1);
+const route = API_ROUTES.profile._;
 
 @ApiTags(getT().profile)
 @Controller(route)
@@ -65,7 +65,7 @@ export class ProfileController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
-  @Patch('update-password')
+  @Patch(API_ROUTES.profile.updatePassword)
   async updatePassword(
     @Req() req: TFastifyRequestWithToken,
     @Body() updatePasswordDto: UpdatePasswordDto,
@@ -81,7 +81,7 @@ export class ProfileController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
-  @Post('change-email')
+  @Post(API_ROUTES.profile.changeEmail)
   async changeEmailRequest(
     @Req() req: TFastifyRequestWithToken,
     @Body() dhangeEmailRequestDto: ChangeEmailRequestDto,
@@ -97,7 +97,7 @@ export class ProfileController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
-  @Patch('change-email')
+  @Patch(API_ROUTES.profile.changeEmail)
   async changeEmailConfirm(
     @Req() req: TFastifyRequestWithToken,
     @Body() changeEmailConfirmDto: ChangeEmailConfirmDto,
@@ -113,7 +113,7 @@ export class ProfileController {
   @HttpCode(HttpStatus.OK)
   @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
-  @Get('sessions')
+  @Get(API_ROUTES.profile.sessions)
   async getSessions(
     @Req() req: TFastifyRequestWithToken,
   ): Promise<TSessionExternal[]> {
@@ -129,7 +129,7 @@ export class ProfileController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Roles({ path: route, action: ERights.Deleting })
   @UseGuards(JwtGuard, RolesGuard)
-  @Delete('sessions')
+  @Delete(API_ROUTES.profile.sessions)
   async deleteSessions(
     @Req() req: TFastifyRequestWithToken,
     @Body() reqItemsDto: ReqItemsDto<TSessionExternal['id']>,

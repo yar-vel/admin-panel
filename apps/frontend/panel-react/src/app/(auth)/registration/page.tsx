@@ -1,19 +1,21 @@
-import { Metadata } from 'next/types';
-import { FC } from 'react';
+import { Metadata } from "next/types";
+import { FC } from "react";
 
-import RegistrationPage from '@/views/auth/RegistrationPage';
-import { getT } from '@ap/shared/dist/locales';
+import { RegistrationPage } from "@/_pages/auth/RegistrationPage";
+import { getServerT } from "@/shared/config/i18n/server";
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = getT();
+  const t = await getServerT();
+
   return {
-    title: t.signUp,
-    description: t.signUp,
+    title: t("signUp"),
+    description: t("signUp"),
   };
 };
 
 const Page: FC = async () => {
-  const t = getT();
-  return <RegistrationPage h1={t.signUp} />;
+  const t = await getServerT();
+
+  return <RegistrationPage h1={t("signUp")} />;
 };
 export default Page;

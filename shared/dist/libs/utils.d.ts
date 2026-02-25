@@ -1,5 +1,6 @@
-import { IReqList, IResListMeta } from "../types";
-import type { IMenuItem } from "../types/ui";
+import { IReqList, IResListMeta } from '../types';
+import type { IMenuItem } from '../types/ui';
+import { TRoutes } from './types';
 /**
  * @param {Date | string | number} date Parsed date
  * @returns {string} Formatted date string
@@ -56,4 +57,5 @@ export declare const createSearchParams: ({ data, exclude, searchParams, }: {
     exclude?: string[];
     searchParams?: string[][] | Record<string, string> | string | URLSearchParams;
 }) => URLSearchParams;
+export declare const buildRoutes: <T extends Record<string, unknown>>(tree: T, parent?: string) => TRoutes<T>;
 //# sourceMappingURL=utils.d.ts.map

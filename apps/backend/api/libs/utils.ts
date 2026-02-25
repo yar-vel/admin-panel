@@ -4,6 +4,7 @@ import { hash, verify } from 'argon2';
 import * as crypto from 'crypto';
 
 import { cfg } from 'config/configuration';
+import { DEV } from '@ap/shared/dist/libs';
 
 /**
  * @returns {string} Random string of 4 digits
@@ -37,10 +38,15 @@ export const createCookieOptions = (
   return {
     httpOnly: true,
     sameSite: 'lax',
-    secure: true,
     path: '/',
     maxAge,
-    domain: `.${cfg.urls.main}`,
+    domain: `.${cfg.urls.nginx}`,
+    secure:
+      cfg.urls.api.startsWith('/') &&
+      cfg.urls.panelReact.startsWith('/') &&
+      cfg.urls.panelVue.startsWith('/')
+        ? cfg.mode !== DEV
+        : true,
   };
 };
 

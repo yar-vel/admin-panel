@@ -1,30 +1,27 @@
-import { FC, useEffect, useState } from "react";
+import { FC, FormEvent, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { useTranslation } from "react-i18next";
 
-import FormBase from "@/shared/ui/form/FormBase";
-import FormField from "@/shared/ui/form/FormField";
-import FormButton from "@/shared/ui/form/FormButton";
-import FormLink from "@/shared/ui/form/FormLink";
-import FormAlert from "@/shared/ui/form/FormAlert";
-import CustomModal from "@/shared/ui/modal/CustomModal";
-import ResetPasswordForm from "./ResetPasswordForm";
-import useTranslate from "@/shared/hooks/useTranslate";
-import useTranslateRef from "@/shared/hooks/useTranslateRef";
-import useLanguageRef from "@/shared/hooks/useLanguageRef";
-import { getErrorText, ROUTES } from "@ap/shared/dist/libs";
-import authApi from "@/entities/auth/api";
+import { FormBase } from "@/shared/ui/form/FormBase";
+import { FormField } from "@/shared/ui/form/FormField";
+import { FormButton } from "@/shared/ui/form/FormButton";
+import { FormLink } from "@/shared/ui/form/FormLink";
+import { FormAlert } from "@/shared/ui/form/FormAlert";
+import { CustomModal } from "@/shared/ui/modal/CustomModal";
+import { ResetPasswordForm } from "./ResetPasswordForm";
+import { getErrorText } from "@ap/shared/dist/libs";
+import { authApi } from "@/entities/auth/api";
+import { ROUTES } from "@/shared/lib/constants";
 
-const ForgotPasswordForm: FC = () => {
-  const lRef = useLanguageRef();
-  const tRef = useTranslateRef();
-  const t = useTranslate();
+export const ForgotPasswordForm: FC = () => {
+  const { t, i18n } = useTranslation();
   const [email, setEmail] = useState("");
   const [resetModal, setResetModal] = useState(false);
   const [errorText, setErrorText] = useState<string | null>(null);
   const [forgotPassword, { isSuccess, error, isFetching }] =
     authApi.useLazyForgotPasswordQuery();
 
-  const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (email) {
@@ -42,14 +39,14 @@ const ForgotPasswordForm: FC = () => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(tRef.current.wrongEmail);
+          setErrorText(t("wrongEmail"));
           break;
         default:
-          setErrorText(getErrorText(error, lRef.current));
+          setErrorText(getErrorText(error, i18n.language));
           break;
       }
     }
-  }, [error, tRef, lRef]);
+  }, [error, t, i18n]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -65,25 +62,25 @@ const ForgotPasswordForm: FC = () => {
           required
           name="email"
           type="email"
-          label={t.email}
+          label={t("email")}
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           autoFocus
           disabled={isFetching}
         />
         <FormButton type="submit" fullWidth loading={isFetching}>
-          {t.confirm}
+          {t("confirm")}
         </FormButton>
         <FormLink href={ROUTES.ui.signIn} mui={{ align: "center" }}>
-          {t.signInText}
+          {t("signInText")}
         </FormLink>
         <FormLink href={ROUTES.ui.signUp} mui={{ align: "center" }}>
-          {t.signUpText}
+          {t("signUpText")}
         </FormLink>
       </FormBase>
       <CustomModal
         open={resetModal}
-        title={t.resetPassword}
+        title={t("resetPassword")}
         onClose={() => setResetModal(false)}
       >
         <ResetPasswordForm email={email} onClose={() => setResetModal(false)} />
@@ -91,4 +88,3 @@ const ForgotPasswordForm: FC = () => {
     </>
   );
 };
-export default ForgotPasswordForm;

@@ -9,10 +9,10 @@ import {
   IVerifyUser,
   TSignUp,
 } from "@ap/shared/dist/types";
-import baseQueryWithReauth from "@/app/api/baseQueryWithReauth";
-import authService from "./service";
+import { baseQueryWithReauth } from "@/app/api/baseQueryWithReauth";
+import { authService } from "./service";
 
-const authApi = createApi({
+export const authApi = createApi({
   reducerPath: "auth",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
@@ -49,5 +49,3 @@ const authApi = createApi({
     }),
   }),
 });
-
-export default authApi;

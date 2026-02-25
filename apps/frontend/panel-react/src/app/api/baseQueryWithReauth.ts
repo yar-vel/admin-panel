@@ -8,11 +8,11 @@ import type {
 } from "@reduxjs/toolkit/query";
 import { Mutex } from "async-mutex";
 
-import authService from "@/entities/auth/service";
+import { authService } from "@/entities/auth/service";
 
 const mutex = new Mutex();
 const baseQuery = fetchBaseQuery({ baseUrl: process.env.API_HOST_EXTERNAL });
-const baseQueryWithReauth: BaseQueryFn<
+export const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError
@@ -31,7 +31,7 @@ const baseQueryWithReauth: BaseQueryFn<
         const refreshResult = await baseQuery(
           authService.refreshArgs(),
           api,
-          extraOptions
+          extraOptions,
         );
 
         if (refreshResult.data) {
@@ -53,4 +53,3 @@ const baseQueryWithReauth: BaseQueryFn<
 
   return result;
 };
-export default baseQueryWithReauth;

@@ -14,6 +14,10 @@ run_check() {
   fi
 }
 
+# shared
+api_folder="shared"
+run_check "🔍 Linting ${api_folder}..." "npm --prefix ${api_folder} run lint"
+
 # api
 api_folder="apps/backend/api"
 run_check "🔍 Linting ${api_folder}..." "npm --prefix ${api_folder} run lint"

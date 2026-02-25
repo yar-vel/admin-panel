@@ -1,3 +1,3 @@
-import en from './en';
+import { en } from './list/en';
 
-export const d = { en } as const;
+export const dictionary = { en } as const;

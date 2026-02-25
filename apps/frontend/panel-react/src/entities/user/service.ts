@@ -9,14 +9,14 @@ import {
   TUserReqList,
   TUserResList,
 } from "@ap/shared/dist/types";
-import { ROUTES } from "@ap/shared/dist/libs";
 import { IFetchArgs, IFetchRes } from "@/app/api/types";
-import serverFetch from "@/app/api/serverFetch";
+import { serverFetch } from "@/app/api/serverFetch";
+import { ROUTES } from "@/shared/lib/constants";
 
 class UsersService {
   createArgs(payload: TUserCreate): IFetchArgs {
     return {
-      url: ROUTES.api.users,
+      url: ROUTES.api.users._,
       method: "POST",
       credentials: "include",
       body: payload,
@@ -25,7 +25,7 @@ class UsersService {
 
   getOneArgs(payload: IUser["id"]): IFetchArgs {
     return {
-      url: ROUTES.api.user(payload),
+      url: ROUTES.api.users.user(payload),
       method: "GET",
       credentials: "include",
     };
@@ -37,7 +37,7 @@ class UsersService {
 
   getListArgs(payload?: TUserReqList): IFetchArgs {
     return {
-      url: ROUTES.api.users,
+      url: ROUTES.api.users._,
       method: "GET",
       credentials: "include",
       params: payload as Record<string, unknown>,
@@ -50,7 +50,7 @@ class UsersService {
 
   updateArgs(payload: IFetchUpdate<TUserUpdate, IUser["id"]>): IFetchArgs {
     return {
-      url: ROUTES.api.user(payload.id),
+      url: ROUTES.api.users.user(payload.id),
       method: "PATCH",
       credentials: "include",
       body: payload.fields,
@@ -58,10 +58,10 @@ class UsersService {
   }
 
   updateRolesArgs(
-    payload: IFetchUpdate<IReqItems<IUsersRoles>, IUser["id"]>
+    payload: IFetchUpdate<IReqItems<IUsersRoles>, IUser["id"]>,
   ): IFetchArgs {
     return {
-      url: ROUTES.api.userRoles(payload.id),
+      url: ROUTES.api.users.userRoles(payload.id),
       method: "PATCH",
       credentials: "include",
       body: payload.fields,
@@ -70,7 +70,7 @@ class UsersService {
 
   deleteArgs(payload: IReqItems<IUser["id"]>): IFetchArgs {
     return {
-      url: ROUTES.api.users,
+      url: ROUTES.api.users._,
       method: "DELETE",
       credentials: "include",
       body: payload,
@@ -78,5 +78,4 @@ class UsersService {
   }
 }
 
-const usersService = new UsersService();
-export default usersService;
+export const usersService = new UsersService();

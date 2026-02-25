@@ -1,6 +1,6 @@
 class ProfileApi {
   getProfile = () =>
-    useAPI<IUser>(ROUTES.api.profile, {
+    useAPI<IUser>(ROUTES.api.profile._, {
       immediate: false,
       watch: false,
       method: 'GET',
@@ -8,7 +8,7 @@ class ProfileApi {
     })
 
   updateProfile = (payload: TFetchPayload<TUserUpdate>) =>
-    useAPI(ROUTES.api.profile, {
+    useAPI(ROUTES.api.profile._, {
       immediate: false,
       watch: false,
       method: 'PATCH',
@@ -17,7 +17,7 @@ class ProfileApi {
     })
 
   updatePassword = (payload: TFetchPayload<IUpdatePassword>) =>
-    useAPI(ROUTES.api.updatePassword, {
+    useAPI(ROUTES.api.profile.updatePassword, {
       immediate: false,
       watch: false,
       method: 'PATCH',
@@ -26,7 +26,7 @@ class ProfileApi {
     })
 
   changeEmailRequest = (payload: TFetchPayload<IChangeEmailRequest>) =>
-    useAPI(ROUTES.api.changeEmail, {
+    useAPI(ROUTES.api.profile.changeEmail, {
       immediate: false,
       watch: false,
       method: 'POST',
@@ -35,7 +35,7 @@ class ProfileApi {
     })
 
   changeEmailConfirm = (payload: TFetchPayload<IChangeEmailConfirm>) =>
-    useAPI(ROUTES.api.changeEmail, {
+    useAPI(ROUTES.api.profile.changeEmail, {
       immediate: false,
       watch: false,
       method: 'PATCH',
@@ -44,7 +44,7 @@ class ProfileApi {
     })
 
   getSessions = () =>
-    useAPI<TSessionExternal[]>(ROUTES.api.sessions, {
+    useAPI<TSessionExternal[]>(ROUTES.api.profile.sessions, {
       immediate: false,
       watch: false,
       method: 'GET',
@@ -52,7 +52,7 @@ class ProfileApi {
     })
 
   deleteSessions = (payload: TFetchPayload<IReqItems<TSessionExternal['id']>>) =>
-    useAPI(ROUTES.api.sessions, {
+    useAPI(ROUTES.api.profile.sessions, {
       immediate: false,
       watch: false,
       method: 'DELETE',

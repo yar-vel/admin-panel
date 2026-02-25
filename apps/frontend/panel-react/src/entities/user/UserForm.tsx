@@ -2,12 +2,12 @@ import { FC, FormEvent, useMemo, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useTranslation } from "react-i18next";
 
-import FormBase from "@/shared/ui/form/FormBase";
-import FormField from "@/shared/ui/form/FormField";
-import FormButton from "@/shared/ui/form/FormButton";
-import FormCheckbox from "@/shared/ui/form/FormCheckbox";
-import useTranslate from "@/shared/hooks/useTranslate";
+import { FormBase } from "@/shared/ui/form/FormBase";
+import { FormField } from "@/shared/ui/form/FormField";
+import { FormButton } from "@/shared/ui/form/FormButton";
+import { FormCheckbox } from "@/shared/ui/form/FormCheckbox";
 import { IUser, TUserCreate, TUserUpdate } from "@ap/shared/dist/types";
 import {
   EMAIL_REGEX,
@@ -15,10 +15,10 @@ import {
   PASSWORD_REGEX,
   testString,
 } from "@ap/shared/dist/libs";
-import FormPassword from "@/shared/ui/form/FormPassword";
+import { FormPassword } from "@/shared/ui/form/FormPassword";
 import { IEntityForm } from "@/shared/lib/types";
 
-const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
+export const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
   initialData,
   onCreate,
   createDisabled,
@@ -30,7 +30,7 @@ const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
   deleteDisabled,
   deleteLoading,
 }) => {
-  const t = useTranslate();
+  const { t } = useTranslation();
   const [data, setData] = useState<IUser>(
     initialData ?? {
       id: "",
@@ -39,16 +39,16 @@ const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
       name: "",
       enabled: false,
       verified: false,
-    }
+    },
   );
   const emailIsValid = useMemo(
     () => testString(EMAIL_REGEX, data.email ?? ""),
-    [data]
+    [data],
   );
   const nameIsValid = useMemo(() => testString(NAME_REGEX, data.name), [data]);
   const passwordIsValid = useMemo(
     () => testString(PASSWORD_REGEX, data.password ?? ""),
-    [data]
+    [data],
   );
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
@@ -76,10 +76,10 @@ const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
           required
           name="email"
           type="email"
-          label={t.email}
+          label={t("email")}
           value={data.email ?? ""}
           onChange={(event) => setData({ ...data, email: event.target.value })}
-          helperText={t.emailValidation}
+          helperText={t("emailValidation")}
           color={emailIsValid ? "success" : "error"}
           error={!emailIsValid && (data.email ?? "").length > 0}
         />
@@ -87,10 +87,10 @@ const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
       <FormField
         required
         name="name"
-        label={t.name}
+        label={t("name")}
         value={data.name}
         onChange={(event) => setData({ ...data, name: event.target.value })}
-        helperText={t.nameValidation}
+        helperText={t("nameValidation")}
         color={nameIsValid ? "success" : "error"}
         error={!nameIsValid && data.name.length > 0}
       />
@@ -99,18 +99,18 @@ const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
           required
           autoComplete="new-password"
           name="password"
-          label={t.password}
+          label={t("password")}
           value={data.password}
           onChange={(event) =>
             setData({ ...data, password: event.target.value })
           }
-          helperText={t.passwordValidation}
+          helperText={t("passwordValidation")}
           color={passwordIsValid ? "success" : "error"}
           error={!passwordIsValid && (data.password ?? "").length > 0}
         />
       )}
       <FormCheckbox
-        labelProps={{ label: t.enabled }}
+        labelProps={{ label: t("enabled") }}
         name="enabled"
         value="enabled"
         checked={data.enabled}
@@ -125,7 +125,7 @@ const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
           disabled={createDisabled}
           loading={createLoading}
         >
-          {t.create}
+          {t("create")}
         </FormButton>
       )}
       {onUpdate && (
@@ -136,7 +136,7 @@ const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
           disabled={updateDisabled}
           loading={updateLoading}
         >
-          {t.update}
+          {t("update")}
         </FormButton>
       )}
       {onDelete && (
@@ -147,10 +147,9 @@ const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
           disabled={deleteDisabled}
           loading={deleteLoading}
         >
-          {t.delete}
+          {t("delete")}
         </FormButton>
       )}
     </FormBase>
   );
 };
-export default UserForm;

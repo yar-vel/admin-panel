@@ -1,26 +1,26 @@
-import { DataGridProps, GridColDef } from '@mui/x-data-grid';
-import { DataGrid } from '@mui/x-data-grid/DataGrid';
-import { FC, useMemo } from 'react';
-import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
-import Link from 'next/link';
+import { DataGridProps, GridColDef } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid/DataGrid";
+import { FC, useMemo } from "react";
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
+import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
-import useTranslate from '@/shared/hooks/useTranslate';
-import useRights from '@/shared/hooks/useRights';
-import { IRole } from '@ap/shared/dist/types';
-import { ROUTES } from '@ap/shared/dist/libs';
+import { useRights } from "@/shared/hooks/useRights";
+import { IRole } from "@ap/shared/dist/types";
+import { ROUTES } from "@/shared/lib/constants";
 
-const RoleTable: FC<Omit<DataGridProps<IRole>, 'columns'>> = (props) => {
-  const t = useTranslate();
-  const rights = useRights(ROUTES.api.roles);
+export const RoleTable: FC<Omit<DataGridProps<IRole>, "columns">> = (props) => {
+  const { t } = useTranslation();
+  const rights = useRights(ROUTES.api.roles._);
 
   const сolumns: GridColDef<IRole>[] = useMemo(
     () => [
       {
-        field: 'edit',
-        headerName: t.edit,
+        field: "edit",
+        headerName: t("edit"),
         width: 50,
-        type: 'boolean',
+        type: "boolean",
         sortable: false,
         disableColumnMenu: true,
         renderCell: (params) => (
@@ -33,30 +33,35 @@ const RoleTable: FC<Omit<DataGridProps<IRole>, 'columns'>> = (props) => {
           </IconButton>
         ),
       },
-      { field: 'id', headerName: t.id, minWidth: 150, type: 'number' },
+      { field: "id", headerName: t("id"), minWidth: 150, type: "number" },
       {
-        field: 'name',
-        headerName: t.name,
+        field: "name",
+        headerName: t("name"),
         minWidth: 250,
-        type: 'string',
+        type: "string",
         flex: 1,
       },
       {
-        field: 'description',
-        headerName: t.description,
+        field: "description",
+        headerName: t("description"),
         minWidth: 250,
-        type: 'string',
+        type: "string",
         flex: 1,
       },
-      { field: 'enabled', headerName: t.enabled, width: 150, type: 'boolean' },
+      {
+        field: "enabled",
+        headerName: t("enabled"),
+        width: 150,
+        type: "boolean",
+      },
     ],
-    [t, rights]
+    [t, rights],
   );
 
   return (
     <DataGrid<IRole>
       {...props}
-      sx={{ width: '100%', minHeight: 200, my: 1 }}
+      sx={{ width: "100%", minHeight: 200, my: 1 }}
       pageSizeOptions={[25, 50, 100]}
       columns={сolumns}
       isRowSelectable={(params) => rights.deleting && !params.row.default}
@@ -65,4 +70,3 @@ const RoleTable: FC<Omit<DataGridProps<IRole>, 'columns'>> = (props) => {
     />
   );
 };
-export default RoleTable;

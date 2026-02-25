@@ -1,8 +1,8 @@
 import { NextMiddleware, NextResponse } from "next/server";
 
-import { ROUTES } from "@ap/shared/dist/libs";
 import { IUser } from "@ap/shared/dist/types";
-import profileService from "./entities/profile/service";
+import { profileService } from "./entities/profile/service";
+import { ROUTES } from "./shared/lib/constants";
 
 export const config = {
   matcher: [
@@ -58,26 +58,26 @@ export const middleware: NextMiddleware = async (request) => {
       response = NextResponse.redirect(
         new URL(
           decodeURIComponent(searchParams.get("return") || ROUTES.ui.home),
-          request.url
+          request.url,
         ),
-        { status: 302 }
+        { status: 302 },
       );
     }
 
     response.headers.set(
       "store-profile",
-      encodeURIComponent(JSON.stringify(profile))
+      encodeURIComponent(JSON.stringify(profile)),
     );
   } else {
     if (!isAuthRoute && !request.headers.has("referer")) {
       response = NextResponse.redirect(
         new URL(
           `${ROUTES.ui.signIn}?return=${encodeURIComponent(
-            request.nextUrl.pathname
+            request.nextUrl.pathname,
           )}`,
-          request.url
+          request.url,
         ),
-        302
+        302,
       );
     }
   }

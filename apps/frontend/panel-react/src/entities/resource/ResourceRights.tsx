@@ -1,31 +1,33 @@
-import React, { useMemo } from "react";
+import { FC, useMemo } from "react";
 import {
   FormControl,
   FormGroup,
   FormHelperText,
   FormLabel,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
-import useTranslate from "@/shared/hooks/useTranslate";
-import FormCheckbox from "@/shared/ui/form/FormCheckbox";
+import { FormCheckbox } from "@/shared/ui/form/FormCheckbox";
 import { IResource, IRights } from "@ap/shared/dist/types";
 
-const ResourceRights: React.FC<{
+export const ResourceRights: FC<{
   roleId: string;
   resource: IResource;
   rights?: IRights;
   onUpdate: (newRights: IRights) => void;
 }> = ({ roleId, resource, rights, onUpdate }) => {
-  const t = useTranslate();
+  const { t } = useTranslation();
   const newRights = useMemo(() => {
-    return rights ?? {
-      roleId,
-      resourceId: resource.id,
-      creating: false,
-      reading: false,
-      updating: false,
-      deleting: false,
-    };
+    return (
+      rights ?? {
+        roleId,
+        resourceId: resource.id,
+        creating: false,
+        reading: false,
+        updating: false,
+        deleting: false,
+      }
+    );
   }, [rights, roleId, resource]);
 
   return (
@@ -33,7 +35,7 @@ const ResourceRights: React.FC<{
       <FormLabel component="legend">{resource.name}</FormLabel>
       <FormGroup>
         <FormCheckbox
-          labelProps={{ label: t.create }}
+          labelProps={{ label: t("create") }}
           name="create[]"
           value="create"
           checked={rights?.creating || false}
@@ -42,7 +44,7 @@ const ResourceRights: React.FC<{
           }
         />
         <FormCheckbox
-          labelProps={{ label: t.read }}
+          labelProps={{ label: t("read") }}
           name="read[]"
           value="read"
           checked={rights?.reading || false}
@@ -51,7 +53,7 @@ const ResourceRights: React.FC<{
           }
         />
         <FormCheckbox
-          labelProps={{ label: t.update }}
+          labelProps={{ label: t("update") }}
           name="update[]"
           value="update"
           checked={rights?.updating || false}
@@ -60,7 +62,7 @@ const ResourceRights: React.FC<{
           }
         />
         <FormCheckbox
-          labelProps={{ label: t.delete }}
+          labelProps={{ label: t("delete") }}
           name="delete[]"
           value="delete"
           checked={rights?.deleting || false}
@@ -75,4 +77,3 @@ const ResourceRights: React.FC<{
     </FormControl>
   );
 };
-export default ResourceRights;

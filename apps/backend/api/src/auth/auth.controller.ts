@@ -31,19 +31,19 @@ import { SignInGoogleDto } from './dto/sign-in-google.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { UserExternalDto } from 'src/users/dto/user-external.dto';
 import { cfg } from 'config/configuration';
-import { ROUTES } from '@ap/shared/dist/libs';
 import { getT } from '@ap/shared/dist/locales';
 import { IUser } from '@ap/shared/dist/types';
+import { API_ROUTES } from '@ap/shared/dist/libs';
 
 @ApiTags(getT().authorization)
-@Controller(ROUTES.api.auth.substring(1))
+@Controller(API_ROUTES.auth._)
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @ApiOperation({ summary: getT().signUp })
   @ApiResponse({ status: HttpStatus.CREATED, type: UserExternalDto })
   @HttpCode(HttpStatus.CREATED)
-  @Post('sign-up')
+  @Post(API_ROUTES.auth.sighUp)
   async signUp(@Body() signUpDto: SignUpDto): Promise<IUser> {
     const user = await this.authService.signUp(signUpDto);
     return plainToInstance(UserExternalDto, user);
@@ -52,7 +52,7 @@ export class AuthController {
   @ApiOperation({ summary: getT().forgotPassword })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Post('forgot-password')
+  @Post(API_ROUTES.auth.forgotPassword)
   async forgotPassword(
     @Body() forgotPasswordDto: ForgotPasswordDto,
   ): Promise<void> {
@@ -62,7 +62,7 @@ export class AuthController {
   @ApiOperation({ summary: getT().resetPassword })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Post('reset-password')
+  @Post(API_ROUTES.auth.resetPassword)
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
   ): Promise<void> {
@@ -73,7 +73,7 @@ export class AuthController {
   @ApiResponse({ status: HttpStatus.CREATED, type: UserExternalDto })
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(LocalAuthGuard)
-  @Post('sign-in')
+  @Post(API_ROUTES.auth.signIn)
   async signIn(
     @Req() req: TFastifyRequestWithUser,
     @Body() signInDto: SignInDto,
@@ -104,7 +104,7 @@ export class AuthController {
   @ApiOperation({ summary: getT().confirmRegistration })
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Post('verify-user')
+  @Post(API_ROUTES.auth.verifyUser)
   async verifyUser(@Body() verifyUserDto: VerifyUserDto): Promise<void> {
     await this.authService.verifyUser(verifyUserDto);
   }
@@ -112,7 +112,7 @@ export class AuthController {
   @ApiOperation({ summary: getT().signUp })
   @ApiResponse({ status: HttpStatus.CREATED, type: UserExternalDto })
   @HttpCode(HttpStatus.CREATED)
-  @Post('sign-in/google')
+  @Post(API_ROUTES.auth.signInGoogle)
   async signInGoogle(
     @Req() req: FastifyRequest,
     @Body() signInGoogleDto: SignInGoogleDto,
@@ -145,7 +145,7 @@ export class AuthController {
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtRefreshGuard)
-  @Get('refresh')
+  @Get(API_ROUTES.auth.refresh)
   async refresh(
     @Req() req: TFastifyRequestWithToken,
     @Res({ passthrough: true }) res: FastifyReply,
@@ -173,7 +173,7 @@ export class AuthController {
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtGuard)
-  @Delete('sign-out')
+  @Delete(API_ROUTES.auth.signOut)
   async signOut(
     @Req() req: TFastifyRequestWithToken,
     @Res({ passthrough: true }) res: FastifyReply,

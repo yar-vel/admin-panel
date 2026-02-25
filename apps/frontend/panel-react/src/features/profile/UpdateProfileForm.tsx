@@ -1,38 +1,34 @@
 import { FC, FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import FormBase from "@/shared/ui/form/FormBase";
-import FormField from "@/shared/ui/form/FormField";
-import FormButton from "@/shared/ui/form/FormButton";
-import useRights from "@/shared/hooks/useRights";
+import { FormBase } from "@/shared/ui/form/FormBase";
+import { FormField } from "@/shared/ui/form/FormField";
+import { FormButton } from "@/shared/ui/form/FormButton";
+import { useRights } from "@/shared/hooks/useRights";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { addAlert, setProfile } from "@/app/store/main/main";
-import useTranslate from "@/shared/hooks/useTranslate";
-import useLanguageRef from "@/shared/hooks/useLanguageRef";
-import useTranslateRef from "@/shared/hooks/useTranslateRef";
 import {
   getErrorText,
   getUpdatedValues,
   NAME_REGEX,
-  ROUTES,
   testString,
 } from "@ap/shared/dist/libs";
 import { IUser } from "@ap/shared/dist/types";
-import profileApi from "@/entities/profile/api";
+import { profileApi } from "@/entities/profile/api";
+import { ROUTES } from "@/shared/lib/constants";
 
-const UpdateProfileForm: FC = () => {
+export const UpdateProfileForm: FC = () => {
   const dispatch = useAppDispatch();
-  const lRef = useLanguageRef();
-  const tRef = useTranslateRef();
-  const t = useTranslate();
+  const { t, i18n } = useTranslation();
   const [update, { isSuccess, isLoading, error }] =
     profileApi.useUpdateProfileMutation();
-  const rights = useRights(ROUTES.api.profile);
+  const rights = useRights(ROUTES.api.profile._);
   const profile = useAppSelector((store) => store.main.profile);
   const profileRef = useRef(profile);
   const [newData, setNewData] = useState(profile);
   const nameIsValid = useMemo(
     () => newData?.name && testString(NAME_REGEX, newData.name),
-    [newData]
+    [newData],
   );
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
@@ -42,12 +38,12 @@ const UpdateProfileForm: FC = () => {
       const updatedValues = getUpdatedValues<IUser>(profile, newData);
 
       if (Object.keys(updatedValues).length === 0) {
-        dispatch(addAlert({ type: "warning", text: t.nothingToUpdate }));
+        dispatch(addAlert({ type: "warning", text: t("nothingToUpdate") }));
       } else {
         update(updatedValues);
       }
     } else {
-      dispatch(addAlert({ type: "warning", text: t.unknownError }));
+      dispatch(addAlert({ type: "warning", text: t("unknownError") }));
     }
   };
 
@@ -62,25 +58,25 @@ const UpdateProfileForm: FC = () => {
       dispatch(
         addAlert({
           type: "error",
-          text: getErrorText(error, lRef.current),
-        })
+          text: getErrorText(error, i18n.language),
+        }),
       );
     }
-  }, [dispatch, error, lRef]);
+  }, [dispatch, error, i18n]);
 
   useEffect(() => {
     if (isSuccess) {
       dispatch(setProfile(profileRef.current));
-      dispatch(addAlert({ type: "success", text: tRef.current.success }));
+      dispatch(addAlert({ type: "success", text: t("success") }));
     }
-  }, [isSuccess, dispatch, tRef]);
+  }, [isSuccess, dispatch, t]);
 
   return (
     <FormBase onSubmit={submitHandler}>
       {profile?.googleId && (
         <FormField
           name="googleId"
-          label={t.googleId}
+          label={t("googleId")}
           value={profile.googleId}
           disabled
         />
@@ -88,12 +84,12 @@ const UpdateProfileForm: FC = () => {
       <FormField
         required
         name="name"
-        label={t.name}
+        label={t("name")}
         value={newData?.name ?? ""}
         onChange={(event) =>
           newData && setNewData({ ...newData, name: event.target.value })
         }
-        helperText={t.nameValidation}
+        helperText={t("nameValidation")}
         color={nameIsValid ? "success" : "error"}
         error={!nameIsValid && (newData?.name ?? "").length > 0}
       />
@@ -103,9 +99,8 @@ const UpdateProfileForm: FC = () => {
         disabled={!rights.updating}
         loading={isLoading}
       >
-        {t.update}
+        {t("update")}
       </FormButton>
     </FormBase>
   );
 };
-export default UpdateProfileForm;

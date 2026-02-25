@@ -4,9 +4,6 @@ services:
   prometheus:
     image: ${IMAGE_TAG}/prometheus
 
-  nginx:
-    image: ${IMAGE_TAG}/nginx
-
   rabbitmq:
     image: ${IMAGE_TAG}/rabbitmq
 
@@ -15,6 +12,9 @@ services:
 
   redis:
     image: ${IMAGE_TAG}/redis
+
+  nginx:
+    image: ${IMAGE_TAG}/nginx
 
   api:
     image: ${IMAGE_TAG}/api

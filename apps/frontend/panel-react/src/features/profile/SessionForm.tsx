@@ -12,28 +12,25 @@ import {
   styled,
   Typography,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
-import FormBase from "@/shared/ui/form/FormBase";
+import { FormBase } from "@/shared/ui/form/FormBase";
 import { useAppDispatch } from "@/app/store/hooks";
 import { addAlert, setProfile } from "@/app/store/main/main";
-import theme from "@/shared/lib/theme";
-import useRights from "@/shared/hooks/useRights";
-import useTranslate from "@/shared/hooks/useTranslate";
-import useLanguageRef from "@/shared/hooks/useLanguageRef";
-import useTranslateRef from "@/shared/hooks/useTranslateRef";
+import { theme } from "@/shared/ui/theme";
+import { useRights } from "@/shared/hooks/useRights";
 import { TSessionExternal } from "@ap/shared/dist/types";
-import { getDateString, getErrorText, ROUTES } from "@ap/shared/dist/libs";
-import profileApi from "@/entities/profile/api";
+import { getDateString, getErrorText } from "@ap/shared/dist/libs";
+import { profileApi } from "@/entities/profile/api";
+import { ROUTES } from "@/shared/lib/constants";
 
-const SessionForm: FC<{ session: TSessionExternal; onDelete?: () => void }> = ({
-  session,
-  onDelete,
-}) => {
+export const SessionForm: FC<{
+  session: TSessionExternal;
+  onDelete?: () => void;
+}> = ({ session, onDelete }) => {
   const dispatch = useAppDispatch();
-  const lRef = useLanguageRef();
-  const tRef = useTranslateRef();
-  const t = useTranslate();
-  const rights = useRights(ROUTES.api.profile);
+  const { t, i18n } = useTranslation();
+  const rights = useRights(ROUTES.api.profile._);
   const userAgent = useRef(new UAParser(session.userAgent).getResult());
   const [remove, removeReq] = profileApi.useDeleteSessionsMutation();
 
@@ -47,22 +44,22 @@ const SessionForm: FC<{ session: TSessionExternal; onDelete?: () => void }> = ({
       dispatch(
         addAlert({
           type: "error",
-          text: getErrorText(removeReq.error, lRef.current),
-        })
+          text: getErrorText(removeReq.error, i18n.language),
+        }),
       );
     }
-  }, [dispatch, removeReq.error, lRef]);
+  }, [dispatch, removeReq.error, i18n]);
 
   useEffect(() => {
     if (removeReq.isSuccess) {
-      dispatch(addAlert({ type: "success", text: tRef.current.success }));
+      dispatch(addAlert({ type: "success", text: t("success") }));
       onDelete?.();
 
       if (session.current) {
         dispatch(setProfile(null));
       }
     }
-  }, [removeReq.isSuccess, dispatch, session, tRef, onDelete]);
+  }, [removeReq.isSuccess, dispatch, session, t, onDelete]);
 
   return (
     <FormBase onSubmit={submitHandler}>
@@ -103,7 +100,7 @@ const SessionForm: FC<{ session: TSessionExternal; onDelete?: () => void }> = ({
           </Typography>
           {session.current && (
             <Chip
-              label={t.current}
+              label={t("current")}
               color="success"
               variant="outlined"
               size="small"
@@ -115,7 +112,7 @@ const SessionForm: FC<{ session: TSessionExternal; onDelete?: () => void }> = ({
             edge="end"
             color="error"
             aria-label="sign out"
-            title={t.signOut}
+            title={t("signOut")}
             disabled={
               !rights.updating || removeReq.isLoading || removeReq.isSuccess
             }
@@ -128,7 +125,6 @@ const SessionForm: FC<{ session: TSessionExternal; onDelete?: () => void }> = ({
     </FormBase>
   );
 };
-export default SessionForm;
 
 const Session = styled(Card)`
   display: flex;

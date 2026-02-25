@@ -3,21 +3,22 @@ import { Metadata } from "next/types";
 import { notFound } from "next/navigation";
 
 import { IAppPage } from "@/app/types";
-import { getT } from "@ap/shared/dist/locales";
-import EditRolePage from "@/views/panel/roles/EditRolePage";
-import rolesService from "@/entities/role/service";
-import resourcesService from "@/entities/resource/service";
+import { EditRolePage } from "@/_pages/panel/roles/EditRolePage";
+import { rolesService } from "@/entities/role/service";
+import { resourcesService } from "@/entities/resource/service";
+import { getServerT } from "@/shared/config/i18n/server";
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = getT();
+  const t = await getServerT();
+
   return {
-    title: t.role,
-    description: t.role,
+    title: t("role"),
+    description: t("role"),
   };
 };
 
 const Page: FC<IAppPage> = async ({ params }) => {
-  const t = getT();
+  const t = await getServerT();
   const { id } = await params;
 
   if (id) {
@@ -27,7 +28,7 @@ const Page: FC<IAppPage> = async ({ params }) => {
     if (role.data) {
       return (
         <EditRolePage
-          h1={t.role}
+          h1={t("role")}
           data={{ role: role.data, resources: resources.data?.rows }}
         />
       );

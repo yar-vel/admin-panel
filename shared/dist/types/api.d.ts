@@ -3,7 +3,7 @@ export interface IReqList<T = unknown> {
     reqPage?: number;
     reqCount?: boolean;
     reqSortField?: T extends object ? keyof T : string;
-    reqSortOrder?: "ASC" | "DESC";
+    reqSortOrder?: 'ASC' | 'DESC';
 }
 export interface IResList<T = unknown, S = T, F = T> {
     rows: T[];
@@ -20,7 +20,7 @@ export interface IResListMeta<T = unknown, S = T, F = T> {
 }
 export interface ISort<T = unknown> {
     field: T extends object ? keyof T : string;
-    order: "ASC" | "DESC";
+    order: 'ASC' | 'DESC';
 }
 export interface IReqItems<T = string | number> {
     items: T[];

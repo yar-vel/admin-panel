@@ -1,7 +1,7 @@
-import { createListenerMiddleware } from '@reduxjs/toolkit';
-import { setProfile } from './main/main';
+import { createListenerMiddleware } from "@reduxjs/toolkit";
+import { setProfile } from "./main/main";
 
-const authMiddleware = createListenerMiddleware();
+export const authMiddleware = createListenerMiddleware();
 
 /**
  * NOTE
@@ -14,13 +14,11 @@ const authMiddleware = createListenerMiddleware();
  */
 authMiddleware.startListening({
   predicate: (action) =>
-    typeof action.payload === 'object' &&
+    typeof action.payload === "object" &&
     action.payload !== null &&
-    'status' in action.payload &&
+    "status" in action.payload &&
     action.payload.status === 401,
   effect: (_, api) => {
     api.dispatch(setProfile(null));
   },
 });
-
-export default authMiddleware;

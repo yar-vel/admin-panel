@@ -25,11 +25,11 @@ import { ResourceUpdateDto } from './dto/resource-update.dto';
 import { ReqItemsDto } from 'src/database/dto/req-items.dto';
 import { ResourceExternalDto } from './dto/resource-external.dto';
 import { ResourceResListDto } from './dto/resource-res-list.dto';
-import { ROUTES } from '@ap/shared/dist/libs';
 import { getT } from '@ap/shared/dist/locales';
 import { IResource, TResourceResList } from '@ap/shared/dist/types';
+import { API_ROUTES } from '@ap/shared/dist/libs';
 
-const route = ROUTES.api.resources.substring(1);
+const route = API_ROUTES.resources._;
 
 @ApiTags(getT().resources)
 @Controller(route)
@@ -54,7 +54,7 @@ export class ResourcesController {
   @HttpCode(HttpStatus.OK)
   @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
-  @Get('/:id')
+  @Get(API_ROUTES.resources.resource(':id'))
   async getOne(@Param('id') id: string): Promise<IResource> {
     const resource = await this.resourceService.getOne(id);
     return plainToInstance(ResourceExternalDto, resource);
@@ -78,7 +78,7 @@ export class ResourcesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
-  @Patch('/:id')
+  @Patch(API_ROUTES.resources.resource(':id'))
   async update(
     @Param('id') id: string,
     @Body() resourceUpdateDto: ResourceUpdateDto,

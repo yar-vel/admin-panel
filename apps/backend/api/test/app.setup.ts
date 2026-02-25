@@ -107,13 +107,10 @@ export const createApp = async () => {
   await app.register(fastifyHelmet);
 
   app.enableCors({
-    origin: [
-      `https://www.${cfg.urls.main}`,
-      `https://${cfg.urls.panelReact}`,
-      `https://${cfg.urls.panelVue}`,
-    ],
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+    origin: [`https://${cfg.urls.nginx}`],
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
 
   app.useGlobalPipes(

@@ -1,35 +1,32 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, FormEvent, useEffect, useRef, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { useTranslation } from "react-i18next";
 
-import FormBase from "@/shared/ui/form/FormBase";
-import FormButton from "@/shared/ui/form/FormButton";
-import FormField from "@/shared/ui/form/FormField";
+import { FormBase } from "@/shared/ui/form/FormBase";
+import { FormButton } from "@/shared/ui/form/FormButton";
+import { FormField } from "@/shared/ui/form/FormField";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { addAlert, setProfile } from "@/app/store/main/main";
-import useRights from "@/shared/hooks/useRights";
-import useTranslate from "@/shared/hooks/useTranslate";
-import useTranslateRef from "@/shared/hooks/useTranslateRef";
-import useLanguageRef from "@/shared/hooks/useLanguageRef";
-import { getErrorText, ROUTES } from "@ap/shared/dist/libs";
-import profileApi from "@/entities/profile/api";
+import { useRights } from "@/shared/hooks/useRights";
+import { getErrorText } from "@ap/shared/dist/libs";
+import { profileApi } from "@/entities/profile/api";
+import { ROUTES } from "@/shared/lib/constants";
 
-const ChangeEmailConfirmForm: FC<{
+export const ChangeEmailConfirmForm: FC<{
   email: string;
   onClose?: () => void;
 }> = ({ email, onClose }) => {
   const dispatch = useAppDispatch();
-  const lRef = useLanguageRef();
-  const tRef = useTranslateRef();
-  const t = useTranslate();
+  const { t, i18n } = useTranslation();
   const [changeEmailConfirm, { isSuccess, error, isLoading }] =
     profileApi.useChangeEmailConfirmMutation();
-  const rights = useRights(ROUTES.api.profile);
+  const rights = useRights(ROUTES.api.profile._);
   const profile = useAppSelector((store) => store.main.profile);
   const emailRef = useRef(email);
   const profileRef = useRef(profile);
   const [code, setCode] = useState("");
 
-  const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     changeEmailConfirm({ code });
   };
@@ -41,21 +38,21 @@ const ChangeEmailConfirmForm: FC<{
           dispatch(
             addAlert({
               type: "error",
-              text: tRef.current.wrongEmailOrCode,
-            })
+              text: t("wrongEmailOrCode"),
+            }),
           );
           break;
         default:
           dispatch(
             addAlert({
               type: "error",
-              text: getErrorText(error, lRef.current),
-            })
+              text: getErrorText(error, i18n.language),
+            }),
           );
           break;
       }
     }
-  }, [error, tRef, lRef, dispatch]);
+  }, [error, t, i18n, dispatch]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -63,7 +60,7 @@ const ChangeEmailConfirmForm: FC<{
 
       if (profileRef.current) {
         dispatch(
-          setProfile({ ...profileRef.current, email: emailRef.current })
+          setProfile({ ...profileRef.current, email: emailRef.current }),
         );
       }
     }
@@ -79,10 +76,10 @@ const ChangeEmailConfirmForm: FC<{
         required
         autoComplete="off"
         name="code"
-        label={t.code}
+        label={t("code")}
         value={code}
         onChange={(event) => setCode(event.target.value)}
-        helperText={`${t.codeFromEmail} (${email})`}
+        helperText={`${t("codeFromEmail")} (${email})`}
       />
       <FormButton
         type="submit"
@@ -90,12 +87,11 @@ const ChangeEmailConfirmForm: FC<{
         disabled={!rights.updating}
         loading={isLoading || isSuccess}
       >
-        {t.confirm}
+        {t("confirm")}
       </FormButton>
       <FormButton fullWidth color="error" onClick={onClose}>
-        {t.close}
+        {t("close")}
       </FormButton>
     </FormBase>
   );
 };
-export default ChangeEmailConfirmForm;

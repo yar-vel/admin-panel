@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { styled, ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
-import Container from '@mui/material/Container';
-import { FC, PropsWithChildren } from 'react';
+import { styled, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
+import Container from "@mui/material/Container";
+import { FC, PropsWithChildren } from "react";
 
-import theme from '@/shared/lib/theme';
+import { theme } from "@/shared/ui/theme";
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (

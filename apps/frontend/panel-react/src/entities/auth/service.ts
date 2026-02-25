@@ -6,13 +6,13 @@ import {
   IVerifyUser,
   TSignUp,
 } from "@ap/shared/dist/types";
-import { ROUTES } from "@ap/shared/dist/libs";
 import { IFetchArgs } from "@/app/api/types";
+import { ROUTES } from "@/shared/lib/constants";
 
 class AuthService {
   signUpArgs(payload: TSignUp): IFetchArgs {
     return {
-      url: ROUTES.api.sighUp,
+      url: ROUTES.api.auth.sighUp,
       method: "POST",
       body: payload,
     };
@@ -20,7 +20,7 @@ class AuthService {
 
   forgotPasswordArgs(payload: IForgotPassword): IFetchArgs {
     return {
-      url: ROUTES.api.forgotPassword,
+      url: ROUTES.api.auth.forgotPassword,
       method: "POST",
       body: payload,
     };
@@ -28,7 +28,7 @@ class AuthService {
 
   resetPasswordArgs(payload: IResetPassword): IFetchArgs {
     return {
-      url: ROUTES.api.resetPassword,
+      url: ROUTES.api.auth.resetPassword,
       method: "POST",
       body: payload,
     };
@@ -36,7 +36,7 @@ class AuthService {
 
   signInArgs(payload: ISignIn): IFetchArgs {
     return {
-      url: ROUTES.api.signIn,
+      url: ROUTES.api.auth.signIn,
       method: "POST",
       credentials: "include",
       body: payload,
@@ -45,7 +45,7 @@ class AuthService {
 
   verifyUserArgs(payload: IVerifyUser): IFetchArgs {
     return {
-      url: ROUTES.api.verifyUser,
+      url: ROUTES.api.auth.verifyUser,
       method: "POST",
       body: payload,
     };
@@ -53,7 +53,7 @@ class AuthService {
 
   signInGoogleArgs(payload: ISignInGoogle): IFetchArgs {
     return {
-      url: ROUTES.api.signInGoogle,
+      url: ROUTES.api.auth.signInGoogle,
       method: "POST",
       credentials: "include",
       body: payload,
@@ -62,7 +62,7 @@ class AuthService {
 
   refreshArgs(): IFetchArgs {
     return {
-      url: ROUTES.api.refresh,
+      url: ROUTES.api.auth.refresh,
       method: "GET",
       credentials: "include",
     };
@@ -70,12 +70,11 @@ class AuthService {
 
   signOutArgs(): IFetchArgs {
     return {
-      url: ROUTES.api.signOut,
+      url: ROUTES.api.auth.signOut,
       method: "DELETE",
       credentials: "include",
     };
   }
 }
 
-const authService = new AuthService();
-export default authService;
+export const authService = new AuthService();

@@ -8,7 +8,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput, { OutlinedInputProps } from '@mui/material/OutlinedInput';
 
-const FormPassword: FC<OutlinedInputProps & { helperText?: string }> = ({
+export const FormPassword: FC<OutlinedInputProps & { helperText?: string }> = ({
   helperText,
   ...props
 }) => {
@@ -50,4 +50,3 @@ const FormPassword: FC<OutlinedInputProps & { helperText?: string }> = ({
     </FormControl>
   );
 };
-export default FormPassword;

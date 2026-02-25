@@ -20,9 +20,10 @@ export const cfg = {
     },
   },
   urls: {
-    main: process.env.NGINX_HOST || 'localhost.com',
-    panelReact: process.env.PANEL_REACT_URL || 'localhost.com',
-    panelVue: process.env.PANEL_VUE_URL || 'vue.localhost.com',
+    nginx: process.env.NGINX_HOST || 'localhost',
+    api: process.env.API_URL || '/api/',
+    panelReact: process.env.PANEL_REACT_URL || '/',
+    panelVue: process.env.PANEL_VUE_URL || '/vue/',
   },
   rmq: {
     host: process.env.RABBITMQ_HOST || 'localhost',

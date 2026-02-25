@@ -41,7 +41,7 @@ watch(
       />
     </template>
     <v-divider />
-    <SideBarMenuItem
+    <SidebarMenuItem
       v-for="child of childs"
       :key="`sbmi:${child.title}:${child.href}`"
       v-bind="child"

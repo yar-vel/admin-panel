@@ -1,7 +1,7 @@
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { FC } from 'react';
 
-const FormField: FC<TextFieldProps> = (props) => {
+export const FormField: FC<TextFieldProps> = (props) => {
   return (
     <TextField
       fullWidth
@@ -12,4 +12,3 @@ const FormField: FC<TextFieldProps> = (props) => {
     />
   );
 };
-export default FormField;

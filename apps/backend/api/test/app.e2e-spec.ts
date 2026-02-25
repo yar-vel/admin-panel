@@ -9,11 +9,11 @@ import {
   timeout,
   userCookies,
 } from './app.setup';
-import runAuthTests from './auth.test';
-import runProfileTests from './profile.test';
-import runResourcesTests from './resources.test';
-import runRolesTests from './roles.test';
-import runUsersTests from './users.test';
+import { runAuthTests } from './auth.test';
+import { runProfileTests } from './profile.test';
+import { runResourcesTests } from './resources.test';
+import { runRolesTests } from './roles.test';
+import { runUsersTests } from './users.test';
 
 describe('App (e2e)', () => {
   beforeAll(async () => {

@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import { FC, FormHTMLAttributes, PropsWithChildren } from 'react';
 
-const FormBase: FC<PropsWithChildren & FormHTMLAttributes<HTMLFormElement>> = ({
+export const FormBase: FC<PropsWithChildren & FormHTMLAttributes<HTMLFormElement>> = ({
   children,
   ...props
 }) => {
@@ -11,4 +11,3 @@ const FormBase: FC<PropsWithChildren & FormHTMLAttributes<HTMLFormElement>> = ({
     </Box>
   );
 };
-export default FormBase;

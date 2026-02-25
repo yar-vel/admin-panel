@@ -75,7 +75,7 @@ export class AuthService {
         return {
           path: value,
           name: value.replace(value[0], value[0].toUpperCase()),
-          description: getT().defaultResource(value),
+          description: getT().defaultResource,
           enabled: true,
         };
       });

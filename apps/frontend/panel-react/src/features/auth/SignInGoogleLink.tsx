@@ -1,15 +1,16 @@
-import { FC, MouseEventHandler, useEffect, useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { FC, MouseEventHandler, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
-import FormLink from '@/shared/ui/form/FormLink';
-import { useAppDispatch } from '@/app/store/hooks';
-import { setProfile } from '@/app/store/main/main';
-import useTranslate from '@/shared/hooks/useTranslate';
-import { IUser, IWindowMessage } from '@ap/shared/dist/types';
-import { getGoogleSignInUrl, ROUTES } from '@ap/shared/dist/libs';
+import { FormLink } from "@/shared/ui/form/FormLink";
+import { useAppDispatch } from "@/app/store/hooks";
+import { setProfile } from "@/app/store/main/main";
+import { IUser, IWindowMessage } from "@ap/shared/dist/types";
+import { getGoogleSignInUrl } from "@ap/shared/dist/libs";
+import { ROUTES } from "@/shared/lib/constants";
 
-const SignInGoogleLink: FC = () => {
-  const t = useTranslate();
+export const SignInGoogleLink: FC = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
@@ -18,18 +19,26 @@ const SignInGoogleLink: FC = () => {
   const googleHandler: MouseEventHandler<HTMLAnchorElement> = (event) => {
     event.preventDefault();
 
+    const redirectUri =
+      location.origin +
+      (
+        (process.env.HOST?.startsWith("/") ? process.env.HOST : "") +
+        ROUTES.ui.signInGoogle
+      ).replaceAll("//", "/");
+
     const message: IWindowMessage<string> = {
       type: ROUTES.ui.signInGoogle,
       payload: String(Math.random()),
     };
+
     const googleWindow = window.open(
       getGoogleSignInUrl(
         process.env.GOOGLE_CLIENT_ID!,
-        process.env.HOST!,
-        message.payload
+        redirectUri,
+        message.payload,
       ),
       undefined,
-      'top=100,left=100,width=500,height=500'
+      "top=100,left=100,width=500,height=500",
     );
 
     clearTimeout(timeout.current);
@@ -46,14 +55,14 @@ const SignInGoogleLink: FC = () => {
 
       dispatch(setProfile(event.data.payload));
       router.push(
-        decodeURIComponent(searchParams.get('return') || ROUTES.ui.home)
+        decodeURIComponent(searchParams.get("return") || ROUTES.ui.home),
       );
     };
 
-    window.addEventListener('message', messageHandler);
+    window.addEventListener("message", messageHandler);
 
     return () => {
-      window.removeEventListener('message', messageHandler);
+      window.removeEventListener("message", messageHandler);
     };
   }, [dispatch, router, searchParams]);
 
@@ -63,14 +72,17 @@ const SignInGoogleLink: FC = () => {
     };
   }, []);
 
+  if (!process.env.GOOGLE_CLIENT_ID) {
+    return;
+  }
+
   return (
     <FormLink
       onClick={googleHandler}
       href={ROUTES.ui.signInGoogle}
-      mui={{ align: 'center' }}
+      mui={{ align: "center" }}
     >
-      {t.signInWithGoogle}
+      {t("signInWithGoogle")}
     </FormLink>
   );
 };
-export default SignInGoogleLink;

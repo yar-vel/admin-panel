@@ -9,7 +9,7 @@ const defaultRights = {
   deleting: false,
 };
 
-const useRights = (path: string) => {
+export const useRights = (path: string) => {
   const route = path.startsWith("/") ? path.slice(1) : path;
   const [rights, setRights] = useState(defaultRights);
   const profile = useAppSelector((store) => store.main.profile);
@@ -63,4 +63,3 @@ const useRights = (path: string) => {
 
   return rights;
 };
-export default useRights;

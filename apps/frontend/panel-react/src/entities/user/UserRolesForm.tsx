@@ -1,22 +1,22 @@
 import { FC, FormEvent, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
+import { useTranslation } from "react-i18next";
 
-import FormBase from "@/shared/ui/form/FormBase";
-import FormButton from "@/shared/ui/form/FormButton";
-import useTranslate from "@/shared/hooks/useTranslate";
-import FormCheckbox from "@/shared/ui/form/FormCheckbox";
+import { FormBase } from "@/shared/ui/form/FormBase";
+import { FormButton } from "@/shared/ui/form/FormButton";
+import { FormCheckbox } from "@/shared/ui/form/FormCheckbox";
 import { IRole, IUser, IUsersRoles } from "@ap/shared/dist/types";
 import { IEntityFormUpdate } from "@/shared/lib/types";
 
-const UserRolesForm: FC<
+export const UserRolesForm: FC<
   {
     user: IUser;
     roles: IRole[];
   } & IEntityFormUpdate<IUsersRoles[]>
 > = ({ user, roles, onUpdate, updateDisabled, updateLoading }) => {
-  const t = useTranslate();
+  const { t } = useTranslation();
   const [updatedRoles, setUpdatedRoles] = useState<IUsersRoles[]>(
-    user.roles?.map((value) => ({ roleId: value.id, userId: user.id })) ?? []
+    user.roles?.map((value) => ({ roleId: value.id, userId: user.id })) ?? [],
   );
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
@@ -64,9 +64,8 @@ const UserRolesForm: FC<
         disabled={updateDisabled}
         loading={updateLoading}
       >
-        {t.update}
+        {t("update")}
       </FormButton>
     </FormBase>
   );
 };
-export default UserRolesForm;

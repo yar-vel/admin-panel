@@ -89,37 +89,6 @@ services:
           memory: 64M
     logging: *default-logging
 
-  nginx:
-    build:
-      context: ./infrastructure/nginx
-    container_name: ${PROJECT_TAG}-nginx
-    networks:
-      - main
-    expose:
-      - ${NGINX_PORT}
-    ports:
-      - ${NGINX_PORT}:${NGINX_PORT}
-      - ${NGINX_SSL_PORT}:${NGINX_SSL_PORT}
-    depends_on:
-      api:
-        condition: service_started
-      mailer:
-        condition: service_started
-    deploy:
-      resources:
-        limits:
-          cpus: '0.250'
-          memory: 256M
-        reservations:
-          cpus: '0.125'
-          memory: 64M
-    logging: *default-logging
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8008/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   rabbitmq:
     build:
       context: ./infrastructure/rabbitmq
@@ -243,6 +212,37 @@ services:
           cpus: '0.125'
           memory: 64M
     logging: *default-logging
+
+  nginx:
+    build:
+      context: ./infrastructure/nginx
+    container_name: ${PROJECT_TAG}-nginx
+    networks:
+      - main
+    expose:
+      - ${NGINX_PORT}
+    ports:
+      - ${NGINX_PORT}:${NGINX_PORT}
+      - ${NGINX_SSL_PORT}:${NGINX_SSL_PORT}
+    depends_on:
+      api:
+        condition: service_started
+      mailer:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: '0.250'
+          memory: 256M
+        reservations:
+          cpus: '0.125'
+          memory: 64M
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8008/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   api:
     build:

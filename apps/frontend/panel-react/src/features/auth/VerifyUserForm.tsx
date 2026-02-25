@@ -1,24 +1,20 @@
 import { FC, FormEvent, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { useTranslation } from "react-i18next";
 
-import FormBase from "@/shared/ui/form/FormBase";
-import FormField from "@/shared/ui/form/FormField";
-import FormButton from "@/shared/ui/form/FormButton";
-import FormAlert from "@/shared/ui/form/FormAlert";
-import useTranslate from "@/shared/hooks/useTranslate";
-import useTranslateRef from "@/shared/hooks/useTranslateRef";
-import useLanguageRef from "@/shared/hooks/useLanguageRef";
+import { FormBase } from "@/shared/ui/form/FormBase";
+import { FormField } from "@/shared/ui/form/FormField";
+import { FormButton } from "@/shared/ui/form/FormButton";
+import { FormAlert } from "@/shared/ui/form/FormAlert";
 import { getErrorText } from "@ap/shared/dist/libs";
-import authApi from "@/entities/auth/api";
+import { authApi } from "@/entities/auth/api";
 
-const VerifyUserForm: FC<{
+export const VerifyUserForm: FC<{
   email: string;
   onClose?: () => void;
   onSuccess?: () => void;
 }> = ({ email, onClose, onSuccess }) => {
-  const lRef = useLanguageRef();
-  const tRef = useTranslateRef();
-  const t = useTranslate();
+  const { t, i18n } = useTranslation();
   const [verifyUser, { isSuccess, error, isFetching }] =
     authApi.useLazyVerifyUserQuery();
   const [errorText, setErrorText] = useState<string | null>(null);
@@ -39,14 +35,14 @@ const VerifyUserForm: FC<{
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 404:
-          setErrorText(tRef.current.wrongCode);
+          setErrorText(t("wrongCode"));
           break;
         default:
-          setErrorText(getErrorText(error, lRef.current));
+          setErrorText(getErrorText(error, i18n.language));
           break;
       }
     }
-  }, [error, lRef, tRef]);
+  }, [error, t, i18n]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -62,18 +58,17 @@ const VerifyUserForm: FC<{
         required
         autoComplete="off"
         name="code"
-        label={t.code}
+        label={t("code")}
         value={code}
         onChange={(event) => setCode(event.target.value)}
-        helperText={`${t.codeFromEmail} (${email})`}
+        helperText={`${t("codeFromEmail")} (${email})`}
       />
       <FormButton type="submit" fullWidth loading={isFetching || isSuccess}>
-        {t.confirm}
+        {t("confirm")}
       </FormButton>
       <FormButton color="error" onClick={onClose} fullWidth>
-        {t.close}
+        {t("close")}
       </FormButton>
     </FormBase>
   );
 };
-export default VerifyUserForm;

@@ -1,5 +1,5 @@
-import { d } from './dictionary';
-import type en from './en';
+import { dictionary } from './dictionary';
+import { en } from './list/en';
 
 export type TLangDictionary = typeof en;
-export type TLangList = keyof typeof d;
+export type TLangList = keyof typeof dictionary;

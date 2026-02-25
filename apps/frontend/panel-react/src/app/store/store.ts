@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import mainSlice, { mainSliceName } from "./main/main";
-import authMiddleware from "./authMiddleware";
-import authApi from "@/entities/auth/api";
-import profileApi from "@/entities/profile/api";
-import usersApi from "@/entities/user/api";
-import rolesApi from "@/entities/role/api";
-import resourcesApi from "@/entities/resource/api";
+import { authMiddleware } from "./authMiddleware";
+import { authApi } from "@/entities/auth/api";
+import { profileApi } from "@/entities/profile/api";
+import { usersApi } from "@/entities/user/api";
+import { rolesApi } from "@/entities/role/api";
+import { resourcesApi } from "@/entities/resource/api";
 
 export const makeStore = () =>
   configureStore({

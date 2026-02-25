@@ -1,6 +1,6 @@
-import serverFetch from "@/app/api/serverFetch";
+import { serverFetch } from "@/app/api/serverFetch";
 import { IFetchArgs, IFetchRes } from "@/app/api/types";
-import { ROUTES } from "@ap/shared/dist/libs";
+import { ROUTES } from "@/shared/lib/constants";
 import {
   IChangeEmailConfirm,
   IChangeEmailRequest,
@@ -14,7 +14,7 @@ import {
 class ProfileService {
   getProfileArgs(): IFetchArgs {
     return {
-      url: ROUTES.api.profile,
+      url: ROUTES.api.profile._,
       method: "GET",
       credentials: "include",
     };
@@ -26,7 +26,7 @@ class ProfileService {
 
   updateProfileArgs(payload: TUserUpdate): IFetchArgs {
     return {
-      url: ROUTES.api.profile,
+      url: ROUTES.api.profile._,
       method: "PATCH",
       credentials: "include",
       body: payload,
@@ -35,7 +35,7 @@ class ProfileService {
 
   updatePasswordArgs(payload: IUpdatePassword): IFetchArgs {
     return {
-      url: ROUTES.api.updatePassword,
+      url: ROUTES.api.profile.updatePassword,
       method: "PATCH",
       credentials: "include",
       body: payload,
@@ -44,7 +44,7 @@ class ProfileService {
 
   changeEmailRequestArgs(payload: IChangeEmailRequest): IFetchArgs {
     return {
-      url: ROUTES.api.changeEmail,
+      url: ROUTES.api.profile.changeEmail,
       method: "POST",
       credentials: "include",
       body: payload,
@@ -53,7 +53,7 @@ class ProfileService {
 
   changeEmailConfirmArgs(payload: IChangeEmailConfirm): IFetchArgs {
     return {
-      url: ROUTES.api.changeEmail,
+      url: ROUTES.api.profile.changeEmail,
       method: "PATCH",
       credentials: "include",
       body: payload,
@@ -62,7 +62,7 @@ class ProfileService {
 
   getSessionsArgs(): IFetchArgs {
     return {
-      url: ROUTES.api.sessions,
+      url: ROUTES.api.profile.sessions,
       method: "GET",
       credentials: "include",
     };
@@ -70,7 +70,7 @@ class ProfileService {
 
   deleteSessionsArgs(payload: IReqItems<TSessionExternal["id"]>): IFetchArgs {
     return {
-      url: ROUTES.api.sessions,
+      url: ROUTES.api.profile.sessions,
       method: "DELETE",
       credentials: "include",
       body: payload,
@@ -78,5 +78,4 @@ class ProfileService {
   }
 }
 
-const profileService = new ProfileService();
-export default profileService;
+export const profileService = new ProfileService();

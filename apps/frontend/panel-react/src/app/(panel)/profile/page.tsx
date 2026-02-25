@@ -1,19 +1,21 @@
-import { FC } from 'react';
-import { Metadata } from 'next/types';
+import { FC } from "react";
+import { Metadata } from "next/types";
 
-import ProfilePage from '@/views/panel/ProfilePage';
-import { getT } from '@ap/shared/dist/locales';
+import { ProfilePage } from "@/_pages/panel/ProfilePage";
+import { getServerT } from "@/shared/config/i18n/server";
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = getT();
+  const t = await getServerT();
+
   return {
-    title: t.profile,
-    description: t.profile,
+    title: t("profile"),
+    description: t("profile"),
   };
 };
 
 const Page: FC = async () => {
-  const t = getT();
-  return <ProfilePage h1={t.profile} />;
+  const t = await getServerT();
+
+  return <ProfilePage h1={t("profile")} />;
 };
 export default Page;

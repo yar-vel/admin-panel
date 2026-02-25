@@ -1,19 +1,21 @@
 import { FC } from "react";
 import { Metadata } from "next/types";
 
-import CreateResourcePage from "@/views/panel/resources/CreateResourcePage";
-import { getT } from "@ap/shared/dist/locales";
+import { CreateResourcePage } from "@/_pages/panel/resources/CreateResourcePage";
+import { getServerT } from "@/shared/config/i18n/server";
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = getT();
+  const t = await getServerT();
+
   return {
-    title: t.newResource,
-    description: t.newResource,
+    title: t("newResource"),
+    description: t("newResource"),
   };
 };
 
 const Page: FC = async () => {
-  const t = getT();
-  return <CreateResourcePage h1={t.newResource} />;
+  const t = await getServerT();
+
+  return <CreateResourcePage h1={t("newResource")} />;
 };
 export default Page;

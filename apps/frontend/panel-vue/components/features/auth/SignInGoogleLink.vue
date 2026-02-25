@@ -8,12 +8,24 @@ const timeout = ref<NodeJS.Timeout>()
 const googleHandler = (event: MouseEvent) => {
   event.preventDefault()
 
+  const redirectUri
+    = location.origin
+      + (
+        (config.public.host.startsWith('/') ? config.public.host : '')
+        + ROUTES.ui.signInGoogle
+      ).replaceAll('//', '/')
+
   const message: IWindowMessage<string> = {
     type: ROUTES.ui.signInGoogle,
     payload: String(Math.random()),
   }
+
   const googleWindow = window.open(
-    getGoogleSignInUrl(config.public.googleClientId, config.public.host, message.payload),
+    getGoogleSignInUrl(
+      config.public.googleClientId,
+      redirectUri,
+      message.payload,
+    ),
     undefined,
     'top=100,left=100,width=500,height=500',
   )
@@ -45,6 +57,7 @@ onUnmounted(() => {
 
 <template>
   <FormLink
+    v-if="Boolean(config.public.googleClientId)"
     event=""
     :href="ROUTES.ui.signInGoogle"
     :text="$t('signInWithGoogle')"

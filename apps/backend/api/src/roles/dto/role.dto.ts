@@ -44,7 +44,7 @@ export class RoleDto implements IRole {
   @IsBoolean()
   default: boolean;
 
-  @ApiProperty({ type: [RightsDto] })
+  @ApiProperty({ type: () => [RightsDto] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => RightsDto)

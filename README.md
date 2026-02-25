@@ -1,30 +1,21 @@
 # Admin Panel
 
 This is a boilerplate project that implements the functionality of the admin panel.
+Think of it as a set of reusable solutions combined into a finished project.
 The project is built using microservices architecture.
 To run it, you will need to install [Docker](https://github.com/docker).
 
-## Preliminary Setup
-
-For a local proxy, add this to hosts:
-
-```sh
-# C:\Windows\System32\drivers\etc\hosts on Windows
-# or
-# /etc/hosts on Linux
-127.0.0.1 localhost.com
-127.0.0.1 www.localhost.com
-127.0.0.1 vue.localhost.com
-127.0.0.1 api.localhost.com
-```
-
-After that, you must add the self-signed certificate to your browser as a certificate authority
-(in this case, it is the `infrastructure/nginx/ssl/myCA.pem` file).
-Or just use your own purchased domain and certificate for it.
-
-Some startup parameters can be edited in the `.env` file.
-
 ## Project Launch
+
+### Preliminary Setup
+
+Before running, you will need to copy and (optionally during testing) edit
+the `.env` file (based on `.env.example`) and the passwords set
+in the `secrets` folder (based on `secrets.example`).
+
+If you plan to use Google OAuth 2.0 for authorization, you need to update
+the list of allowed origins and redirect URIs in your app settings
+in Google Cloud Console and specify the `GOOGLE_CLIENT_ID` variable in the `.env` file.
 
 ### Development
 
@@ -38,6 +29,11 @@ Redis ([RedisInsight](https://github.com/RedisInsight/RedisInsight))
 and RabbitMQ ([RabbitMQ Management Plugin](https://github.com/rabbitmq/rabbitmq-management)).
 
 ### Production
+
+If this is your first time running a project using this command, you'll need to temporarily enable
+synchronization of the database structure with the ORM models on the backend:
+set `cfg.postgres.synchronize = true` in the `apps/backend/api/config/configuration.ts` file.
+In a production environment, synchronization is disabled to prevent accidental data corruption in the database.
 
 ```sh
 docker compose -f docker-compose.yml -f prod.yml up -d
@@ -53,19 +49,13 @@ docker compose down --remove-orphans
 
 ### Additional Commands
 
-Install git pre-commit hook:
-
-```sh
-npm --prefix scripts ci
-```
-
-Install all dependencies in apps:
+Clean install of all dependencies in `apps`, `shared` and `scripts` (pre-commit hook):
 
 ```sh
 npm run install:all
 ```
 
-Run linting for all apps:
+Run linting (with `--fix`) for all apps:
 
 ```sh
 npm run lint:all
@@ -86,7 +76,7 @@ npm run lint:all
 This microservice provides a graphical interface for administration.
 In it, you can set a list of protected links, create roles with rights for links, manage registered users.
 The service is written in [React](https://github.com/facebook/react), [Next.js](https://github.com/vercel/next.js)
-and [TypeScript](https://github.com/microsoft/TypeScript) with **FSD**-like structure.
+and [TypeScript](https://github.com/microsoft/TypeScript) with FSD-like structure.
 [Material UI](https://github.com/mui/material-ui) is used as the UI kit.
 [Redux Toolkit](https://github.com/reduxjs/redux-toolkit) is used as the application state manager.
 [RTK Query](https://github.com/rtk-incubator/rtk-query) is used for API requests.
@@ -133,6 +123,7 @@ Service folder: `apps/backend/mailer`.
 Service folder: `infrastructure/nginx`.
 In the `./html` folder you can change the default nginx response pages.
 The `./ssl` folder is used to store the SSL certificate files.
+Reusable blocks (do not support environment variables) are located in the `./snippets` folder.
 In the file `./templates/default.conf.template` you can set routing rules.
 
 #### Database
@@ -174,7 +165,7 @@ For example, if you need to open some service for external requests,
 it will be safer to define the password for it in a secret file instead
 of declaring it in environment variables, as is usually the case.
 
-As an example, I will consider a similar case for _RabbitMQ_.
+As an example, I will consider a similar case for RabbitMQ.
 This image has by default `ENTRYPOINT["docker-entrypoint.sh"]` (the original entry point)
 and `CMD["rabbitmq-server"]` (the original argument passed).
 Let's assume we have a secret file with a password `/secrets/rabbitmq.txt`
@@ -214,21 +205,56 @@ ENTRYPOINT ["./custom-entrypoint.sh"]
 
 ## Other Folders
 
-The `secrets` folder is used to store passwords and keys. In a real project, it should be added to `.gitignore`.
-
 The `shared` folder is intended to store common types, utilities, and dictionaries between the frontend and backend.
 Currently, containers are configured to use this folder (adding a dependency to `package.json` for development
-and `tsconfig.json` for build, and mounting volumes for Docker) without switching to _npm workspaces_.
+and `tsconfig.json` for build, and mounting volumes for Docker) without switching to `npm workspaces`.
 
-The `scripts` folder currently contains only a hook for _git_, which is configured to run
+The `scripts` folder currently contains only a hook for `git`, which is configured to run
 tests and linters in applications before commit, and a small script for installing it.
 
-## SSL Update
+## Subdomain Setup
 
-Without a certificate, the project will not function normally (CORS policy).
-The standard certificate is registered for addresses _localhost.com_ ([React](#react)),
-_vue.localhost.com_ ([Vue](#vue)) and _api.localhost.com_ ([API server](#api-server)).
-It has a limited duration.
+If you want to use subdomains instead of subsections for your project's container URLs,
+you'll need to edit the `.env` file. For example:
+
+```sh
+# ...
+# api
+API_URL="api.${NGINX_HOST}"
+# ...
+# panel-react
+PANEL_REACT_URL="${NGINX_HOST}"
+# ...
+# panel-vue
+PANEL_VUE_URL="vue.${NGINX_HOST}"
+# ...
+```
+
+An example configuration for proxying subdomains can be found
+in the file `infrastructure/nginx/templates.example/subdomains.conf.template`.
+
+It is important to note that if you want to run a local project with subdomains,
+you will need to map the local IP address to any convenient address,
+since `localhost` and `127.0.0.1` addresses do not support subdomains:
+
+```sh
+# C:\Windows\System32\drivers\etc\hosts on Windows
+# or
+# /etc/hosts on Linux
+127.0.0.1 localhost.com
+127.0.0.1 vue.localhost.com
+127.0.0.1 api.localhost.com
+```
+
+Without a certificate, a project with subdomains may not work correctly (CORS policy).
+You must add the self-signed certificate to your browser as a certificate authority
+(in this case, it is the `infrastructure/nginx/ssl/myCA.pem` file).
+Or just use your own purchased domain and certificate for it.
+
+### SSL Update
+
+The standard certificate is registered for address `localhost.com`
+and all subdomains (`*.localhost.com`). It has a limited duration.
 To create a new certificate, you can use the following commands:
 
 1. Launching a Docker container to create a certificate:
@@ -267,4 +293,9 @@ To create a new certificate, you can use the following commands:
 
 I tried to implement the most common use cases of technologies,
 trying to follow the solutions from their documentation as much as possible.
+
+Since this is not a CMS but an example of a custom admin panel,
+to add a certain functionality you need to create a controller for it, etc. in the `api`,
+add the `resource` through the UI and display it there when needed.
+
 Hope this will be useful for someone.

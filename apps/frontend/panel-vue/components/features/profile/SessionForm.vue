@@ -13,7 +13,7 @@ const emit = defineEmits<{
 
 const { t, locale } = useI18n()
 const router = useRouter()
-const rights = useRights(ROUTES.api.profile)
+const rights = useRights(ROUTES.api.profile._)
 const mainStore = useMainStore()
 const userAgent = new UAParser(props.session.userAgent).getResult()
 const updatedAt = getDateString(props.session.updatedAt)

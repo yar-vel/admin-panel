@@ -14,7 +14,7 @@ export class RightsDto implements IRights {
   @IsUUID()
   roleId: IRole['id'];
 
-  @ApiPropertyOptional({ type: RoleDto })
+  @ApiPropertyOptional({ type: () => RoleDto })
   @IsOptional()
   @ValidateNested()
   @Type(() => RoleDto)
@@ -27,7 +27,7 @@ export class RightsDto implements IRights {
   @IsUUID()
   resourceId: IResource['id'];
 
-  @ApiPropertyOptional({ type: ResourceDto })
+  @ApiPropertyOptional({ type: () => ResourceDto })
   @IsOptional()
   @ValidateNested()
   @Type(() => ResourceDto)

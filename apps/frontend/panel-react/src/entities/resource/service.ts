@@ -7,14 +7,14 @@ import {
   TResourceReqList,
   TResourceResList,
 } from "@ap/shared/dist/types";
-import { ROUTES } from "@ap/shared/dist/libs";
 import { IFetchArgs, IFetchRes } from "@/app/api/types";
-import serverFetch from "@/app/api/serverFetch";
+import { serverFetch } from "@/app/api/serverFetch";
+import { ROUTES } from "@/shared/lib/constants";
 
 class ResourcesService {
   createArgs(payload: TResourceCreate): IFetchArgs {
     return {
-      url: ROUTES.api.resources,
+      url: ROUTES.api.resources._,
       method: "POST",
       credentials: "include",
       body: payload,
@@ -23,7 +23,7 @@ class ResourcesService {
 
   getOneArgs(payload: IResource["id"]): IFetchArgs {
     return {
-      url: ROUTES.api.resource(payload),
+      url: ROUTES.api.resources.resource(payload),
       method: "GET",
       credentials: "include",
     };
@@ -35,7 +35,7 @@ class ResourcesService {
 
   getListArgs(payload?: TResourceReqList): IFetchArgs {
     return {
-      url: ROUTES.api.resources,
+      url: ROUTES.api.resources._,
       method: "GET",
       credentials: "include",
       params: payload as Record<string, unknown>,
@@ -43,16 +43,16 @@ class ResourcesService {
   }
 
   async getList(
-    payload?: TResourceReqList
+    payload?: TResourceReqList,
   ): Promise<IFetchRes<TResourceResList>> {
     return serverFetch<TResourceResList>(this.getListArgs(payload));
   }
 
   updateArgs(
-    payload: IFetchUpdate<TResourceUpdate, IResource["id"]>
+    payload: IFetchUpdate<TResourceUpdate, IResource["id"]>,
   ): IFetchArgs {
     return {
-      url: ROUTES.api.resource(payload.id),
+      url: ROUTES.api.resources.resource(payload.id),
       method: "PATCH",
       credentials: "include",
       body: payload.fields,
@@ -61,7 +61,7 @@ class ResourcesService {
 
   deleteArgs(payload: IReqItems<IResource["id"]>): IFetchArgs {
     return {
-      url: ROUTES.api.resources,
+      url: ROUTES.api.resources._,
       method: "DELETE",
       credentials: "include",
       body: payload,
@@ -69,5 +69,4 @@ class ResourcesService {
   }
 }
 
-const resourcesService = new ResourcesService();
-export default resourcesService;
+export const resourcesService = new ResourcesService();

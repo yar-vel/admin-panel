@@ -26,11 +26,11 @@ import { ReqItemsDto } from 'src/database/dto/req-items.dto';
 import { UserExternalDto } from './dto/user-external.dto';
 import { UserResListDto } from './dto/user-res-list.dto';
 import { UsersRolesReqItemsDto } from 'src/database/dto/users-roles-req-items.dto';
-import { ROUTES } from '@ap/shared/dist/libs';
 import { getT } from '@ap/shared/dist/locales';
 import { IResList, IUser } from '@ap/shared/dist/types';
+import { API_ROUTES } from '@ap/shared/dist/libs';
 
-const route = ROUTES.api.users.substring(1);
+const route = API_ROUTES.users._;
 
 @ApiTags(getT().users)
 @Controller(route)
@@ -53,7 +53,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @Roles({ path: route, action: ERights.Reading })
   @UseGuards(JwtGuard, RolesGuard)
-  @Get('/:id')
+  @Get(API_ROUTES.users.user(':id'))
   async getOne(@Param('id') id: string): Promise<IUser> {
     const user = await this.usersService.getOnePublic(id);
     return plainToInstance(UserExternalDto, user);
@@ -77,7 +77,7 @@ export class UsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
-  @Patch('/:id')
+  @Patch(API_ROUTES.users.user(':id'))
   async update(
     @Param('id') id: string,
     @Body() userUpdateDto: UserUpdateDto,
@@ -90,7 +90,7 @@ export class UsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Roles({ path: route, action: ERights.Updating })
   @UseGuards(JwtGuard, RolesGuard)
-  @Patch('/:id/roles')
+  @Patch(API_ROUTES.users.userRoles(':id'))
   async updateRoles(
     @Param('id') id: string,
     @Body() usersRolesReqItemsDto: UsersRolesReqItemsDto,

@@ -1,32 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSearchParams = exports.resListMetaToReq = exports.getField = exports.getGoogleSignInUrl = exports.checkActiveLink = exports.getErrorText = exports.testString = exports.getUpdatedValues = exports.getDateString = void 0;
+exports.buildRoutes = exports.createSearchParams = exports.resListMetaToReq = exports.getField = exports.getGoogleSignInUrl = exports.checkActiveLink = exports.getErrorText = exports.testString = exports.getUpdatedValues = exports.getDateString = void 0;
 const utils_1 = require("../locales/utils");
-const constants_1 = require("./constants");
 /**
  * @param {Date | string | number} date Parsed date
  * @returns {string} Formatted date string
  */
 const getDateString = (date = Date.now()) => {
-    const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
+    const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
     const now = Date.now();
     const parsedDate = new Date(date);
     const parsedTime = parsedDate.getTime();
     if (isNaN(parsedTime)) {
-        return "-";
+        return '-';
     }
     const differenceMS = now - parsedTime;
     const minuteMS = 1000 * 60;
     const hourMS = minuteMS * 60;
     const dayMS = hourMS * 24;
     if (differenceMS < minuteMS) {
-        return rtf.format(0, "minute");
+        return rtf.format(0, 'minute');
     }
     else if (differenceMS < hourMS) {
-        return rtf.format(-1 * Math.floor(differenceMS / minuteMS), "minute");
+        return rtf.format(-1 * Math.floor(differenceMS / minuteMS), 'minute');
     }
     else if (differenceMS < dayMS) {
-        return rtf.format(-1 * Math.floor(differenceMS / hourMS), "hour");
+        return rtf.format(-1 * Math.floor(differenceMS / hourMS), 'hour');
     }
     else {
         return parsedDate.toLocaleString();
@@ -62,24 +61,24 @@ exports.testString = testString;
  * @param {string} lang Error language
  * @returns {string} Formatted error text
  */
-const getErrorText = (error, lang = "en") => {
+const getErrorText = (error, lang = 'en') => {
     const t = (0, utils_1.getT)(lang);
     if (!(error instanceof Object)) {
         return t.unknownError;
     }
-    if (("status" in error && error.status === 429) ||
-        ("statusCode" in error && error.statusCode === 429)) {
+    if (('status' in error && error.status === 429) ||
+        ('statusCode' in error && error.statusCode === 429)) {
         return t.tooManyRequests;
     }
     let obj = error;
-    if ("data" in obj && obj.data instanceof Object) {
+    if ('data' in obj && obj.data instanceof Object) {
         obj = obj.data;
     }
-    if ("message" in obj) {
+    if ('message' in obj) {
         if (obj.message instanceof Array) {
-            return obj.message.join(".\r\n").concat(".");
+            return obj.message.join('.\r\n').concat('.');
         }
-        else if (typeof obj.message === "string") {
+        else if (typeof obj.message === 'string') {
             return obj.message;
         }
     }
@@ -112,13 +111,13 @@ exports.checkActiveLink = checkActiveLink;
  * @returns {boolean} Google Login URL
  */
 const getGoogleSignInUrl = (googleClientId, redirectUri, state) => {
-    let url = "https://accounts.google.com/o/oauth2/v2/auth";
+    let url = 'https://accounts.google.com/o/oauth2/v2/auth';
     url += `?client_id=${encodeURIComponent(googleClientId)}`;
-    url += `&redirect_uri=${encodeURIComponent(`https://${redirectUri}${constants_1.ROUTES.ui.signInGoogle}`)}`;
-    url += `&scope=${encodeURIComponent("https://www.googleapis.com/auth/userinfo.profile")}`;
+    url += `&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    url += `&scope=${encodeURIComponent('https://www.googleapis.com/auth/userinfo.profile')}`;
     url += `&state=${encodeURIComponent(state)}`;
-    url += "&include_granted_scopes=true";
-    url += "&response_type=token";
+    url += '&include_granted_scopes=true';
+    url += '&response_type=token';
     return url;
 };
 exports.getGoogleSignInUrl = getGoogleSignInUrl;
@@ -128,7 +127,7 @@ exports.getGoogleSignInUrl = getGoogleSignInUrl;
  * @returns {T | undefined} Field value or nothing
  */
 const getField = (object, field) => {
-    if (typeof object === "object" && object !== null && field in object) {
+    if (typeof object === 'object' && object !== null && field in object) {
         return object[field];
     }
     return undefined;
@@ -156,7 +155,7 @@ exports.resListMetaToReq = resListMetaToReq;
 const createSearchParams = ({ data, exclude, searchParams, }) => {
     const newParams = new URLSearchParams(searchParams);
     Object.entries(data).forEach(([key, value]) => {
-        if (value === undefined || value === "" || (exclude === null || exclude === void 0 ? void 0 : exclude.includes(key))) {
+        if (value === undefined || value === '' || (exclude === null || exclude === void 0 ? void 0 : exclude.includes(key))) {
             return;
         }
         newParams.set(key, String(value));
@@ -164,4 +163,39 @@ const createSearchParams = ({ data, exclude, searchParams, }) => {
     return newParams;
 };
 exports.createSearchParams = createSearchParams;
+const buildRoutes = (tree, parent = '') => {
+    var _a;
+    const result = {};
+    let base = tree['_'] === '/' ? '' : String((_a = tree['_']) !== null && _a !== void 0 ? _a : '');
+    if (base) {
+        base = (base[0] !== '/' ? '/' : '') + base;
+    }
+    if (parent && parent !== '/') {
+        base = (parent[0] !== '/' ? '/' : '') + parent + base;
+    }
+    for (const key in tree) {
+        const value = tree[key];
+        if (key === '_') {
+            result[key] = base;
+            continue;
+        }
+        if (typeof value === 'object') {
+            result[key] = (0, exports.buildRoutes)(value, base);
+        }
+        else if (typeof value === 'function') {
+            result[key] = (...args) => {
+                let fixedValue = value(...args);
+                if (fixedValue[0] !== '/') {
+                    fixedValue = '/' + fixedValue;
+                }
+                return base + fixedValue;
+            };
+        }
+        else {
+            result[key] = base + (String(value)[0] !== '/' ? '/' : '') + value;
+        }
+    }
+    return result;
+};
+exports.buildRoutes = buildRoutes;
 //# sourceMappingURL=utils.js.map

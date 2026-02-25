@@ -3,12 +3,12 @@
 import { headers } from "next/headers";
 
 import { IFetchRes, IFetchArgs } from "./types";
-import authService from "@/entities/auth/service";
+import { authService } from "@/entities/auth/service";
 import { getField } from "@ap/shared/dist/libs";
 
 const query = async <T>(
   url: string,
-  options: RequestInit
+  options: RequestInit,
 ): Promise<IFetchRes<T>> => {
   try {
     const res = await fetch(url, options);
@@ -27,8 +27,8 @@ const query = async <T>(
   }
 };
 
-const serverFetch = async <T = unknown>(
-  payload: IFetchArgs
+export const serverFetch = async <T = unknown>(
+  payload: IFetchArgs,
 ): Promise<IFetchRes<T>> => {
   const baseUrl = process.env.API_HOST_INTERNAL ?? "";
   const headersList = await headers();
@@ -55,7 +55,7 @@ const serverFetch = async <T = unknown>(
             const [key, value] = cookie.split(";", 1)[0].split("=");
             return key + "=" + (value ?? "");
           })
-          .join("; ")
+          .join("; "),
     );
   }
 
@@ -63,7 +63,7 @@ const serverFetch = async <T = unknown>(
     payload.headers.forEach((v, k) => optionsHeaders.set(k, v));
   } else if (payload.headers) {
     Object.entries(payload.headers).forEach(([k, v]) =>
-      optionsHeaders.set(k, v)
+      optionsHeaders.set(k, v),
     );
   }
 
@@ -71,7 +71,7 @@ const serverFetch = async <T = unknown>(
     baseUrl +
       payload.url +
       new URLSearchParams(payload.params as Record<string, string>),
-    options
+    options,
   );
 
   if (result.error === 401) {
@@ -93,7 +93,7 @@ const serverFetch = async <T = unknown>(
               const [key, value] = cookie.split(";", 1)[0].split("=");
               return key + "=" + (value ?? "");
             })
-            .join("; ")
+            .join("; "),
       );
       options.headers = optionsHeaders;
 
@@ -102,7 +102,7 @@ const serverFetch = async <T = unknown>(
           baseUrl +
             payload.url +
             new URLSearchParams(payload.params as Record<string, string>),
-          options
+          options,
         )),
         newCookiesRaw: refreshRes.newCookiesRaw,
       };
@@ -111,4 +111,3 @@ const serverFetch = async <T = unknown>(
 
   return result;
 };
-export default serverFetch;

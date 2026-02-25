@@ -4,11 +4,11 @@ import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 
-import theme from "@/shared/lib/theme";
+import { theme } from "@/shared/ui/theme";
 import { deleteAlert } from "@/app/store/main/main";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 
-const LayoutAlerts: FC = () => {
+export const LayoutAlerts: FC = () => {
   const dispatch = useAppDispatch();
   const alerts = useAppSelector((state) => state.main.alerts);
 
@@ -45,7 +45,6 @@ const LayoutAlerts: FC = () => {
     </AlertsContainer>
   );
 };
-export default LayoutAlerts;
 
 const AlertsContainer = styled(Box)`
   position: fixed;

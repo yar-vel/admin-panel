@@ -2,15 +2,15 @@
 import { useDisplay } from 'vuetify'
 
 const mainStore = useMainStore()
-const { width } = useDisplay()
+const { mdAndUp } = useDisplay()
 </script>
 
 <template>
   <v-navigation-drawer
-    :model-value="width < 1000 ? !mainStore.isSideBarOpened : true"
-    :permanent="width > 1000"
-    :rail="width > 1000 ? !mainStore.isSideBarOpened : null"
-    :temporary="width < 1000"
+    :model-value="mdAndUp ? true : !mainStore.isSideBarOpened"
+    :temporary="!mdAndUp"
+    :permanent="mdAndUp"
+    :rail="mdAndUp ? !mainStore.isSideBarOpened : null"
     @update:model-value="mainStore.toggleSideBar(!mainStore.isSideBarOpened)"
   >
     <v-list

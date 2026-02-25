@@ -11,7 +11,7 @@ import {
   userCookies,
   wrongValue,
 } from './app.setup';
-import { ROUTES } from '@ap/shared/dist/libs';
+import { API_ROUTES, buildRoutes } from '@ap/shared/dist/libs';
 import {
   IForgotPassword,
   IResetPassword,
@@ -21,29 +21,31 @@ import {
   TSignUp,
 } from '@ap/shared/dist/types';
 
-const runAuthTests = () => {
+const ROUTES = buildRoutes(API_ROUTES);
+
+export const runAuthTests = () => {
   describe('Auth', () => {
     describe('Sign Up', () => {
       it('Incorrect (admin)', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.sighUp)
+          .post(ROUTES.auth.sighUp)
           .send({ ...admin, name: wrongValue } satisfies SignUpDto)
           .expect(HttpStatus.BAD_REQUEST);
 
         await request(app.getHttpServer())
-          .post(ROUTES.api.sighUp)
+          .post(ROUTES.auth.sighUp)
           .send({ ...admin, email: wrongValue } satisfies SignUpDto)
           .expect(HttpStatus.BAD_REQUEST);
 
         await request(app.getHttpServer())
-          .post(ROUTES.api.sighUp)
+          .post(ROUTES.auth.sighUp)
           .send({ ...admin, password: wrongValue } satisfies SignUpDto)
           .expect(HttpStatus.BAD_REQUEST);
       });
 
       it('Correct (admin)', async () => {
         const signUpResBody = await request(app.getHttpServer())
-          .post(ROUTES.api.sighUp)
+          .post(ROUTES.auth.sighUp)
           .send(admin)
           .expect(HttpStatus.CREATED)
           .then((res) => res.body as IUser);
@@ -57,14 +59,14 @@ const runAuthTests = () => {
 
       it('Incorrect (user)', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.sighUp)
+          .post(ROUTES.auth.sighUp)
           .send({ ...user, email: admin.email } satisfies TSignUp)
           .expect(HttpStatus.CONFLICT);
       });
 
       it('Correct (user)', async () => {
         const signUpResBody = await request(app.getHttpServer())
-          .post(ROUTES.api.sighUp)
+          .post(ROUTES.auth.sighUp)
           .send(user)
           .expect(HttpStatus.CREATED)
           .then((res) => res.body as IUser);
@@ -80,7 +82,7 @@ const runAuthTests = () => {
     describe('Verify User request', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.signIn)
+          .post(ROUTES.auth.signIn)
           .send({
             username: wrongValue,
             password: admin.password,
@@ -88,7 +90,7 @@ const runAuthTests = () => {
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .post(ROUTES.api.signIn)
+          .post(ROUTES.auth.signIn)
           .send({
             username: admin.email,
             password: wrongValue,
@@ -98,7 +100,7 @@ const runAuthTests = () => {
 
       it('Correct (admin)', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.signIn)
+          .post(ROUTES.auth.signIn)
           .send({
             username: admin.email,
             password: admin.password,
@@ -111,7 +113,7 @@ const runAuthTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.signIn)
+          .post(ROUTES.auth.signIn)
           .send({
             username: user.email,
             password: user.password,
@@ -126,7 +128,7 @@ const runAuthTests = () => {
     describe('Verify User', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.verifyUser)
+          .post(ROUTES.auth.verifyUser)
           .send({
             code: wrongValue,
             email: queue.at(-1)!.email,
@@ -134,7 +136,7 @@ const runAuthTests = () => {
           .expect(HttpStatus.NOT_FOUND);
 
         await request(app.getHttpServer())
-          .post(ROUTES.api.verifyUser)
+          .post(ROUTES.auth.verifyUser)
           .send({
             code: queue.at(-1)!.code,
             email: wrongValue,
@@ -144,7 +146,7 @@ const runAuthTests = () => {
 
       it('Correct (admin)', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.verifyUser)
+          .post(ROUTES.auth.verifyUser)
           .send({
             code: queue.at(-2)!.code,
             email: queue.at(-2)!.email,
@@ -154,7 +156,7 @@ const runAuthTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.verifyUser)
+          .post(ROUTES.auth.verifyUser)
           .send({
             code: queue.at(-1)!.code,
             email: queue.at(-1)!.email,
@@ -166,14 +168,14 @@ const runAuthTests = () => {
     describe('Forgot Password', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.forgotPassword)
+          .post(ROUTES.auth.forgotPassword)
           .send({ email: wrongValue } satisfies IForgotPassword)
           .expect(HttpStatus.NOT_FOUND);
       });
 
       it('Correct (admin)', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.forgotPassword)
+          .post(ROUTES.auth.forgotPassword)
           .send({ email: admin.email } satisfies IForgotPassword)
           .expect(HttpStatus.NO_CONTENT);
 
@@ -182,7 +184,7 @@ const runAuthTests = () => {
 
       it('Correct (user)', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.forgotPassword)
+          .post(ROUTES.auth.forgotPassword)
           .send({ email: user.email } satisfies IForgotPassword)
           .expect(HttpStatus.NO_CONTENT);
 
@@ -193,7 +195,7 @@ const runAuthTests = () => {
     describe('Reset Password', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.resetPassword)
+          .post(ROUTES.auth.resetPassword)
           .send({
             code: wrongValue,
             email: queue.at(-2)!.email,
@@ -202,7 +204,7 @@ const runAuthTests = () => {
           .expect(HttpStatus.NOT_FOUND);
 
         await request(app.getHttpServer())
-          .post(ROUTES.api.resetPassword)
+          .post(ROUTES.auth.resetPassword)
           .send({
             code: queue.at(-2)!.code,
             email: wrongValue,
@@ -211,7 +213,7 @@ const runAuthTests = () => {
           .expect(HttpStatus.NOT_FOUND);
 
         await request(app.getHttpServer())
-          .post(ROUTES.api.resetPassword)
+          .post(ROUTES.auth.resetPassword)
           .send({
             code: queue.at(-2)!.code,
             email: queue.at(-2)!.email,
@@ -224,7 +226,7 @@ const runAuthTests = () => {
         admin.password = admin.password + admin.password;
 
         await request(app.getHttpServer())
-          .post(ROUTES.api.resetPassword)
+          .post(ROUTES.auth.resetPassword)
           .send({
             code: queue.at(-2)!.code,
             email: queue.at(-2)!.email,
@@ -237,7 +239,7 @@ const runAuthTests = () => {
         user.password = user.password + user.password;
 
         await request(app.getHttpServer())
-          .post(ROUTES.api.resetPassword)
+          .post(ROUTES.auth.resetPassword)
           .send({
             code: queue.at(-1)!.code,
             email: queue.at(-1)!.email,
@@ -250,7 +252,7 @@ const runAuthTests = () => {
     describe('Sign In', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .post(ROUTES.api.signIn)
+          .post(ROUTES.auth.signIn)
           .send({
             username: wrongValue,
             password: admin.password,
@@ -258,7 +260,7 @@ const runAuthTests = () => {
           .expect(HttpStatus.UNAUTHORIZED);
 
         await request(app.getHttpServer())
-          .post(ROUTES.api.signIn)
+          .post(ROUTES.auth.signIn)
           .send({
             username: admin.email,
             password: wrongValue,
@@ -268,7 +270,7 @@ const runAuthTests = () => {
 
       it('Correct (admin)', async () => {
         const signInRes = await request(app.getHttpServer())
-          .post(ROUTES.api.signIn)
+          .post(ROUTES.auth.signIn)
           .send({
             username: admin.email,
             password: admin.password,
@@ -289,7 +291,7 @@ const runAuthTests = () => {
 
       it('Correct (user)', async () => {
         const signInRes = await request(app.getHttpServer())
-          .post(ROUTES.api.signIn)
+          .post(ROUTES.auth.signIn)
           .send({
             username: user.email,
             password: user.password,
@@ -311,13 +313,13 @@ const runAuthTests = () => {
     describe('Refresh', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
-          .get(ROUTES.api.refresh)
+          .get(ROUTES.auth.refresh)
           .expect(HttpStatus.UNAUTHORIZED);
       });
 
       it('Correct (admin)', async () => {
         const refreshRes = await request(app.getHttpServer())
-          .get(ROUTES.api.refresh)
+          .get(ROUTES.auth.refresh)
           .set('Cookie', adminCookies)
           .expect(HttpStatus.NO_CONTENT);
 
@@ -329,7 +331,7 @@ const runAuthTests = () => {
 
       it('Correct (user)', async () => {
         const refreshRes = await request(app.getHttpServer())
-          .get(ROUTES.api.refresh)
+          .get(ROUTES.auth.refresh)
           .set('Cookie', userCookies)
           .expect(HttpStatus.NO_CONTENT);
 
@@ -341,4 +343,3 @@ const runAuthTests = () => {
     });
   });
 };
-export default runAuthTests;

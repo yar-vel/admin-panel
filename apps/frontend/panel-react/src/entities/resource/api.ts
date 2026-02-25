@@ -9,10 +9,10 @@ import {
   TResourceResList,
   TResourceReqList,
 } from "@ap/shared/dist/types";
-import baseQueryWithReauth from "@/app/api/baseQueryWithReauth";
-import resourcesService from "./service";
+import { baseQueryWithReauth } from "@/app/api/baseQueryWithReauth";
+import { resourcesService } from "./service";
 
-const resourcesApi = createApi({
+export const resourcesApi = createApi({
   reducerPath: "resources",
   baseQuery: baseQueryWithReauth,
   tagTypes: ["CountedEntities", "Entities", "Entity"],
@@ -46,4 +46,3 @@ const resourcesApi = createApi({
     }),
   }),
 });
-export default resourcesApi;

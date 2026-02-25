@@ -1,6 +1,6 @@
 class AuthApi {
   signUp = (payload: TFetchPayload<TSignUp>) =>
-    useAPI<IUser>(ROUTES.api.sighUp, {
+    useAPI<IUser>(ROUTES.api.auth.sighUp, {
       immediate: false,
       watch: false,
       method: 'POST',
@@ -8,7 +8,7 @@ class AuthApi {
     })
 
   forgotPassword = (payload: TFetchPayload<IForgotPassword>) =>
-    useAPI(ROUTES.api.forgotPassword, {
+    useAPI(ROUTES.api.auth.forgotPassword, {
       immediate: false,
       watch: false,
       method: 'POST',
@@ -16,7 +16,7 @@ class AuthApi {
     })
 
   resetPassword = (payload: TFetchPayload<IResetPassword>) =>
-    useAPI(ROUTES.api.resetPassword, {
+    useAPI(ROUTES.api.auth.resetPassword, {
       immediate: false,
       watch: false,
       method: 'POST',
@@ -24,7 +24,7 @@ class AuthApi {
     })
 
   verifyUser = (payload: TFetchPayload<IVerifyUser>) =>
-    useAPI(ROUTES.api.verifyUser, {
+    useAPI(ROUTES.api.auth.verifyUser, {
       immediate: false,
       watch: false,
       method: 'POST',
@@ -32,7 +32,7 @@ class AuthApi {
     })
 
   signIn = (payload: TFetchPayload<ISignIn>) =>
-    useAPI<IUser>(ROUTES.api.signIn, {
+    useAPI<IUser>(ROUTES.api.auth.signIn, {
       immediate: false,
       watch: false,
       method: 'POST',
@@ -41,7 +41,7 @@ class AuthApi {
     })
 
   signInGoogle = (payload: TFetchPayload<ISignInGoogle>) =>
-    useAPI<IUser>(ROUTES.api.signInGoogle, {
+    useAPI<IUser>(ROUTES.api.auth.signInGoogle, {
       immediate: false,
       watch: false,
       method: 'POST',
@@ -50,7 +50,7 @@ class AuthApi {
     })
 
   signOut = () =>
-    useAPI(ROUTES.api.signOut, {
+    useAPI(ROUTES.api.auth.signOut, {
       immediate: false,
       watch: false,
       method: 'DELETE',

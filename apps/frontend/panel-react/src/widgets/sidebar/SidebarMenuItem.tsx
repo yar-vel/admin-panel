@@ -12,7 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { IMenuItem } from "@ap/shared/dist/types";
 import { checkActiveLink } from "@ap/shared/dist/libs";
 
-const SideBarMenuItem: FC<IMenuItem<ReactNode>> = ({
+export const SidebarMenuItem: FC<IMenuItem<ReactNode>> = ({
   href,
   title,
   icon,
@@ -67,7 +67,7 @@ const SideBarMenuItem: FC<IMenuItem<ReactNode>> = ({
         <Collapse in={open} timeout="auto">
           <Divider />
           {childs.map((item, index) => (
-            <SideBarMenuItem
+            <SidebarMenuItem
               key={`sbmi:${index}:${item.title}:${item.href}`}
               {...item}
             />
@@ -77,4 +77,3 @@ const SideBarMenuItem: FC<IMenuItem<ReactNode>> = ({
     </>
   );
 };
-export default SideBarMenuItem;

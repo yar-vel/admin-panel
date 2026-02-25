@@ -4,7 +4,7 @@ import type { SubmitEventPromise } from 'vuetify'
 import profileApi from '~/components/entities/profile/profileApi'
 
 const { t, locale } = useI18n()
-const rights = useRights(ROUTES.api.profile)
+const rights = useRights(ROUTES.api.profile._)
 const mainStore = useMainStore()
 const oldPassword = ref('')
 const newPassword = ref('')

@@ -1,19 +1,21 @@
 import { FC } from "react";
 import { Metadata } from "next/types";
 
-import { getT } from "@ap/shared/dist/locales";
-import CreateUserPage from "@/views/panel/users/CreateUserPage";
+import { CreateUserPage } from "@/_pages/panel/users/CreateUserPage";
+import { getServerT } from "@/shared/config/i18n/server";
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const t = getT();
+  const t = await getServerT();
+
   return {
-    title: t.newUser,
-    description: t.newUser,
+    title: t("newUser"),
+    description: t("newUser"),
   };
 };
 
 const Page: FC = async () => {
-  const t = getT();
-  return <CreateUserPage h1={t.newUser} />;
+  const t = await getServerT();
+
+  return <CreateUserPage h1={t("newUser")} />;
 };
 export default Page;

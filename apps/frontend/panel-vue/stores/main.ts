@@ -5,8 +5,8 @@ export const useMainStore = defineStore('main', () => {
   }
 
   const language = ref<TLangList>('en')
-  function setLanguage(value: TLangList) {
-    language.value = value
+  function setLanguage(newLang: TLangList) {
+    language.value = newLang
   }
 
   const alerts = ref<IAlert[]>([])

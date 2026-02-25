@@ -1,20 +1,20 @@
 import { FC, FormEvent, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
+import { useTranslation } from "react-i18next";
 
-import FormBase from "@/shared/ui/form/FormBase";
-import FormButton from "@/shared/ui/form/FormButton";
-import useTranslate from "@/shared/hooks/useTranslate";
+import { FormBase } from "@/shared/ui/form/FormBase";
+import { FormButton } from "@/shared/ui/form/FormButton";
 import { IResource, IRights, IRole } from "@ap/shared/dist/types";
-import ResourceRights from "@/entities/resource/ResourceRights";
+import { ResourceRights } from "@/entities/resource/ResourceRights";
 import { IEntityFormUpdate } from "@/shared/lib/types";
 
-const RoleRightsForm: FC<
+export const RoleRightsForm: FC<
   {
     role: IRole;
     resources: IResource[];
   } & IEntityFormUpdate<IRights[]>
 > = ({ role, resources, onUpdate, updateDisabled, updateLoading }) => {
-  const t = useTranslate();
+  const { t } = useTranslation();
   const [updatedRights, setUpdatedRights] = useState(role.rights ?? []);
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
@@ -54,7 +54,7 @@ const RoleRightsForm: FC<
           roleId={role.id}
           resource={resource}
           rights={updatedRights.find(
-            (value) => value.resourceId === resource.id
+            (value) => value.resourceId === resource.id,
           )}
           onUpdate={updateRights}
         />
@@ -67,9 +67,8 @@ const RoleRightsForm: FC<
         disabled={updateDisabled}
         loading={updateLoading}
       >
-        {t.update}
+        {t("update")}
       </FormButton>
     </FormBase>
   );
 };
-export default RoleRightsForm;

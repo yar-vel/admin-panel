@@ -8,46 +8,56 @@ export const PASSWORD_REGEX =
 
 export const DEV = 'development';
 
-/** Supported application routes */
-export const ROUTES = {
-  ui: {
-    signUp: '/registration',
-    signIn: '/authorization',
-    signInGoogle: '/authorization/google',
-    forgotPassword: '/forgot-password',
-    home: '/',
-    profile: '/profile',
-    users: '/users',
-    newUser: '/users/new',
-    user: (id: string | number) => `/users/${id}`,
-    roles: '/roles',
-    newRole: '/roles/new',
-    role: (id: string | number) => `/roles/${id}`,
-    resources: '/resources',
-    newResource: '/resources/new',
-    resource: (id: string | number) => `/resources/${id}`,
+/** Supported API routes */
+export const API_ROUTES = {
+  auth: {
+    _: 'auth',
+    sighUp: 'sign-up',
+    forgotPassword: 'forgot-password',
+    resetPassword: 'reset-password',
+    signIn: 'sign-in',
+    verifyUser: 'verify-user',
+    signInGoogle: 'sign-in/google',
+    refresh: 'refresh',
+    signOut: 'sign-out',
   },
-  api: {
-    auth: '/auth',
-    sighUp: '/auth/sign-up',
-    forgotPassword: '/auth/forgot-password',
-    resetPassword: '/auth/reset-password',
-    signIn: '/auth/sign-in',
-    verifyUser: '/auth/verify-user',
-    signInGoogle: '/auth/sign-in/google',
-    refresh: '/auth/refresh',
-    signOut: '/auth/sign-out',
-    profile: '/profile',
-    updatePassword: '/profile/update-password',
-    changeEmail: '/profile/change-email',
-    sessions: '/profile/sessions',
-    users: '/users',
-    user: (id: string | number) => `/users/${id}`,
-    userRoles: (id: string | number) => `/users/${id}/roles`,
-    roles: '/roles',
-    role: (id: string | number) => `/roles/${id}`,
-    roleRights: (id: string | number) => `/roles/${id}/rights`,
-    resources: '/resources',
-    resource: (id: string | number) => `/resources/${id}`,
+  profile: {
+    _: 'profile',
+    updatePassword: 'update-password',
+    changeEmail: 'change-email',
+    sessions: 'sessions',
   },
+  users: {
+    _: 'users',
+    user: (id: string | number) => `/${id}`,
+    userRoles: (id: string | number) => `/${id}/roles`,
+  },
+  roles: {
+    _: 'roles',
+    role: (id: string | number) => `/${id}`,
+    roleRights: (id: string | number) => `/${id}/rights`,
+  },
+  resources: {
+    _: 'resources',
+    resource: (id: string | number) => `/${id}`,
+  },
+} as const;
+
+/** Supported UI routes */
+export const UI_ROUTES = {
+  signUp: '/registration',
+  signIn: '/authorization',
+  signInGoogle: '/authorization/google',
+  forgotPassword: '/forgot-password',
+  home: '/',
+  profile: '/profile',
+  users: '/users',
+  newUser: '/users/new',
+  user: (id: string | number) => `/users/${id}`,
+  roles: '/roles',
+  newRole: '/roles/new',
+  role: (id: string | number) => `/roles/${id}`,
+  resources: '/resources',
+  newResource: '/resources/new',
+  resource: (id: string | number) => `/resources/${id}`,
 } as const;

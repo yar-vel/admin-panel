@@ -15,23 +15,22 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Divider from "@mui/material/Divider";
+import { useTranslation } from "react-i18next";
 
 import { useAppSelector } from "@/app/store/hooks";
-import useTranslate from "@/shared/hooks/useTranslate";
-import theme, { sideBarOpenedWidth, sideBarWidth } from "@/shared/lib/theme";
+import { theme, sideBarOpenedWidth, sideBarWidth } from "@/shared/ui/theme";
 import { useAppDispatch } from "@/app/store/hooks";
 import { addAlert, setProfile } from "@/app/store/main/main";
-import SideBar from "@/widgets/sidebar/Sidebar";
-import LayoutAlerts from "@/widgets/alerts/LayoutAlerts";
-import useLanguageRef from "@/shared/hooks/useLanguageRef";
-import { getErrorText, ROUTES } from "@ap/shared/dist/libs";
-import authApi from "@/entities/auth/api";
+import { SideBar } from "@/widgets/sidebar/Sidebar";
+import { LayoutAlerts } from "@/widgets/alerts/LayoutAlerts";
+import { getErrorText } from "@ap/shared/dist/libs";
+import { authApi } from "@/entities/auth/api";
+import { ROUTES } from "@/shared/lib/constants";
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const lRef = useLanguageRef();
-  const t = useTranslate();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(true);
   const [signOut, { isSuccess, error, isLoading }] =
     authApi.useSignOutMutation();
@@ -55,11 +54,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       dispatch(
         addAlert({
           type: "error",
-          text: getErrorText(error, lRef.current),
-        })
+          text: getErrorText(error, i18n.language),
+        }),
       );
     }
-  }, [dispatch, error, lRef]);
+  }, [dispatch, error, i18n]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -87,7 +86,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 edge="end"
                 color="error"
                 aria-label="sign out"
-                title={t.signOut}
+                title={t("signOut")}
                 disabled={isLoading || isSuccess}
                 onClick={() => dispatch(setProfile(null))}
               >

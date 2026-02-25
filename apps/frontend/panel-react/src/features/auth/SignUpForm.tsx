@@ -1,33 +1,29 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, FormEvent, useEffect, useMemo, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
-import FormBase from "@/shared/ui/form/FormBase";
-import FormField from "@/shared/ui/form/FormField";
-import FormPassword from "@/shared/ui/form/FormPassword";
-import FormButton from "@/shared/ui/form/FormButton";
-import FormLink from "@/shared/ui/form/FormLink";
-import FormAlert from "@/shared/ui/form/FormAlert";
-import CustomModal from "@/shared/ui/modal/CustomModal";
-import SignUpSuccessForm from "./SignUpSuccessForm";
-import useTranslate from "@/shared/hooks/useTranslate";
-import useTranslateRef from "@/shared/hooks/useTranslateRef";
-import useLanguageRef from "@/shared/hooks/useLanguageRef";
+import { FormBase } from "@/shared/ui/form/FormBase";
+import { FormField } from "@/shared/ui/form/FormField";
+import { FormPassword } from "@/shared/ui/form/FormPassword";
+import { FormButton } from "@/shared/ui/form/FormButton";
+import { FormLink } from "@/shared/ui/form/FormLink";
+import { FormAlert } from "@/shared/ui/form/FormAlert";
+import { CustomModal } from "@/shared/ui/modal/CustomModal";
+import { SignUpSuccessForm } from "./SignUpSuccessForm";
 import {
   EMAIL_REGEX,
   getErrorText,
   NAME_REGEX,
   PASSWORD_REGEX,
-  ROUTES,
   testString,
 } from "@ap/shared/dist/libs";
-import authApi from "@/entities/auth/api";
+import { authApi } from "@/entities/auth/api";
+import { ROUTES } from "@/shared/lib/constants";
 
-const SignUpForm: FC = () => {
+export const SignUpForm: FC = () => {
   const router = useRouter();
-  const lRef = useLanguageRef();
-  const tRef = useTranslateRef();
-  const t = useTranslate();
+  const { t, i18n } = useTranslation();
   const [name, setName] = useState("");
   const nameIsValid = useMemo(() => testString(NAME_REGEX, name), [name]);
   const [email, setEmail] = useState("");
@@ -35,13 +31,13 @@ const SignUpForm: FC = () => {
   const [password, setPassword] = useState("");
   const passwordIsValid = useMemo(
     () => testString(PASSWORD_REGEX, password),
-    [password]
+    [password],
   );
   const [successModal, setSuccessModal] = useState(false);
   const [errorText, setErrorText] = useState<string | null>(null);
   const [signUp, { data, error, isLoading }] = authApi.useLazySignUpQuery();
 
-  const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (nameIsValid && emailIsValid && passwordIsValid) {
@@ -68,14 +64,14 @@ const SignUpForm: FC = () => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 409:
-          setErrorText(tRef.current.userAlreadyExist);
+          setErrorText(t("userAlreadyExist"));
           break;
         default:
-          setErrorText(getErrorText(error, lRef.current));
+          setErrorText(getErrorText(error, i18n.language));
           break;
       }
     }
-  }, [error, tRef, lRef]);
+  }, [error, t, i18n]);
 
   useEffect(() => {
     if (data) {
@@ -90,10 +86,10 @@ const SignUpForm: FC = () => {
         <FormField
           required
           name="name"
-          label={t.name}
+          label={t("name")}
           value={name}
           onChange={(event) => setName(event.target.value)}
-          helperText={t.nameValidation}
+          helperText={t("nameValidation")}
           color={nameIsValid ? "success" : "error"}
           error={!nameIsValid && name.length > 0}
           autoFocus
@@ -102,36 +98,36 @@ const SignUpForm: FC = () => {
           required
           name="email"
           type="email"
-          label={t.email}
+          label={t("email")}
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          helperText={t.emailValidation}
+          helperText={t("emailValidation")}
           color={emailIsValid ? "success" : "error"}
           error={!emailIsValid && email.length > 0}
         />
         <FormPassword
           required
           name="password"
-          label={t.password}
+          label={t("password")}
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          helperText={t.passwordValidation}
+          helperText={t("passwordValidation")}
           color={passwordIsValid ? "success" : "error"}
           error={!passwordIsValid && password.length > 0}
         />
         <FormButton type="submit" fullWidth loading={isLoading}>
-          {t.signUp}
+          {t("signUp")}
         </FormButton>
         <FormLink href={ROUTES.ui.signIn} mui={{ align: "center" }}>
-          {t.signInText}
+          {t("signInText")}
         </FormLink>
         <FormLink href={ROUTES.ui.forgotPassword} mui={{ align: "center" }}>
-          {t.forgotPasswordText}
+          {t("forgotPasswordText")}
         </FormLink>
       </FormBase>
       <CustomModal
         open={successModal}
-        title={t.registration}
+        title={t("registration")}
         onClose={() => setSuccessModal(false)}
       >
         <SignUpSuccessForm onClose={successHandler} />
@@ -139,4 +135,3 @@ const SignUpForm: FC = () => {
     </>
   );
 };
-export default SignUpForm;

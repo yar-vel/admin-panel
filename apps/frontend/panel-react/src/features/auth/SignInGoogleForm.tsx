@@ -1,24 +1,21 @@
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Typography } from "@mui/material";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { useTranslation } from "react-i18next";
 
-import FormBase from "@/shared/ui/form/FormBase";
-import FormAlert from "@/shared/ui/form/FormAlert";
-import useTranslate from "@/shared/hooks/useTranslate";
-import useTranslateRef from "@/shared/hooks/useTranslateRef";
-import useLanguageRef from "@/shared/hooks/useLanguageRef";
+import { FormBase } from "@/shared/ui/form/FormBase";
+import { FormAlert } from "@/shared/ui/form/FormAlert";
 import { IUser, IWindowMessage } from "@ap/shared/dist/types";
-import { getErrorText, ROUTES } from "@ap/shared/dist/libs";
-import authApi from "@/entities/auth/api";
+import { getErrorText } from "@ap/shared/dist/libs";
+import { authApi } from "@/entities/auth/api";
+import { ROUTES } from "@/shared/lib/constants";
 
-const SignInGoogleForm: FC = () => {
-  const lRef = useLanguageRef();
-  const tRef = useTranslateRef();
-  const t = useTranslate();
+export const SignInGoogleForm: FC = () => {
+  const { t, i18n } = useTranslation();
   const hash = useRef(
     new URLSearchParams(
-      typeof location === "object" ? location.hash.slice(1) : ""
-    )
+      typeof location === "object" ? location.hash.slice(1) : "",
+    ),
   );
   const [errorText, setErrorText] = useState<string | null>(null);
   const [signInGoogle, { data, error }] = authApi.useLazySignInGoogleQuery();
@@ -40,7 +37,7 @@ const SignInGoogleForm: FC = () => {
 
       window.close();
     },
-    [data]
+    [data],
   );
 
   useEffect(() => {
@@ -54,22 +51,22 @@ const SignInGoogleForm: FC = () => {
     if (hash.current.has("access_token")) {
       signInGoogle({ googleAccessToken: hash.current.get("access_token")! });
     } else {
-      setErrorText(tRef.current.error);
+      setErrorText(t("error"));
     }
-  }, [signInGoogle, tRef]);
+  }, [signInGoogle, t]);
 
   useEffect(() => {
     if (error) {
       switch ((error as FetchBaseQueryError).status) {
         case 410:
-          setErrorText(tRef.current.userDeleted);
+          setErrorText(t("userDeleted"));
           break;
         default:
-          setErrorText(getErrorText(error, lRef.current));
+          setErrorText(getErrorText(error, i18n.language));
           break;
       }
     }
-  }, [error, tRef, lRef]);
+  }, [error, t, i18n]);
 
   return (
     <FormBase>
@@ -81,10 +78,9 @@ const SignInGoogleForm: FC = () => {
           variant="subtitle1"
           sx={{ mt: 2, opacity: 0.75 }}
         >
-          {t.loading}...
+          {t("loading")}...
         </Typography>
       )}
     </FormBase>
   );
 };
-export default SignInGoogleForm;

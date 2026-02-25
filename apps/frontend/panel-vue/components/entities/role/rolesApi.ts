@@ -1,6 +1,6 @@
 class RolesApi {
   create = (payload: TFetchPayload<TRoleCreate>) =>
-    useAPI<IRole>(ROUTES.api.roles, {
+    useAPI<IRole>(ROUTES.api.roles._, {
       immediate: false,
       watch: false,
       method: 'POST',
@@ -9,7 +9,7 @@ class RolesApi {
     })
 
   getOne = (payload: TFetchPayload<IRole['id']>) =>
-    useAPI<IRole>(() => ROUTES.api.role(unref(payload)), {
+    useAPI<IRole>(() => ROUTES.api.roles.role(unref(payload)), {
       immediate: false,
       watch: false,
       method: 'GET',
@@ -17,7 +17,7 @@ class RolesApi {
     })
 
   getList = (payload?: TFetchPayload<TRoleReqList>) =>
-    useAPI<TRoleResList>(ROUTES.api.roles, {
+    useAPI<TRoleResList>(ROUTES.api.roles._, {
       immediate: false,
       watch: false,
       method: 'GET',
@@ -26,7 +26,7 @@ class RolesApi {
     })
 
   update = (payload: TFetchPayload<IFetchUpdate<TRoleUpdate, IRole['id']>>) =>
-    useAPI(() => ROUTES.api.role(unref(unref(payload).id)), {
+    useAPI(() => ROUTES.api.roles.role(unref(unref(payload).id)), {
       immediate: false,
       watch: false,
       method: 'PATCH',
@@ -35,7 +35,7 @@ class RolesApi {
     })
 
   updateRights = (payload: TFetchPayload<IFetchUpdate<IReqItems<IRights>, IRole['id']>>) =>
-    useAPI(() => ROUTES.api.roleRights(unref(unref(payload).id)), {
+    useAPI(() => ROUTES.api.roles.roleRights(unref(unref(payload).id)), {
       immediate: false,
       watch: false,
       method: 'PATCH',
@@ -44,7 +44,7 @@ class RolesApi {
     })
 
   delete = (payload: TFetchPayload<IReqItems<IRole['id']>>) =>
-    useAPI(ROUTES.api.roles, {
+    useAPI(ROUTES.api.roles._, {
       immediate: false,
       watch: false,
       method: 'DELETE',

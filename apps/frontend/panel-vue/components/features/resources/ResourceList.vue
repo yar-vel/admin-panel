@@ -10,7 +10,7 @@ const emit = defineEmits<{
 }>()
 
 const { locale } = useI18n()
-const rights = useRights(ROUTES.api.resources)
+const rights = useRights(ROUTES.api.resources._)
 const mainStore = useMainStore()
 const rows = ref(props.initialRows)
 const meta = ref(props.initialMeta)

@@ -2,12 +2,12 @@ import { FC, FormEvent, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useTranslation } from "react-i18next";
 
-import FormBase from "@/shared/ui/form/FormBase";
-import FormField from "@/shared/ui/form/FormField";
-import FormButton from "@/shared/ui/form/FormButton";
-import FormCheckbox from "@/shared/ui/form/FormCheckbox";
-import useTranslate from "@/shared/hooks/useTranslate";
+import { FormBase } from "@/shared/ui/form/FormBase";
+import { FormField } from "@/shared/ui/form/FormField";
+import { FormButton } from "@/shared/ui/form/FormButton";
+import { FormCheckbox } from "@/shared/ui/form/FormCheckbox";
 import {
   IResource,
   TResourceCreate,
@@ -15,7 +15,7 @@ import {
 } from "@ap/shared/dist/types";
 import { IEntityForm } from "@/shared/lib/types";
 
-const ResourceForm: FC<
+export const ResourceForm: FC<
   IEntityForm<IResource, TResourceCreate, TResourceUpdate>
 > = ({
   initialData,
@@ -29,7 +29,7 @@ const ResourceForm: FC<
   deleteDisabled,
   deleteLoading,
 }) => {
-  const t = useTranslate();
+  const { t } = useTranslation();
   const [data, setData] = useState<IResource>(
     initialData ?? {
       id: "",
@@ -38,7 +38,7 @@ const ResourceForm: FC<
       description: "",
       default: false,
       enabled: false,
-    }
+    },
   );
 
   const submitHandler = (event: FormEvent<HTMLFormElement>) => {
@@ -62,27 +62,27 @@ const ResourceForm: FC<
       <FormField
         required
         name="name"
-        label={t.name}
+        label={t("name")}
         value={data.name}
         onChange={(event) => setData({ ...data, name: event.target.value })}
       />
       <FormField
         required
         name="path"
-        label={t.path}
+        label={t("path")}
         value={data.path}
         onChange={(event) => setData({ ...data, path: event.target.value })}
       />
       <FormField
         name="description"
-        label={t.description}
+        label={t("description")}
         value={data.description}
         onChange={(event) =>
           setData({ ...data, description: event.target.value })
         }
       />
       <FormCheckbox
-        labelProps={{ label: t.enabled }}
+        labelProps={{ label: t("enabled") }}
         name="enabled"
         value="enabled"
         checked={data.enabled}
@@ -96,7 +96,7 @@ const ResourceForm: FC<
           disabled={createDisabled}
           loading={createLoading}
         >
-          {t.create}
+          {t("create")}
         </FormButton>
       )}
       {onUpdate && (
@@ -107,7 +107,7 @@ const ResourceForm: FC<
           disabled={updateDisabled}
           loading={updateLoading}
         >
-          {t.update}
+          {t("update")}
         </FormButton>
       )}
       {onDelete && (
@@ -118,10 +118,9 @@ const ResourceForm: FC<
           disabled={deleteDisabled}
           loading={deleteLoading}
         >
-          {t.delete}
+          {t("delete")}
         </FormButton>
       )}
     </FormBase>
   );
 };
-export default ResourceForm;

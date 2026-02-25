@@ -1,14 +1,14 @@
-import Fade from '@mui/material/Fade';
-import Modal, { ModalProps } from '@mui/material/Modal';
-import { FC, useEffect, useState } from 'react';
-import Backdrop from '@mui/material/Backdrop';
-import Typography from '@mui/material/Typography';
-import { styled } from '@mui/material/styles';
-import Container from '@mui/material/Container';
+import Fade from "@mui/material/Fade";
+import Modal, { ModalProps } from "@mui/material/Modal";
+import { FC, useEffect, useState } from "react";
+import Backdrop from "@mui/material/Backdrop";
+import Typography from "@mui/material/Typography";
+import { styled } from "@mui/material/styles";
+import Container from "@mui/material/Container";
 
-import theme from '@/shared/lib/theme';
+import { theme } from "@/shared/ui/theme";
 
-const CustomModal: FC<ModalProps> = ({ children, ...props }) => {
+export const CustomModal: FC<ModalProps> = ({ children, ...props }) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const CustomModal: FC<ModalProps> = ({ children, ...props }) => {
   return (
     <Modal
       {...props}
-      sx={{ display: 'flex' }}
+      sx={{ display: "flex" }}
       closeAfterTransition
       slots={{ backdrop: Backdrop }}
       slotProps={{
@@ -46,7 +46,6 @@ const CustomModal: FC<ModalProps> = ({ children, ...props }) => {
     </Modal>
   );
 };
-export default CustomModal;
 
 const ContainerStyled = styled(Container)`
   max-height: 100%;

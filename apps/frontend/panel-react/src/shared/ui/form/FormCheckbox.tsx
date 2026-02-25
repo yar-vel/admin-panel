@@ -5,7 +5,7 @@ import FormControlLabel, {
 import { styled } from '@mui/material/styles';
 import { FC } from 'react';
 
-const FormCheckbox: FC<
+export const FormCheckbox: FC<
   CheckboxProps & { labelProps: Omit<FormControlLabelProps, 'control'> }
 > = ({ labelProps, ...props }) => {
   return (
@@ -15,7 +15,6 @@ const FormCheckbox: FC<
     />
   );
 };
-export default FormCheckbox;
 
 const FormControlLabelStyled = styled(FormControlLabel)`
   display: flex;

@@ -13,7 +13,7 @@ const newData = ref<TUserCreate>({
 })
 const { data, error, execute, status } = usersApi.create(newData)
 const mainStore = useMainStore()
-const rights = useRights(ROUTES.api.users)
+const rights = useRights(ROUTES.api.users._)
 
 watch(data, () => {
   if (data.value) {

@@ -8,16 +8,16 @@ import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { styled } from "@mui/material/styles";
+import { useTranslation } from "react-i18next";
 
-import useTranslate from "@/shared/hooks/useTranslate";
-import SideBarMenu from "./SidebarMenu";
-import theme, { sideBarOpenedWidth, sideBarWidth } from "@/shared/lib/theme";
+import { SideBarMenu } from "./SidebarMenu";
+import { theme, sideBarOpenedWidth, sideBarWidth } from "@/shared/ui/theme";
 
-const SideBar: FC<{ open?: boolean; setOpen?: () => void }> = ({
+export const SideBar: FC<{ open?: boolean; setOpen?: () => void }> = ({
   open,
   setOpen,
 }) => {
-  const t = useTranslate();
+  const { t } = useTranslation();
 
   return (
     <DrawerStyled openStyled={open} openMdStyled={!open}>
@@ -27,7 +27,7 @@ const SideBar: FC<{ open?: boolean; setOpen?: () => void }> = ({
             <ListItemIcon>
               <AdminPanelSettingsIcon />
             </ListItemIcon>
-            <ListItemText primary={t.adminPanel} />
+            <ListItemText primary={t("adminPanel")} />
           </ListItemButton>
         </ListItem>
       </List>
@@ -36,7 +36,6 @@ const SideBar: FC<{ open?: boolean; setOpen?: () => void }> = ({
     </DrawerStyled>
   );
 };
-export default SideBar;
 
 const DrawerStyled = styled(
   (props: DrawerProps) => (
@@ -45,7 +44,7 @@ const DrawerStyled = styled(
   {
     shouldForwardProp: (prop) =>
       !(["openStyled", "openMdStyled"] as PropertyKey[]).includes(prop),
-  }
+  },
 )<{ openStyled?: boolean; openMdStyled?: boolean }>(
   ({ openStyled, openMdStyled }) => ({
     width: openStyled ? sideBarOpenedWidth : sideBarWidth,
@@ -75,5 +74,5 @@ const DrawerStyled = styled(
         width: sideBarOpenedWidth,
       },
     },
-  })
+  }),
 );

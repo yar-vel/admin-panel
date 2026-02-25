@@ -1,0 +1,60 @@
+include snippets/health_common.conf;
+
+# redirect to HTTPS for all HTTP servers
+server {
+    listen ${NGINX_PORT};
+    listen [::]:${NGINX_PORT};
+    server_name _;
+    return 301 https://$host$request_uri;
+}
+
+# api
+server {
+    listen ${NGINX_SSL_PORT} ssl;
+    listen [::]:${NGINX_SSL_PORT} ssl;
+    server_name ${API_URL};
+    ssl_certificate /usr/share/nginx/ssl/${NGINX_HOST}.crt;
+    ssl_certificate_key /usr/share/nginx/ssl/${NGINX_HOST}.key;
+
+    include snippets/client_common.conf;
+    include snippets/gzip_common.conf;
+
+    location / {
+        include snippets/proxy_common.conf;
+        proxy_pass http://${API_HOST}:${API_PORT}/;
+    }
+}
+
+# panel-react
+server {
+    listen ${NGINX_SSL_PORT} ssl default_server;
+    listen [::]:${NGINX_SSL_PORT} ssl default_server;
+    server_name ${PANEL_REACT_URL};
+    ssl_certificate /usr/share/nginx/ssl/${NGINX_HOST}.crt;
+    ssl_certificate_key /usr/share/nginx/ssl/${NGINX_HOST}.key;
+
+    include snippets/client_common.conf;
+    include snippets/gzip_common.conf;
+
+    location / {
+        include snippets/proxy_common.conf;
+        proxy_pass http://${PANEL_REACT_HOST}:${PANEL_REACT_PORT}/;
+    }
+}
+
+# panel-vue
+server {
+    listen ${NGINX_SSL_PORT} ssl;
+    listen [::]:${NGINX_SSL_PORT} ssl;
+    server_name ${PANEL_VUE_URL};
+    ssl_certificate /usr/share/nginx/ssl/${NGINX_HOST}.crt;
+    ssl_certificate_key /usr/share/nginx/ssl/${NGINX_HOST}.key;
+
+    include snippets/client_common.conf;
+    include snippets/gzip_common.conf;
+
+    location / {
+        include snippets/proxy_common.conf;
+        proxy_pass http://${PANEL_VUE_HOST}:${PANEL_VUE_PORT}/;
+    }
+}

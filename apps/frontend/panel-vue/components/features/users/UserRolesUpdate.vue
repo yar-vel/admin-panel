@@ -15,7 +15,7 @@ const { status, error, execute } = usersApi.updateRoles({
   fields: { items: updatedRoles },
 })
 const mainStore = useMainStore()
-const rights = useRights(ROUTES.api.users)
+const rights = useRights(ROUTES.api.users._)
 
 watch(error, () => {
   if (!error.value) {

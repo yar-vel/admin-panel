@@ -7,7 +7,7 @@ const { role, resources } = defineProps<{
 }>()
 
 const { t, locale } = useI18n()
-const rights = useRights(ROUTES.api.roles)
+const rights = useRights(ROUTES.api.roles._)
 const mainStore = useMainStore()
 const updatedRights = ref<IRights[]>(role.rights ?? [])
 const { status, error, execute } = rolesApi.updateRights({

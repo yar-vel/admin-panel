@@ -1,13 +1,13 @@
-import useTranslate from '@/shared/hooks/useTranslate';
-import Button, { ButtonProps } from '@mui/material/Button';
-import Link from 'next/link';
-import { FC } from 'react';
+import Button, { ButtonProps } from "@mui/material/Button";
+import Link from "next/link";
+import { FC } from "react";
+import { useTranslation } from "react-i18next";
 
-const FormButton: FC<ButtonProps & { loading?: boolean }> = ({
+export const FormButton: FC<ButtonProps & { loading?: boolean }> = ({
   loading,
   ...props
 }) => {
-  const t = useTranslate();
+  const { t } = useTranslation();
 
   return (
     <Button
@@ -17,8 +17,7 @@ const FormButton: FC<ButtonProps & { loading?: boolean }> = ({
       {...props}
       disabled={props.disabled || loading}
     >
-      {loading ? t.loading : props.children}
+      {loading ? t("loading") : props.children}
     </Button>
   );
 };
-export default FormButton;
