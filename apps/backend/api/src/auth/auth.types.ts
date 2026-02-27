@@ -13,9 +13,10 @@ export interface IToken {
   sign?: string;
 }
 
-export type TFastifyRequestWithUser = FastifyRequest & { user: IUser };
+export interface IRequestUser extends IUser {
+  sessionId: string;
+}
 
-export type TFastifyRequestWithToken = FastifyRequest & {
-  user: IToken;
-  originalUser: IUser;
-};
+export interface IFastifyRequestWithUser extends FastifyRequest {
+  user: IRequestUser;
+}

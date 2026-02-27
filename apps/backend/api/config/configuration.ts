@@ -1,4 +1,4 @@
-import { DEV } from '@ap/shared/dist/libs';
+import { DEV, TEST } from '@ap/shared/dist/libs';
 import { readSecret } from '@ap/shared/dist/server';
 
 export const cfg = {
@@ -9,14 +9,19 @@ export const cfg = {
     access: {
       /** Time in seconds */
       lifetime: Number(process.env.API_ACCESS_TOKEN_LIFETIME) || 60 * 60,
-      secret: readSecret('/run/secrets/access-token') || 'accessTokenSecretKey',
+      secret:
+        process.env.NODE_ENV === TEST
+          ? 'accessTokenSecretKey'
+          : readSecret('/run/secrets/access-token'),
     },
     refresh: {
       /** Time in seconds */
       lifetime:
         Number(process.env.API_REFRESH_TOKEN_LIFETIME) || 60 * 60 * 24 * 7,
       secret:
-        readSecret('/run/secrets/refresh-token') || 'refreshTokenSecretKey',
+        process.env.NODE_ENV === TEST
+          ? 'refreshTokenSecretKey'
+          : readSecret('/run/secrets/refresh-token'),
     },
   },
   urls: {

@@ -17,6 +17,7 @@ import { cfg } from 'config/configuration';
           url: `redis://${cfg.redis.user}:${cfg.redis.password}@${cfg.redis.host}:${cfg.redis.port}/${cfg.redis.db}`,
         });
         await client.connect();
+
         return client;
       },
     },
@@ -24,6 +25,7 @@ import { cfg } from 'config/configuration';
       provide: CACHE_MANAGER,
       useFactory: (redisClient: RedisClientType) => {
         const secondary = createKeyv(redisClient);
+
         return new Cacheable({ secondary });
       },
       inject: [REDIS],

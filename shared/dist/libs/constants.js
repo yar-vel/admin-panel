@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UI_ROUTES = exports.API_ROUTES = exports.DEV = exports.PASSWORD_REGEX = exports.EMAIL_REGEX = exports.NAME_REGEX = void 0;
+exports.UI_ROUTES = exports.API_ROUTES = exports.TEST = exports.DEV = exports.PASSWORD_REGEX = exports.EMAIL_REGEX = exports.NAME_REGEX = void 0;
 /** Name validation regex */
 exports.NAME_REGEX = /^[\w ]{1,100}$/;
 /** Email validation regex */
@@ -8,6 +8,7 @@ exports.EMAIL_REGEX = /^[\w.]+@\w+\.+\w{2,4}$/;
 /** Password validation regex */
 exports.PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\W]{10,100}$/;
 exports.DEV = 'development';
+exports.TEST = 'test';
 /** Supported API routes */
 exports.API_ROUTES = {
     auth: {

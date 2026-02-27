@@ -7,10 +7,13 @@ import { cfg } from 'config/configuration';
 import { DEV } from '@ap/shared/dist/libs';
 
 /**
- * @returns {string} Random string of 4 digits
+ * @param {number} length Length of the resulting string
+ * @returns {string} Random string of N digits
  */
-export const generateCode = (): string => {
-  return (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
+export const generateCode = (length = 6): string => {
+  return (Math.floor(Math.random() * 10 ** length) + 10 ** length)
+    .toString()
+    .substring(1);
 };
 
 /**
@@ -37,7 +40,7 @@ export const createCookieOptions = (
 ): CookieSerializeOptions => {
   return {
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: 'strict',
     path: '/',
     maxAge,
     domain: `.${cfg.urls.nginx}`,

@@ -4,7 +4,6 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,7 +13,7 @@ import { RolesService } from 'src/roles/roles.service';
 import { ResourcesService } from 'src/resources/resources.service';
 import { RoleEntity } from 'src/roles/role.entity';
 import { CacheService } from 'src/cache/cache.service';
-import { IToken, ITokensPair } from './auth.types';
+import { IRequestUser, IToken, ITokensPair } from './auth.types';
 import { QueueService } from 'src/queue/queue.service';
 import { createHash, generateCode, verifyHash } from 'libs/utils';
 import { cfg } from 'config/configuration';
@@ -253,41 +252,32 @@ export class AuthService {
   }
 
   async refresh(
-    token: IToken,
+    user: IRequestUser,
     sessionTtl: number,
     ip: string,
     userAgent?: string,
   ): Promise<ITokensPair> {
-    const session = await this.cacheService.get<ISession>(
-      `sessions:${token.userId}:${token.sessionId}`,
+    const sign = await createHash();
+    const sessionData: ISession = {
+      ip,
+      userAgent,
+      updatedAt: new Date(),
+      sign,
+    };
+
+    await this.cacheService.set(
+      `sessions:${user.id}:${user.sessionId}`,
+      sessionData,
+      sessionTtl * 1000,
     );
-    let sign: string;
-
-    if (session?.sign === token.sign) {
-      sign = await createHash();
-      const sessionData: ISession = {
-        ip,
-        userAgent,
-        updatedAt: new Date(),
-        sign,
-      };
-
-      await this.cacheService.set(
-        `sessions:${token.userId}:${token.sessionId}`,
-        sessionData,
-        sessionTtl * 1000,
-      );
-    } else {
-      throw new UnauthorizedException();
-    }
 
     return this.createTokens(
-      { userId: token.userId, sessionId: token.sessionId, sign },
+      { userId: user.id, sessionId: user.sessionId, sign },
       sessionTtl,
     );
   }
 
-  async signOut(userId: string, sessionId: string): Promise<void> {
-    await this.cacheService.del(`sessions:${userId}:${sessionId}`);
+  async signOut(user: IRequestUser): Promise<void> {
+    await this.cacheService.del(`sessions:${user.id}:${user.sessionId}`);
   }
 }

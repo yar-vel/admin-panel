@@ -53,7 +53,7 @@ export class UserEntity implements IUser {
 
   @Column({
     type: 'varchar',
-    length: 4,
+    length: 6,
     nullable: true,
     transformer: EmptyStringToNull,
   })
@@ -61,7 +61,7 @@ export class UserEntity implements IUser {
 
   @Column({
     type: 'varchar',
-    length: 4,
+    length: 6,
     nullable: true,
     transformer: EmptyStringToNull,
   })
@@ -69,7 +69,7 @@ export class UserEntity implements IUser {
 
   @Column({
     type: 'varchar',
-    length: 4,
+    length: 6,
     nullable: true,
     transformer: EmptyStringToNull,
   })

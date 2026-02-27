@@ -7,6 +7,7 @@ export const PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\W]{10,100}$/;
 
 export const DEV = 'development';
+export const TEST = 'test';
 
 /** Supported API routes */
 export const API_ROUTES = {

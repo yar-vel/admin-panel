@@ -1,4 +1,4 @@
-import { DEV } from '@ap/shared/dist/libs';
+import { DEV, TEST } from '@ap/shared/dist/libs';
 import { readSecret } from '@ap/shared/dist/server';
 
 export const cfg = {
@@ -23,7 +23,10 @@ export const cfg = {
     host: process.env.MAILER_SMTP_HOST || 'localhost',
     port: Number(process.env.MAILER_SMTP_PORT) || 587,
     user: process.env.MAILER_SMTP_USER || 'user',
-    password: readSecret('/run/secrets/smtp') || 'password',
-    from: `"No Reply" <no-reply@${process.env.PROJECT_TAG || 'AP'}>`,
+    password:
+      process.env.NODE_ENV === TEST
+        ? 'password'
+        : readSecret('/run/secrets/smtp'),
+    from: `"No Reply" <no-reply@${process.env.PROJECT_TAG}>`,
   },
 };

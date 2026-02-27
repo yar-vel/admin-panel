@@ -22,10 +22,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { SignUpDto } from './dto/sign-up.dto';
-import {
-  TFastifyRequestWithToken,
-  TFastifyRequestWithUser,
-} from './auth.types';
+import { IFastifyRequestWithUser } from './auth.types';
 import { createCookieOptions, getIP } from 'libs/utils';
 import { SignInGoogleDto } from './dto/sign-in-google.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
@@ -75,7 +72,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post(API_ROUTES.auth.signIn)
   async signIn(
-    @Req() req: TFastifyRequestWithUser,
+    @Req() req: IFastifyRequestWithUser,
     @Body() signInDto: SignInDto,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<IUser> {
@@ -147,7 +144,7 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Get(API_ROUTES.auth.refresh)
   async refresh(
-    @Req() req: TFastifyRequestWithToken,
+    @Req() req: IFastifyRequestWithUser,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<void> {
     const rememberMe = req.cookies['rememberMe'] !== undefined;
@@ -175,10 +172,10 @@ export class AuthController {
   @UseGuards(JwtGuard)
   @Delete(API_ROUTES.auth.signOut)
   async signOut(
-    @Req() req: TFastifyRequestWithToken,
+    @Req() req: IFastifyRequestWithUser,
     @Res({ passthrough: true }) res: FastifyReply,
   ): Promise<void> {
-    await this.authService.signOut(req.user.userId, req.user.sessionId);
+    await this.authService.signOut(req.user);
     const cookieOptions = createCookieOptions();
 
     res.clearCookie('accessToken', cookieOptions);
