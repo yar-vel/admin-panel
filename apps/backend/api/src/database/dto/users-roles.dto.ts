@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID } from 'class-validator';
+import { IsDate, IsUUID } from 'class-validator';
 
-import { IRole, IUser, IUsersRoles } from '@ap/shared/dist/types';
+import { IRole, IUser, IUsersRoles } from '@workspace/shared/dist/types';
 
 export class UsersRolesDto implements IUsersRoles {
   @ApiProperty({
@@ -17,4 +17,8 @@ export class UsersRolesDto implements IUsersRoles {
   })
   @IsUUID()
   roleId: IRole['id'];
+
+  @ApiProperty({ type: Date, example: new Date() })
+  @IsDate()
+  createdAt: Date;
 }

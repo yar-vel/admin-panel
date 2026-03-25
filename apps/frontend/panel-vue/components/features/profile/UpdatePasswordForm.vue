@@ -5,7 +5,7 @@ import profileApi from '~/components/entities/profile/profileApi'
 
 const { t, locale } = useI18n()
 const rights = useRights(ROUTES.api.profile._)
-const mainStore = useMainStore()
+const alertsStore = useAlertsStore()
 const oldPassword = ref('')
 const newPassword = ref('')
 const passwordIsValid = (value: string) =>
@@ -23,7 +23,7 @@ async function submitHandler(event: SubmitEventPromise) {
   }
 
   if (oldPassword.value === newPassword.value) {
-    mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
+    alertsStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
   }
   else {
     execute()
@@ -35,7 +35,7 @@ watch(error, () => {
     return
   }
 
-  mainStore.addAlert({
+  alertsStore.addAlert({
     type: 'error',
     text: getErrorText(error.value, locale.value),
   })
@@ -43,7 +43,7 @@ watch(error, () => {
 
 watch(status, () => {
   if (status.value === 'success') {
-    mainStore.addAlert({ type: 'success', text: t('success') })
+    alertsStore.addAlert({ type: 'success', text: t('success') })
   }
 })
 </script>

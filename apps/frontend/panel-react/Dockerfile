@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS base
+FROM node:24-alpine AS base
 ENV NEXT_TELEMETRY_DISABLED=1
 ARG APP_DIR=/usr/src/app
 ARG HOST_DIR=/apps/frontend/panel-react
@@ -9,8 +9,6 @@ COPY ./shared ${APP_DIR}/shared
 
 FROM base AS development
 ENV NODE_ENV=development
-# NOTE: Windows hot reload fix
-ENV WATCHPACK_POLLING=true
 RUN npm install
 CMD ["npx", "next", "dev"]
 
@@ -29,8 +27,10 @@ FROM base AS production
 ENV NODE_ENV=production
 ARG USER=node
 ARG GROUP=node
-COPY --from=builder ${HOME_DIR}/public ./public
+WORKDIR ${APP_DIR}
+COPY --from=builder ${HOME_DIR}/public ${HOME_DIR}/public
 COPY --from=builder --chown=${USER}:${GROUP} ${HOME_DIR}/.next/standalone ./
-COPY --from=builder --chown=${USER}:${GROUP} ${HOME_DIR}/.next/static ./.next/static
+COPY --from=builder --chown=${USER}:${GROUP} ${HOME_DIR}/.next/static ${HOME_DIR}/.next/static
+WORKDIR ${HOME_DIR}
 USER ${USER}
 ENTRYPOINT ["node", "server.js"]

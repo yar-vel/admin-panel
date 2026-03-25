@@ -13,7 +13,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const Page: FC = async () => {
+const Page: FC<PageProps<"/roles/new">> = async () => {
   const t = await getServerT();
 
   return <CreateRolePage h1={t("newRole")} />;

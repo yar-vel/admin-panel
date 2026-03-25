@@ -2,7 +2,7 @@
 import profileApi from '~/components/entities/profile/profileApi'
 
 const { locale } = useI18n()
-const mainStore = useMainStore()
+const alertsStore = useAlertsStore()
 const sessions = ref<TSessionExternal[] | null>(null)
 const { data, error, execute, status } = profileApi.getSessions()
 
@@ -15,7 +15,7 @@ watch(error, () => {
     return
   }
 
-  mainStore.addAlert({
+  alertsStore.addAlert({
     type: 'error',
     text: getErrorText(error.value, locale.value),
   })

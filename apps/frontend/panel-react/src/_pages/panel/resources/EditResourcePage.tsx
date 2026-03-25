@@ -3,9 +3,9 @@
 import { FC } from "react";
 import { useRouter } from "next/navigation";
 
-import { PanelLayout } from "../PanelLayout";
+import { PanelLayout } from "@/widgets/layout/PanelLayout";
 import { TPage } from "@/_pages/types";
-import { IResource } from "@ap/shared/dist/types";
+import { IResource } from "@workspace/shared/dist/types";
 import { ResourceUpdate } from "@/features/resources/ResourceUpdate";
 import { ROUTES } from "@/shared/lib/constants";
 

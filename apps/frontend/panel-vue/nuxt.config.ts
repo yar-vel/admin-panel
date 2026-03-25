@@ -48,7 +48,7 @@ export default defineNuxtConfig({
     server: {
       allowedHosts: [
         process.env.PANEL_VUE_URL?.startsWith('/')
-          ? `${process.env.NGINX_HOST}:${process.env.NGINX_PORT}`
+          ? `${process.env.NGINX_URL}:${process.env.NGINX_PORT}`
           : process.env.PANEL_VUE_URL || 'localhost',
       ],
     },

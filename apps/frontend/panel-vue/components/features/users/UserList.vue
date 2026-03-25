@@ -9,9 +9,9 @@ const emit = defineEmits<{
   'meta-update': [value: IResListMeta<IUser>]
 }>()
 
-const { locale } = useI18n()
+const { t, locale } = useI18n()
 const rights = useRights(ROUTES.api.users._)
-const mainStore = useMainStore()
+const alertsStore = useAlertsStore()
 const rows = ref(props.initialRows)
 const meta = ref(props.initialMeta)
 const reqPage = ref(meta.value?.page)
@@ -48,6 +48,7 @@ watch([reqPage, reqLimit], () => {
 
 watch(glData, () => {
   if (glData.value) {
+    alertsStore.addAlert({ type: 'success', text: t('success') })
     rows.value = glData.value.rows
 
     if (glData.value.meta) {
@@ -59,7 +60,7 @@ watch(glData, () => {
 
 watch(glError, () => {
   if (glError.value) {
-    mainStore.addAlert({
+    alertsStore.addAlert({
       type: 'error',
       text: getErrorText(glError.value, locale.value),
     })
@@ -76,7 +77,7 @@ watch(dStatus, () => {
 
 watch(dError, () => {
   if (dError.value) {
-    mainStore.addAlert({
+    alertsStore.addAlert({
       type: 'error',
       text: getErrorText(dError.value, locale.value),
     })

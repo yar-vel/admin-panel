@@ -8,15 +8,15 @@ const defaultRights = {
 export function useRights(path: string) {
   const route = path.startsWith('/') ? path.slice(1) : path
   const rights = ref(defaultRights)
-  const mainStore = useMainStore()
+  const profileStore = useProfileStore()
 
   watch(
-    () => mainStore.profile,
+    () => profileStore.profile,
     () => {
-      if (mainStore.profile?.roles) {
-        const roles = Array.isArray(mainStore.profile.roles)
-          ? mainStore.profile.roles
-          : [mainStore.profile.roles]
+      if (profileStore.profile?.roles) {
+        const roles = Array.isArray(profileStore.profile.roles)
+          ? profileStore.profile.roles
+          : [profileStore.profile.roles]
 
         const newRights = { ...defaultRights }
 

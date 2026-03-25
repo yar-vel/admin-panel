@@ -13,8 +13,8 @@ server {
     listen ${NGINX_SSL_PORT} ssl;
     listen [::]:${NGINX_SSL_PORT} ssl;
     server_name ${API_URL};
-    ssl_certificate /usr/share/nginx/ssl/${NGINX_HOST}.crt;
-    ssl_certificate_key /usr/share/nginx/ssl/${NGINX_HOST}.key;
+    ssl_certificate /usr/share/nginx/ssl/${NGINX_URL}.crt;
+    ssl_certificate_key /usr/share/nginx/ssl/${NGINX_URL}.key;
 
     include snippets/client_common.conf;
     include snippets/gzip_common.conf;
@@ -30,8 +30,8 @@ server {
     listen ${NGINX_SSL_PORT} ssl default_server;
     listen [::]:${NGINX_SSL_PORT} ssl default_server;
     server_name ${PANEL_REACT_URL};
-    ssl_certificate /usr/share/nginx/ssl/${NGINX_HOST}.crt;
-    ssl_certificate_key /usr/share/nginx/ssl/${NGINX_HOST}.key;
+    ssl_certificate /usr/share/nginx/ssl/${NGINX_URL}.crt;
+    ssl_certificate_key /usr/share/nginx/ssl/${NGINX_URL}.key;
 
     include snippets/client_common.conf;
     include snippets/gzip_common.conf;
@@ -47,8 +47,8 @@ server {
     listen ${NGINX_SSL_PORT} ssl;
     listen [::]:${NGINX_SSL_PORT} ssl;
     server_name ${PANEL_VUE_URL};
-    ssl_certificate /usr/share/nginx/ssl/${NGINX_HOST}.crt;
-    ssl_certificate_key /usr/share/nginx/ssl/${NGINX_HOST}.key;
+    ssl_certificate /usr/share/nginx/ssl/${NGINX_URL}.crt;
+    ssl_certificate_key /usr/share/nginx/ssl/${NGINX_URL}.key;
 
     include snippets/client_common.conf;
     include snippets/gzip_common.conf;

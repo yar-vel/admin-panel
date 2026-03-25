@@ -8,7 +8,7 @@ const { role, resources } = defineProps<{
 
 const { t, locale } = useI18n()
 const rights = useRights(ROUTES.api.roles._)
-const mainStore = useMainStore()
+const alertsStore = useAlertsStore()
 const updatedRights = ref<IRights[]>(role.rights ?? [])
 const { status, error, execute } = rolesApi.updateRights({
   id: role.id,
@@ -20,7 +20,7 @@ watch(error, () => {
     return
   }
 
-  mainStore.addAlert({
+  alertsStore.addAlert({
     type: 'error',
     text: getErrorText(error.value, locale.value),
   })
@@ -28,7 +28,7 @@ watch(error, () => {
 
 watch(status, () => {
   if (status.value === 'success') {
-    mainStore.addAlert({ type: 'success', text: t('success') })
+    alertsStore.addAlert({ type: 'success', text: t('success') })
   }
 })
 </script>

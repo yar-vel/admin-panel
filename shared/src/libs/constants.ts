@@ -9,6 +9,10 @@ export const PASSWORD_REGEX =
 export const DEV = 'development';
 export const TEST = 'test';
 
+export const REQ_LIST_DEFAULT_PAGE = 1;
+export const REQ_LIST_DEFAULT_LIMIT = 25;
+export const REQ_LIST_MAX_LIMIT = 100;
+
 /** Supported API routes */
 export const API_ROUTES = {
   auth: {
@@ -46,9 +50,9 @@ export const API_ROUTES = {
 
 /** Supported UI routes */
 export const UI_ROUTES = {
-  signUp: '/registration',
-  signIn: '/authorization',
-  signInGoogle: '/authorization/google',
+  signUp: '/sign-up',
+  signIn: '/sign-in',
+  signInGoogle: '/sign-in/google',
   forgotPassword: '/forgot-password',
   home: '/',
   profile: '/profile',

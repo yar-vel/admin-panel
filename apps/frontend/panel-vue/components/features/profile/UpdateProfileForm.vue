@@ -5,8 +5,9 @@ import profileApi from '~/components/entities/profile/profileApi'
 
 const { t, locale } = useI18n()
 const rights = useRights(ROUTES.api.profile._)
-const mainStore = useMainStore()
-const newData = ref(mainStore.profile)
+const alertsStore = useAlertsStore()
+const profileStore = useProfileStore()
+const newData = ref(profileStore.profile)
 const updatedValues = ref<TUserUpdate>({})
 const nameIsValid = (value = '') =>
   testString(NAME_REGEX, value) || t('nameValidation')
@@ -19,9 +20,9 @@ async function submitHandler(event: SubmitEventPromise) {
     return
   }
 
-  if (mainStore.profile && newData.value) {
+  if (profileStore.profile && newData.value) {
     updatedValues.value = getUpdatedValues<IUser>(
-      mainStore.profile,
+      profileStore.profile,
       newData.value,
     )
 
@@ -29,7 +30,7 @@ async function submitHandler(event: SubmitEventPromise) {
       execute()
     }
     else {
-      mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
+      alertsStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
     }
   }
 }
@@ -39,7 +40,7 @@ watch(error, () => {
     return
   }
 
-  mainStore.addAlert({
+  alertsStore.addAlert({
     type: 'error',
     text: getErrorText(error.value, locale.value),
   })
@@ -47,11 +48,11 @@ watch(error, () => {
 
 watch(status, () => {
   if (status.value === 'success') {
-    if (mainStore.profile) {
-      mainStore.setProfile({ ...mainStore.profile, ...newData.value })
+    if (profileStore.profile) {
+      profileStore.setProfile({ ...profileStore.profile, ...newData.value })
     }
 
-    mainStore.addAlert({ type: 'success', text: t('success') })
+    alertsStore.addAlert({ type: 'success', text: t('success') })
   }
 })
 </script>
@@ -59,10 +60,10 @@ watch(status, () => {
 <template>
   <FormBase @submit="submitHandler">
     <FormField
-      v-if="mainStore.profile?.googleId"
+      v-if="profileStore.profile?.googleId"
       disabled
       :label="$t('googleId')"
-      :model-value="mainStore.profile.googleId"
+      :model-value="profileStore.profile.googleId"
       name="googleId"
     />
     <FormField

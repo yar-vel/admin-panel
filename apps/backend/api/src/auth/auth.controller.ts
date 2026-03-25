@@ -28,9 +28,9 @@ import { SignInGoogleDto } from './dto/sign-in-google.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { UserExternalDto } from 'src/users/dto/user-external.dto';
 import { cfg } from 'config/configuration';
-import { getT } from '@ap/shared/dist/locales';
-import { IUser } from '@ap/shared/dist/types';
-import { API_ROUTES } from '@ap/shared/dist/libs';
+import { getT } from '@workspace/shared/dist/locales';
+import { IUser } from '@workspace/shared/dist/types';
+import { API_ROUTES } from '@workspace/shared/dist/libs';
 
 @ApiTags(getT().authorization)
 @Controller(API_ROUTES.auth._)

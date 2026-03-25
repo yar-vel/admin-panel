@@ -1,8 +1,7 @@
 export interface IAlert {
-    id: number;
+    id: string;
     text?: string;
     type?: 'error' | 'warning' | 'success';
-    deleted?: boolean;
 }
 export interface IWindowMessage<T = unknown> {
     type: string;

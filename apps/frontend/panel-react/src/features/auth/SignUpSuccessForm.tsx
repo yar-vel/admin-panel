@@ -1,4 +1,4 @@
-import { FC, FormEvent } from "react";
+import { FC, SubmitEventHandler } from "react";
 import { useTranslation } from "react-i18next";
 
 import { FormBase } from "@/shared/ui/form/FormBase";
@@ -10,13 +10,13 @@ export const SignUpSuccessForm: FC<{
 }> = ({ onClose }) => {
   const { t } = useTranslation();
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     onClose?.();
   };
 
   return (
-    <FormBase onSubmit={submitHandler}>
+    <FormBase onSubmit={handleSubmit}>
       <FormAlert severity="success">{t("registrationSuccessText")}</FormAlert>
       <FormButton type="submit" fullWidth>
         {t("signIn")}

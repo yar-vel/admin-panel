@@ -13,7 +13,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const Page: FC = async () => {
+const Page: FC<PageProps<"/forgot-password">> = async () => {
   const t = await getServerT();
 
   return <ForgotPasswordPage h1={t("forgotPassword")} />;

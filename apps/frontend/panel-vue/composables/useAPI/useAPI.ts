@@ -13,7 +13,7 @@ export function useAPI<T>(
     ? config.public.apiHostInternal
     : config.public.apiHostExternal
   const timeout = 5000
-  const mainStore = useMainStore()
+  const profileStore = useProfileStore()
 
   return useFetch(url, {
     ...options,
@@ -47,23 +47,18 @@ export function useAPI<T>(
             credentials: 'include',
             timeout,
           })
-          const newCookies = refresh.headers.get('set-cookie')
+          const newCookies = refresh.headers.getSetCookie()
 
           if (import.meta.server && event && newCookies) {
             newCookies
-              .split(', ')
               .map(cookie =>
                 event.node.res.appendHeader('set-cookie', cookie),
               )
           }
         }
         catch (error) {
-          if (
-            error instanceof Object
-            && 'statusCode' in error
-            && error.statusCode === 401
-          ) {
-            mainStore.setProfile(null)
+          if (getField(error, 'statusCode') === 401) {
+            profileStore.setProfile(null)
           }
 
           if (

@@ -11,7 +11,8 @@ const emit = defineEmits<{
 }>()
 
 const { t, locale } = useI18n()
-const mainStore = useMainStore()
+const alertsStore = useAlertsStore()
+const profileStore = useProfileStore()
 const code = ref('')
 const codeIsValid = (value: string) =>
   value.length > 0 || `${t('codeFromEmail')} (${props.email})`
@@ -35,10 +36,10 @@ watch(error, () => {
 
   switch (error.value.statusCode) {
     case 404:
-      mainStore.addAlert({ type: 'error', text: t('wrongEmailOrCode') })
+      alertsStore.addAlert({ type: 'error', text: t('wrongEmailOrCode') })
       break
     default:
-      mainStore.addAlert({
+      alertsStore.addAlert({
         type: 'error',
         text: getErrorText(error.value, locale.value),
       })
@@ -47,11 +48,12 @@ watch(error, () => {
 
 watch(status, () => {
   if (status.value === 'success') {
-    emit('close')
-
-    if (mainStore.profile) {
-      mainStore.setProfile({ ...mainStore.profile, email: props.email })
+    if (profileStore.profile) {
+      profileStore.setProfile({ ...profileStore.profile, email: props.email })
     }
+
+    alertsStore.addAlert({ type: 'success', text: t('success') })
+    emit('close')
   }
 })
 </script>

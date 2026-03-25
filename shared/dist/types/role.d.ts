@@ -10,6 +10,8 @@ export interface IRole {
     default: boolean;
     users?: IUser[];
     rights?: IRights[];
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 export type TRoleCreate = Required<Pick<IRole, 'name'>> & Partial<Pick<IRole, 'description' | 'enabled'>>;
 export type TRoleReqListParams = Partial<Pick<IRole, 'name' | 'enabled' | 'default' | 'admin'>>;

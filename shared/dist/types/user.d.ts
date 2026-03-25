@@ -14,6 +14,8 @@ export interface IUser {
     changeEmailCode?: string | null;
     temporaryEmail?: string | null;
     roles?: IRole[];
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 export type TUserCreate = WithoutNulls<Required<Pick<IUser, 'email' | 'password' | 'name'>> & Partial<Pick<IUser, 'enabled'>>>;
 export type TUserCreateGoogle = WithoutNulls<Required<Pick<IUser, 'googleId' | 'name'>> & Partial<Pick<IUser, 'enabled'>>>;

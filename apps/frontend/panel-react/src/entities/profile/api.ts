@@ -1,5 +1,5 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-
+import { fetchWithAuth } from "@/shared/api/fetchWithAuth";
+import { ROUTES } from "@/shared/lib/constants";
 import {
   IChangeEmailConfirm,
   IChangeEmailRequest,
@@ -8,43 +8,74 @@ import {
   IUser,
   TSessionExternal,
   TUserUpdate,
-} from "@ap/shared/dist/types";
-import { profileService } from "./service";
-import { baseQueryWithReauth } from "@/app/api/baseQueryWithReauth";
+} from "@workspace/shared/dist/types";
 
-export const profileApi = createApi({
-  reducerPath: "profile",
-  baseQuery: baseQueryWithReauth,
-  endpoints: (builder) => ({
-    getProfile: builder.query<IUser, void>({
-      query: profileService.getProfileArgs,
-    }),
+export const getProfile = async (headers?: HeadersInit): Promise<IUser> => {
+  const response = await fetchWithAuth(ROUTES.api.profile._, {
+    method: "GET",
+    credentials: "include",
+    headers,
+  });
 
-    updateProfile: builder.mutation<undefined, TUserUpdate>({
-      query: profileService.updateProfileArgs,
-    }),
+  return response.json();
+};
 
-    updatePassword: builder.mutation<undefined, IUpdatePassword>({
-      query: profileService.updatePasswordArgs,
-    }),
+export const updateProfile = async (payload: TUserUpdate): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.profile._, {
+    method: "PATCH",
+    credentials: "include",
+    body: payload,
+  });
+};
 
-    changeEmailRequest: builder.mutation<undefined, IChangeEmailRequest>({
-      query: profileService.changeEmailRequestArgs,
-    }),
+export const updatePassword = async (
+  payload: IUpdatePassword,
+): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.profile.updatePassword, {
+    method: "PATCH",
+    credentials: "include",
+    body: payload,
+  });
+};
 
-    changeEmailConfirm: builder.mutation<undefined, IChangeEmailConfirm>({
-      query: profileService.changeEmailConfirmArgs,
-    }),
+export const changeEmailRequest = async (
+  payload: IChangeEmailRequest,
+): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.profile.changeEmail, {
+    method: "POST",
+    credentials: "include",
+    body: payload,
+  });
+};
 
-    getSessions: builder.query<TSessionExternal[], void>({
-      query: profileService.getSessionsArgs,
-    }),
+export const changeEmailConfirm = async (
+  payload: IChangeEmailConfirm,
+): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.profile.changeEmail, {
+    method: "PATCH",
+    credentials: "include",
+    body: payload,
+  });
+};
 
-    deleteSessions: builder.mutation<
-      undefined,
-      IReqItems<TSessionExternal["id"]>
-    >({
-      query: profileService.deleteSessionsArgs,
-    }),
-  }),
-});
+export const getSessions = async (
+  headers?: HeadersInit,
+): Promise<TSessionExternal[]> => {
+  const response = await fetchWithAuth(ROUTES.api.profile.sessions, {
+    method: "GET",
+    credentials: "include",
+    headers,
+  });
+
+  return response.json();
+};
+
+export const deleteSessions = async (
+  payload: IReqItems<TSessionExternal["id"]>,
+): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.profile.sessions, {
+    method: "DELETE",
+    credentials: "include",
+    body: payload,
+  });
+};

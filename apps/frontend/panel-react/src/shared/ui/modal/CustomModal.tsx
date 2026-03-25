@@ -1,6 +1,6 @@
 import Fade from "@mui/material/Fade";
 import Modal, { ModalProps } from "@mui/material/Modal";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
@@ -9,12 +9,6 @@ import Container from "@mui/material/Container";
 import { theme } from "@/shared/ui/theme";
 
 export const CustomModal: FC<ModalProps> = ({ children, ...props }) => {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    setOpen(props.open);
-  }, [props.open]);
-
   return (
     <Modal
       {...props}
@@ -27,7 +21,7 @@ export const CustomModal: FC<ModalProps> = ({ children, ...props }) => {
         },
       }}
     >
-      <Fade in={open}>
+      <Fade in={props.open}>
         <ContainerStyled maxWidth="xs">
           {props.title && (
             <Typography

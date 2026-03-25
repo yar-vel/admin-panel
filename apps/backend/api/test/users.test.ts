@@ -10,8 +10,8 @@ import {
   TUserReqList,
   TUserResList,
   TUserUpdate,
-} from '@ap/shared/dist/types';
-import { API_ROUTES, buildRoutes } from '@ap/shared/dist/libs';
+} from '@workspace/shared/dist/types';
+import { API_ROUTES, buildRoutes } from '@workspace/shared/dist/libs';
 
 const ROUTES = buildRoutes(API_ROUTES);
 

@@ -6,7 +6,7 @@ import { FastifyRequest } from 'fastify';
 import { IRequestUser, IToken } from './auth.types';
 import { cfg } from 'config/configuration';
 import { CacheService } from 'src/cache/cache.service';
-import { ISession } from '@ap/shared/dist/types';
+import { ISession } from '@workspace/shared/dist/types';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()

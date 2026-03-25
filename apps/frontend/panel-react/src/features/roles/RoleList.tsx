@@ -1,88 +1,85 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { useTranslation } from "react-i18next";
+import { GridPaginationModel, GridRowSelectionModel } from "@mui/x-data-grid";
 
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { useRights } from "@/shared/hooks/useRights";
-import { useAppDispatch } from "@/app/store/hooks";
-import { addAlert } from "@/app/store/main/main";
-import { IRole } from "@ap/shared/dist/types";
-import { getErrorText } from "@ap/shared/dist/libs";
+import { IRole, TRoleReqList } from "@workspace/shared/dist/types";
+import {
+  getErrorText,
+  REQ_LIST_DEFAULT_LIMIT,
+  REQ_LIST_DEFAULT_PAGE,
+  resListMetaToReq,
+} from "@workspace/shared/dist/libs";
 import { RoleTable } from "@/entities/role/RoleTable";
-import { rolesApi } from "@/entities/role/api";
+import { useRoleListQuery } from "@/entities/role/queries";
+import { useDeleteRolesMutation } from "./mutations";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
 import { IEntityList } from "@/shared/lib/types";
 import { ROUTES } from "@/shared/lib/constants";
 
 export const RoleList: FC<IEntityList<IRole>> = ({
-  initialRows,
   initialMeta,
   onMetaUpdate,
 }) => {
-  const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation();
   const rights = useRights(ROUTES.api.roles._);
-  const [getList, getListReq] = rolesApi.useLazyGetListQuery();
-  const [destroy, destroyReq] = rolesApi.useDeleteMutation();
+  const addAlert = useAlertsStore((s) => s.addAlert);
   const [selectedRows, setSelectedRows] = useState<IRole["id"][]>([]);
-  const [rows, setRows] = useState(initialRows);
-  const meta = useRef(initialMeta);
+  const [params, setParams] = useState<TRoleReqList>(() =>
+    resListMetaToReq<IRole>(initialMeta ?? {}),
+  );
+  const roleList = useRoleListQuery(params, {
+    placeholderData: (previousData) => previousData,
+  });
+  const deleteRoles = useDeleteRolesMutation();
+
+  const handlePagination = (model: GridPaginationModel) => {
+    const newParams: TRoleReqList = {
+      ...params,
+      reqPage: model.page + 1,
+      reqLimit: model.pageSize,
+      reqCount: false,
+    };
+    setParams(newParams);
+    onMetaUpdate?.({
+      ...roleList.data?.meta,
+      page: newParams.reqPage,
+      limit: newParams.reqLimit,
+    });
+  };
+
+  const handleSelection = (rowSelectionModel: GridRowSelectionModel) =>
+    setSelectedRows(
+      rowSelectionModel.ids
+        .values()
+        .toArray()
+        .map((value) => value.toString()),
+    );
+
+  const handleDelete = () =>
+    deleteRoles.mutate(
+      { items: selectedRows },
+      {
+        onSuccess: () => {
+          addAlert({ type: "success", text: t("success") });
+          setParams((prev) => ({ ...prev, reqCount: true }));
+        },
+        onError: (error) =>
+          addAlert({ type: "error", text: getErrorText(error, i18n.language) }),
+      },
+    );
 
   useEffect(() => {
-    if (!rows) {
-      getList({
-        reqPage: meta.current?.page,
-        reqLimit: meta.current?.limit,
-        reqCount: true,
+    if (roleList.error) {
+      addAlert({
+        type: "error",
+        text: getErrorText(roleList.error, i18n.language),
       });
     }
-  }, [rows, getList]);
-
-  useEffect(() => {
-    if (getListReq.data) {
-      setRows(getListReq.data.rows);
-
-      if (getListReq.data.meta) {
-        meta.current = {
-          ...getListReq.data.meta,
-          total: getListReq.data.meta.total ?? meta.current?.total,
-        };
-        onMetaUpdate?.(meta.current);
-      }
-    }
-  }, [getListReq.data, onMetaUpdate]);
-
-  useEffect(() => {
-    if (getListReq.error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(getListReq.error, i18n.language),
-        }),
-      );
-    }
-  }, [dispatch, getListReq.error, i18n]);
-
-  useEffect(() => {
-    if (destroyReq.isSuccess) {
-      getList({
-        reqPage: meta.current?.page,
-        reqLimit: meta.current?.limit,
-        reqCount: true,
-      });
-    }
-  }, [destroyReq.isSuccess, getList]);
-
-  useEffect(() => {
-    if (destroyReq.error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(destroyReq.error, i18n.language),
-        }),
-      );
-    }
-  }, [dispatch, destroyReq.error, i18n]);
+  }, [roleList.error, addAlert, i18n]);
 
   return (
     <>
@@ -98,8 +95,8 @@ export const RoleList: FC<IEntityList<IRole>> = ({
         color="error"
         startIcon={<DeleteIcon />}
         disabled={!rights.deleting || selectedRows.length === 0}
-        loading={destroyReq.isLoading}
-        onClick={() => destroy({ items: selectedRows })}
+        loading={deleteRoles.isPending}
+        onClick={handleDelete}
       >
         {t("delete")}
       </FormButton>
@@ -107,26 +104,21 @@ export const RoleList: FC<IEntityList<IRole>> = ({
         initialState={{
           pagination: {
             paginationModel: {
-              page: (meta.current?.page || 1) - 1,
-              pageSize: meta.current?.limit ?? 25,
+              page: (params.reqPage || REQ_LIST_DEFAULT_PAGE) - 1,
+              pageSize: params.reqLimit || REQ_LIST_DEFAULT_LIMIT,
             },
           },
         }}
+        rows={roleList.data?.rows}
+        rowCount={
+          roleList.data?.meta?.total ??
+          initialMeta?.total ??
+          roleList.data?.rows?.length
+        }
+        onRowSelectionModelChange={handleSelection}
+        onPaginationModelChange={handlePagination}
         paginationMode="server"
-        rows={rows}
-        rowCount={meta.current?.total ?? rows?.length}
-        loading={getListReq.isLoading || destroyReq.isLoading}
-        onRowSelectionModelChange={(rowSelectionModel) =>
-          setSelectedRows(
-            rowSelectionModel.ids
-              .values()
-              .toArray()
-              .map((value) => value.toString()),
-          )
-        }
-        onPaginationModelChange={(model) =>
-          getList({ reqPage: model.page + 1, reqLimit: model.pageSize })
-        }
+        loading={roleList.isLoading || deleteRoles.isPending}
       />
     </>
   );

@@ -11,7 +11,7 @@ const emailIsValid = (value: string) => value.length > 0
 const password = ref('')
 const passwordIsValid = (value: string) => value.length > 0
 const rememberMe = ref(false)
-const mainStore = useMainStore()
+const profileStore = useProfileStore()
 const { data, error, execute, status } = authApi.signIn({
   username: email,
   password,
@@ -52,7 +52,7 @@ watch(error, () => {
 
 watch(data, () => {
   if (data.value) {
-    mainStore.setProfile(data.value)
+    profileStore.setProfile(data.value)
     router.push(
       route.query.return
         ? decodeURIComponent(String(route.query.return))

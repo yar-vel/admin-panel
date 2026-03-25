@@ -4,8 +4,8 @@ import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom, timeout } from 'rxjs';
 
 import { MAIL_SERVER } from 'libs/constants';
-import { getField } from '@ap/shared/dist/libs';
-import { IQueuePattern } from '@ap/shared/dist/types';
+import { getField } from '@workspace/shared/dist/libs';
+import { IQueuePattern } from '@workspace/shared/dist/types';
 
 @Injectable()
 export class QueueHealthService {

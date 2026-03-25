@@ -1,8 +1,16 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { RoleEntity } from 'src/roles/role.entity';
 import { ResourceEntity } from 'src/resources/resource.entity';
-import { IResource, IRights, IRole } from '@ap/shared/dist/types';
+import { IResource, IRights, IRole } from '@workspace/shared/dist/types';
 
 @Entity('rights')
 export class RightsEntity implements IRights {
@@ -33,4 +41,10 @@ export class RightsEntity implements IRights {
 
   @Column({ type: 'boolean', default: false })
   deleting: boolean;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt?: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt?: Date;
 }

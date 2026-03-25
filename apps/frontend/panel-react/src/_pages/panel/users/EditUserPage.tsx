@@ -5,9 +5,9 @@ import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
-import { PanelLayout } from "../PanelLayout";
+import { PanelLayout } from "@/widgets/layout/PanelLayout";
 import { TPage } from "@/_pages/types";
-import { IRole, IUser } from "@ap/shared/dist/types";
+import { IRole, IUser } from "@workspace/shared/dist/types";
 import { UserUpdate } from "@/features/users/UserUpdate";
 import { UserRolesUpdate } from "@/features/users/UserRolesUpdate";
 import { ROUTES } from "@/shared/lib/constants";

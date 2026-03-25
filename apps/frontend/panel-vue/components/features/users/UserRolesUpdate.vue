@@ -14,7 +14,7 @@ const { status, error, execute } = usersApi.updateRoles({
   id: user.id,
   fields: { items: updatedRoles },
 })
-const mainStore = useMainStore()
+const alertsStore = useAlertsStore()
 const rights = useRights(ROUTES.api.users._)
 
 watch(error, () => {
@@ -22,7 +22,7 @@ watch(error, () => {
     return
   }
 
-  mainStore.addAlert({
+  alertsStore.addAlert({
     type: 'error',
     text: getErrorText(error.value, locale.value),
   })
@@ -30,7 +30,7 @@ watch(error, () => {
 
 watch(status, () => {
   if (status.value === 'success') {
-    mainStore.addAlert({ type: 'success', text: t('success') })
+    alertsStore.addAlert({ type: 'success', text: t('success') })
   }
 })
 </script>

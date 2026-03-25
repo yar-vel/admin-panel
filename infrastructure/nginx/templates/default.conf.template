@@ -3,7 +3,7 @@ include snippets/health_common.conf;
 server {
     listen ${NGINX_PORT};
     listen [::]:${NGINX_PORT};
-    server_name ${NGINX_HOST};
+    server_name ${NGINX_URL};
 
     include snippets/client_common.conf;
     include snippets/gzip_common.conf;

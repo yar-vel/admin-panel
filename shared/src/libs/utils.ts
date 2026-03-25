@@ -164,16 +164,42 @@ export const getField = <T = unknown>(
  * @param {IResListMeta} resMeta Metadata from the list-response
  * @returns {IReqList} Request parameters
  */
-export const resListMetaToReq = <T = unknown, S = T, F = T>(
+export const resListMetaToReq = <
+  T extends object,
+  S extends object = T,
+  F extends object = T,
+>(
   resMeta: IResListMeta<T, S, F>,
 ): IReqList<S> & Record<string, unknown> => {
-  return {
-    reqPage: resMeta.page,
-    reqLimit: resMeta.limit,
-    reqSortField: resMeta.sort?.field,
-    reqSortOrder: resMeta.sort?.order,
-    ...resMeta.filters,
-  };
+  const result: IReqList<S> & Record<string, unknown> = {};
+
+  if (resMeta.page !== undefined) {
+    result.reqPage = resMeta.page;
+  }
+
+  if (resMeta.limit !== undefined) {
+    result.reqLimit = resMeta.limit;
+  }
+
+  if (resMeta.total !== undefined) {
+    result.reqCount = true;
+  }
+
+  if (resMeta.sort?.field !== undefined) {
+    result.reqSortField = resMeta.sort.field;
+  }
+
+  if (resMeta.sort?.order !== undefined) {
+    result.reqSortOrder = resMeta.sort.order;
+  }
+
+  if (resMeta.filters !== undefined) {
+    Object.entries(resMeta.filters).map(([key, value]) => {
+      result[key] = value;
+    });
+  }
+
+  return result;
 };
 
 /**
@@ -192,11 +218,9 @@ export const createSearchParams = ({
   const newParams = new URLSearchParams(searchParams);
 
   Object.entries(data).forEach(([key, value]) => {
-    if (value === undefined || value === '' || exclude?.includes(key)) {
-      return;
+    if (value !== undefined && value !== '' && !exclude?.includes(key)) {
+      newParams.set(key, String(value));
     }
-
-    newParams.set(key, String(value));
   });
 
   return newParams;

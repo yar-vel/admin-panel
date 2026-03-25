@@ -47,7 +47,7 @@ export declare const getField: <T = unknown>(object: unknown, field: string) => 
  * @param {IResListMeta} resMeta Metadata from the list-response
  * @returns {IReqList} Request parameters
  */
-export declare const resListMetaToReq: <T = unknown, S = T, F = T>(resMeta: IResListMeta<T, S, F>) => IReqList<S> & Record<string, unknown>;
+export declare const resListMetaToReq: <T extends object, S extends object = T, F extends object = T>(resMeta: IResListMeta<T, S, F>) => IReqList<S> & Record<string, unknown>;
 /**
  * @param {object} options Options for creating search parameters
  * @returns {URLSearchParams} Search parameters

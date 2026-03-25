@@ -1,22 +1,24 @@
-import { FC, FormEvent, useEffect, useMemo, useState } from "react";
+import { FC, SubmitEventHandler, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { useRights } from "@/shared/hooks/useRights";
-import { useAppDispatch } from "@/app/store/hooks";
-import { addAlert } from "@/app/store/main/main";
 import { FormPassword } from "@/shared/ui/form/FormPassword";
-import { getErrorText, PASSWORD_REGEX, testString } from "@ap/shared/dist/libs";
-import { profileApi } from "@/entities/profile/api";
+import {
+  getErrorText,
+  PASSWORD_REGEX,
+  testString,
+} from "@workspace/shared/dist/libs";
 import { ROUTES } from "@/shared/lib/constants";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
+import { useUpdatePasswordMutation } from "./mutations";
 
 export const UpdatePasswordForm: FC = () => {
-  const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation();
-  const [update, { isSuccess, isLoading, error }] =
-    profileApi.useUpdatePasswordMutation();
+  const updatePassword = useUpdatePasswordMutation();
   const rights = useRights(ROUTES.api.profile._);
+  const addAlert = useAlertsStore((s) => s.addAlert);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const passwordIsValid = useMemo(
@@ -24,39 +26,32 @@ export const UpdatePasswordForm: FC = () => {
     [newPassword],
   );
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
     if (passwordIsValid) {
       if (oldPassword === newPassword) {
-        dispatch(addAlert({ type: "warning", text: t("nothingToUpdate") }));
+        addAlert({ type: "warning", text: t("nothingToUpdate") });
       } else {
-        update({ oldPassword, newPassword });
+        updatePassword.mutate(
+          { oldPassword, newPassword },
+          {
+            onSuccess: () => addAlert({ type: "success", text: t("success") }),
+            onError: (error) =>
+              addAlert({
+                type: "error",
+                text: getErrorText(error, i18n.language),
+              }),
+          },
+        );
       }
     } else {
-      dispatch(addAlert({ type: "warning", text: t("unknownError") }));
+      addAlert({ type: "warning", text: t("unknownError") });
     }
   };
 
-  useEffect(() => {
-    if (error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(error, i18n.language),
-        }),
-      );
-    }
-  }, [dispatch, error, i18n]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      dispatch(addAlert({ type: "success", text: t("success") }));
-    }
-  }, [isSuccess, dispatch, t]);
-
   return (
-    <FormBase onSubmit={submitHandler}>
+    <FormBase onSubmit={handleSubmit}>
       <FormPassword
         name="old-password"
         label={t("oldPassword")}
@@ -77,7 +72,7 @@ export const UpdatePasswordForm: FC = () => {
         type="submit"
         color="success"
         disabled={!rights.updating}
-        loading={isLoading}
+        loading={updatePassword.isPending}
       >
         {t("update")}
       </FormButton>

@@ -1,14 +1,16 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { RoleEntity } from 'src/roles/role.entity';
 import { USERS_ROLES_TABLE } from 'libs/constants';
-import { IRole, IUser, IUsersRoles } from '@ap/shared/dist/types';
+import { IRole, IUser, IUsersRoles } from '@workspace/shared/dist/types';
 import { EmptyStringToNull } from 'src/database/database.utils';
 
 @Entity('users')
@@ -96,4 +98,10 @@ export class UserEntity implements IUser {
     },
   })
   roles?: RoleEntity[];
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt?: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt?: Date;
 }

@@ -1,56 +1,81 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-
+import { fetchWithAuth } from "@/shared/api/fetchWithAuth";
+import { ROUTES } from "@/shared/lib/constants";
 import {
+  IFetchUpdate,
   IReqItems,
   IRights,
   IRole,
-  IFetchUpdate,
   TRoleCreate,
-  TRoleUpdate,
-  TRoleResList,
   TRoleReqList,
-} from "@ap/shared/dist/types";
-import { baseQueryWithReauth } from "@/app/api/baseQueryWithReauth";
-import { rolesService } from "./service";
+  TRoleResList,
+  TRoleUpdate,
+} from "@workspace/shared/dist/types";
 
-export const rolesApi = createApi({
-  reducerPath: "roles",
-  baseQuery: baseQueryWithReauth,
-  tagTypes: ["CountedEntities", "Entities", "Entity"],
-  endpoints: (builder) => ({
-    create: builder.mutation<IRole, TRoleCreate>({
-      query: rolesService.createArgs,
-      invalidatesTags: ["CountedEntities"],
-    }),
+export const createRole = async (payload: TRoleCreate): Promise<IRole> => {
+  const response = await fetchWithAuth(ROUTES.api.roles._, {
+    method: "POST",
+    credentials: "include",
+    body: payload,
+  });
 
-    getOne: builder.query<IRole, IRole["id"]>({
-      query: rolesService.getOneArgs,
-      providesTags: ["Entity"],
-    }),
+  return response.json();
+};
 
-    getList: builder.query<TRoleResList, TRoleReqList | void>({
-      query: rolesService.getListArgs,
-      providesTags: ["Entities"],
-    }),
+export const getRole = async (
+  id: IRole["id"],
+  headers?: HeadersInit,
+): Promise<IRole> => {
+  const response = await fetchWithAuth(ROUTES.api.roles.role(id), {
+    method: "GET",
+    credentials: "include",
+    headers,
+  });
 
-    update: builder.mutation<undefined, IFetchUpdate<TRoleUpdate, IRole["id"]>>(
-      {
-        query: rolesService.updateArgs,
-        invalidatesTags: ["Entity"],
-      },
-    ),
+  return response.json();
+};
 
-    updateRights: builder.mutation<
-      undefined,
-      IFetchUpdate<IReqItems<IRights>, IRole["id"]>
-    >({
-      query: rolesService.updateRightsArgs,
-      invalidatesTags: ["Entity"],
-    }),
+export const getRoleList = async (
+  params?: TRoleReqList,
+  headers?: HeadersInit,
+): Promise<TRoleResList> => {
+  const response = await fetchWithAuth(ROUTES.api.roles._, {
+    method: "GET",
+    credentials: "include",
+    params,
+    headers,
+  });
 
-    delete: builder.mutation<undefined, IReqItems<IRole["id"]>>({
-      query: rolesService.deleteArgs,
-      invalidatesTags: ["CountedEntities"],
-    }),
-  }),
-});
+  return response.json();
+};
+
+export const updateRole = async ({
+  id,
+  fields,
+}: IFetchUpdate<TRoleUpdate, IRole["id"]>): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.roles.role(id), {
+    method: "PATCH",
+    credentials: "include",
+    body: fields,
+  });
+};
+
+export const updateRoleRights = async ({
+  id,
+  fields,
+}: IFetchUpdate<IReqItems<IRights>, IRole["id"]>): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.roles.roleRights(id), {
+    method: "PATCH",
+    credentials: "include",
+    body: fields,
+  });
+};
+
+export const deleteRoles = async (
+  payload: IReqItems<IRole["id"]>,
+): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.roles._, {
+    method: "DELETE",
+    credentials: "include",
+    body: payload,
+  });
+};

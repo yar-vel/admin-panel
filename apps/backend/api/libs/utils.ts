@@ -4,7 +4,7 @@ import { hash, verify } from 'argon2';
 import * as crypto from 'crypto';
 
 import { cfg } from 'config/configuration';
-import { DEV } from '@ap/shared/dist/libs';
+import { DEV } from '@workspace/shared/dist/libs';
 
 /**
  * @param {number} length Length of the resulting string
@@ -57,7 +57,7 @@ export const createCookieOptions = (
  * @returns {string} User IP from request
  */
 export const getIP = (req: FastifyRequest): string => {
-  return req.ips?.length ? req.ips[0] : req.ip;
+  return req.ip;
 };
 
 /**

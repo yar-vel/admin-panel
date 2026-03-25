@@ -55,7 +55,7 @@ docker compose down --remove-orphans
 Clean install of all dependencies in `apps`, `shared` and `scripts` (pre-commit hook):
 
 ```sh
-npm run install:all
+npm run ci:all
 ```
 
 Run linting (with `--fix`) for all apps:
@@ -223,13 +223,13 @@ you'll need to edit the `.env` file. For example:
 ```sh
 # ...
 # api
-API_URL="api.${NGINX_HOST}"
+API_URL="api.${NGINX_URL}"
 # ...
 # panel-react
-PANEL_REACT_URL="${NGINX_HOST}"
+PANEL_REACT_URL="${NGINX_URL}"
 # ...
 # panel-vue
-PANEL_VUE_URL="vue.${NGINX_HOST}"
+PANEL_VUE_URL="vue.${NGINX_URL}"
 # ...
 ```
 

@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
 
-const mainStore = useMainStore()
+const appStore = useAppStore()
 const { mdAndUp } = useDisplay()
 </script>
 
 <template>
   <v-navigation-drawer
-    :model-value="mdAndUp ? true : !mainStore.isSideBarOpened"
+    :model-value="mdAndUp ? true : !appStore.isSideBarOpened"
     :temporary="!mdAndUp"
     :permanent="mdAndUp"
-    :rail="mdAndUp ? !mainStore.isSideBarOpened : null"
-    @update:model-value="mainStore.toggleSideBar(!mainStore.isSideBarOpened)"
+    :rail="mdAndUp ? !appStore.isSideBarOpened : null"
+    @update:model-value="appStore.toggleSideBar(!appStore.isSideBarOpened)"
   >
     <v-list
       density="compact"
@@ -21,7 +21,7 @@ const { mdAndUp } = useDisplay()
         :active="false"
         prepend-icon="mdi-shield-account-variant"
         :title="$t('adminPanel')"
-        @click="mainStore.toggleSideBar(!mainStore.isSideBarOpened)"
+        @click="appStore.toggleSideBar(!appStore.isSideBarOpened)"
       />
     </v-list>
     <v-divider />

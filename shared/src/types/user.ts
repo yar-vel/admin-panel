@@ -15,6 +15,8 @@ export interface IUser {
   changeEmailCode?: string | null;
   temporaryEmail?: string | null;
   roles?: IRole[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export type TUserCreate = WithoutNulls<

@@ -1,6 +1,4 @@
-import { FC, FormEvent, useEffect, useRef, useState } from "react";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { useRouter, useSearchParams } from "next/navigation";
+import { FC, SubmitEvent, useEffect, useRef, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { FormBase } from "@/shared/ui/form/FormBase";
@@ -12,77 +10,68 @@ import { FormLink } from "@/shared/ui/form/FormLink";
 import { FormAlert } from "@/shared/ui/form/FormAlert";
 import { CustomModal } from "@/shared/ui/modal/CustomModal";
 import { VerifyUserForm } from "./VerifyUserForm";
-import { useAppDispatch } from "@/app/store/hooks";
-import { setProfile } from "@/app/store/main/main";
 import { SignInGoogleLink } from "./SignInGoogleLink";
-import { getErrorText } from "@ap/shared/dist/libs";
-import { authApi } from "@/entities/auth/api";
+import { getErrorText } from "@workspace/shared/dist/libs";
 import { ROUTES } from "@/shared/lib/constants";
+import { useSignInMutation } from "./mutations";
+import { useProfileStore } from "@/entities/profile/store";
+import { FetchError } from "@/shared/api/FetchError";
 
-export const SignInForm: FC = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const dispatch = useAppDispatch();
+export const SignInForm: FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
+  const setProfile = useProfileStore((s) => s.setProfile);
   const { t, i18n } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [verifyModal, setVerifyModal] = useState(false);
-  const [errorText, setErrorText] = useState<string | null>(null);
-  const [signIn, { data, error, isFetching }] = authApi.useLazySignInQuery();
-  const timeout = useRef<NodeJS.Timeout>(undefined);
+  const signIn = useSignInMutation();
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const submitHandler = (event?: FormEvent<HTMLFormElement>) => {
+  const errorText = useMemo(() => {
+    if (signIn.error instanceof FetchError) {
+      switch (signIn.error.status) {
+        case 410:
+          return t("userDeleted");
+        case 403:
+          return null;
+        case 401:
+          return t("wrongEmailOrPassword");
+        default:
+          return getErrorText(signIn.error, i18n.language);
+      }
+    }
+
+    return null;
+  }, [t, i18n, signIn.error]);
+
+  const handleSubmit = (event?: SubmitEvent<HTMLFormElement>) => {
     event?.preventDefault();
 
     if (email && password) {
-      signIn({ username: email, password, rememberMe });
+      signIn.mutate(
+        { username: email, password, rememberMe },
+        {
+          onSuccess: (data) => {
+            setProfile(data);
+            onSuccess?.();
+          },
+          onError: (error) => {
+            if (error instanceof FetchError && error.status === 403) {
+              setVerifyModal(true);
+            }
+          },
+        },
+      );
     }
   };
 
   useEffect(() => {
-    if (isFetching) {
-      setErrorText(null);
-    }
-  }, [isFetching]);
-
-  useEffect(() => {
-    if (error) {
-      switch ((error as FetchBaseQueryError).status) {
-        case 410:
-          setErrorText(t("userDeleted"));
-          break;
-        case 403:
-          setVerifyModal(true);
-          break;
-        case 401:
-          setErrorText(t("wrongEmailOrPassword"));
-          break;
-        default:
-          setErrorText(getErrorText(error, i18n.language));
-          break;
-      }
-    }
-  }, [error, t, i18n]);
-
-  useEffect(() => {
-    if (data) {
-      dispatch(setProfile(data));
-      router.push(
-        decodeURIComponent(searchParams.get("return") || ROUTES.ui.home),
-      );
-    }
-  }, [data, dispatch, router, searchParams]);
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timeout.current);
-    };
+    return () => clearTimeout(timeout.current);
   }, []);
 
   return (
     <>
-      <FormBase onSubmit={submitHandler}>
+      <FormBase onSubmit={handleSubmit}>
         {errorText && <FormAlert severity="error">{errorText}</FormAlert>}
         <FormField
           required
@@ -92,7 +81,7 @@ export const SignInForm: FC = () => {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           autoFocus
-          disabled={isFetching || Boolean(data)}
+          disabled={signIn.isPending || Boolean(signIn.data)}
         />
         <FormPassword
           required
@@ -100,7 +89,7 @@ export const SignInForm: FC = () => {
           label={t("password")}
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          disabled={isFetching || Boolean(data)}
+          disabled={signIn.isPending || Boolean(signIn.data)}
         />
         <FormCheckbox
           labelProps={{ label: t("rememberMe") }}
@@ -108,12 +97,12 @@ export const SignInForm: FC = () => {
           value="remember"
           checked={rememberMe}
           onChange={() => setRememberMe(!rememberMe)}
-          disabled={isFetching || Boolean(data)}
+          disabled={signIn.isPending || Boolean(signIn.data)}
         />
         <FormButton
           type="submit"
           fullWidth
-          loading={isFetching || Boolean(data)}
+          loading={signIn.isPending || Boolean(signIn.data)}
         >
           {t("signIn")}
         </FormButton>
@@ -123,7 +112,7 @@ export const SignInForm: FC = () => {
         <FormLink href={ROUTES.ui.forgotPassword} mui={{ align: "center" }}>
           {t("forgotPasswordText")}
         </FormLink>
-        <SignInGoogleLink />
+        <SignInGoogleLink onSuccess={onSuccess} />
       </FormBase>
       <CustomModal
         open={verifyModal}
@@ -133,7 +122,9 @@ export const SignInForm: FC = () => {
         <VerifyUserForm
           email={email}
           onClose={() => setVerifyModal(false)}
-          onSuccess={() => (timeout.current = setTimeout(submitHandler, 1000))}
+          onSuccess={() => {
+            timeout.current = setTimeout(handleSubmit, 1000);
+          }}
         />
       </CustomModal>
     </>

@@ -1,7 +1,7 @@
 import { IntersectionType, PartialType, PickType } from '@nestjs/swagger';
 
 import { UserDto } from './user.dto';
-import { TUserCreate } from '@ap/shared/dist/types';
+import { TUserCreate } from '@workspace/shared/dist/types';
 
 export class UserCreateDto
   extends IntersectionType(

@@ -13,19 +13,19 @@ const newData = ref<TResourceCreate>({
   enabled: false,
 })
 const { data, error, execute, status } = resourcesApi.create(newData)
-const mainStore = useMainStore()
+const alertsStore = useAlertsStore()
 const rights = useRights(ROUTES.api.resources._)
 
 watch(data, () => {
   if (data.value) {
-    mainStore.addAlert({ type: 'success', text: t('success') })
+    alertsStore.addAlert({ type: 'success', text: t('success') })
     emit('create', data.value)
   }
 })
 
 watch(error, () => {
   if (error.value) {
-    mainStore.addAlert({
+    alertsStore.addAlert({
       type: 'error',
       text: getErrorText(error.value, locale.value),
     })

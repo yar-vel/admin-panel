@@ -9,7 +9,7 @@ import ApiIcon from "@mui/icons-material/Api";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { IMenuItem } from "@ap/shared/dist/types";
+import { IMenuItem } from "@workspace/shared/dist/types";
 import { ROUTES } from "@/shared/lib/constants";
 import { SidebarMenuItem } from "./SidebarMenuItem";
 

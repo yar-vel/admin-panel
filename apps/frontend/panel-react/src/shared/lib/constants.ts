@@ -1,4 +1,8 @@
-import { API_ROUTES, buildRoutes, UI_ROUTES } from "@ap/shared/dist/libs";
+import {
+  buildRoutes,
+  UI_ROUTES,
+  API_ROUTES,
+} from "@workspace/shared/dist/libs";
 
 export const ROUTES = {
   ui: buildRoutes(UI_ROUTES),

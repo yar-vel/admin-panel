@@ -6,6 +6,9 @@ export declare const EMAIL_REGEX: RegExp;
 export declare const PASSWORD_REGEX: RegExp;
 export declare const DEV = "development";
 export declare const TEST = "test";
+export declare const REQ_LIST_DEFAULT_PAGE = 1;
+export declare const REQ_LIST_DEFAULT_LIMIT = 25;
+export declare const REQ_LIST_MAX_LIMIT = 100;
 /** Supported API routes */
 export declare const API_ROUTES: {
     readonly auth: {
@@ -42,9 +45,9 @@ export declare const API_ROUTES: {
 };
 /** Supported UI routes */
 export declare const UI_ROUTES: {
-    readonly signUp: "/registration";
-    readonly signIn: "/authorization";
-    readonly signInGoogle: "/authorization/google";
+    readonly signUp: "/sign-up";
+    readonly signIn: "/sign-in";
+    readonly signInGoogle: "/sign-in/google";
     readonly forgotPassword: "/forgot-password";
     readonly home: "/";
     readonly profile: "/profile";

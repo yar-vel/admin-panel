@@ -1,4 +1,4 @@
-import { FC, FormEvent, useMemo, useState } from "react";
+import { FC, SubmitEventHandler, useMemo, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -8,13 +8,13 @@ import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormField } from "@/shared/ui/form/FormField";
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { FormCheckbox } from "@/shared/ui/form/FormCheckbox";
-import { IUser, TUserCreate, TUserUpdate } from "@ap/shared/dist/types";
+import { IUser, TUserCreate, TUserUpdate } from "@workspace/shared/dist/types";
 import {
   EMAIL_REGEX,
   NAME_REGEX,
   PASSWORD_REGEX,
   testString,
-} from "@ap/shared/dist/libs";
+} from "@workspace/shared/dist/libs";
 import { FormPassword } from "@/shared/ui/form/FormPassword";
 import { IEntityForm } from "@/shared/lib/types";
 
@@ -32,14 +32,15 @@ export const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
 }) => {
   const { t } = useTranslation();
   const [data, setData] = useState<IUser>(
-    initialData ?? {
-      id: "",
-      email: "",
-      password: "",
-      name: "",
-      enabled: false,
-      verified: false,
-    },
+    () =>
+      initialData ?? {
+        id: "",
+        email: "",
+        password: "",
+        name: "",
+        enabled: false,
+        verified: false,
+      },
   );
   const emailIsValid = useMemo(
     () => testString(EMAIL_REGEX, data.email ?? ""),
@@ -51,7 +52,7 @@ export const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
     [data],
   );
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
     if (data.email && data.password) {
@@ -70,7 +71,7 @@ export const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
   };
 
   return (
-    <FormBase onSubmit={submitHandler}>
+    <FormBase onSubmit={handleSubmit}>
       {onCreate && (
         <FormField
           required
@@ -100,7 +101,7 @@ export const UserForm: FC<IEntityForm<IUser, TUserCreate, TUserUpdate>> = ({
           autoComplete="new-password"
           name="password"
           label={t("password")}
-          value={data.password}
+          value={data.password ?? ""}
           onChange={(event) =>
             setData({ ...data, password: event.target.value })
           }

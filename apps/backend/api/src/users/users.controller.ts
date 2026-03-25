@@ -26,9 +26,9 @@ import { ReqItemsDto } from 'src/database/dto/req-items.dto';
 import { UserExternalDto } from './dto/user-external.dto';
 import { UserResListDto } from './dto/user-res-list.dto';
 import { UsersRolesReqItemsDto } from 'src/database/dto/users-roles-req-items.dto';
-import { getT } from '@ap/shared/dist/locales';
-import { IResList, IUser } from '@ap/shared/dist/types';
-import { API_ROUTES } from '@ap/shared/dist/libs';
+import { getT } from '@workspace/shared/dist/locales';
+import { IResList, IUser } from '@workspace/shared/dist/types';
+import { API_ROUTES } from '@workspace/shared/dist/libs';
 
 const route = API_ROUTES.users._;
 

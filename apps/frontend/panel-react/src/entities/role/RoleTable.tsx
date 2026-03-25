@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { IRole } from "@ap/shared/dist/types";
+import { IRole } from "@workspace/shared/dist/types";
 import { ROUTES } from "@/shared/lib/constants";
 
 export const RoleTable: FC<Omit<DataGridProps<IRole>, "columns">> = (props) => {
@@ -65,7 +65,6 @@ export const RoleTable: FC<Omit<DataGridProps<IRole>, "columns">> = (props) => {
       pageSizeOptions={[25, 50, 100]}
       columns={сolumns}
       isRowSelectable={(params) => rights.deleting && !params.row.default}
-      paginationMode="server"
       checkboxSelection
     />
   );

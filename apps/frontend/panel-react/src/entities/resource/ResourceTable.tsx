@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { IResource } from "@ap/shared/dist/types";
+import { IResource } from "@workspace/shared/dist/types";
 import { ROUTES } from "@/shared/lib/constants";
 
 export const ResourceTable: FC<Omit<DataGridProps<IResource>, "columns">> = (
@@ -74,7 +74,6 @@ export const ResourceTable: FC<Omit<DataGridProps<IResource>, "columns">> = (
       pageSizeOptions={[25, 50, 100]}
       columns={сolumns}
       isRowSelectable={(params) => rights.deleting && !params.row.default}
-      paginationMode="server"
       checkboxSelection
     />
   );

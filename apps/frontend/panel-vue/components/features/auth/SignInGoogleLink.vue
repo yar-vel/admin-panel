@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const router = useRouter()
-const mainStore = useMainStore()
+const profileStore = useProfileStore()
 const config = useRuntimeConfig()
 const timeout = ref<NodeJS.Timeout>()
 
@@ -41,7 +41,7 @@ const messageHandler = (event: MessageEvent<IWindowMessage<IUser>>) => {
     return
   }
 
-  mainStore.setProfile(event.data.payload)
+  profileStore.setProfile(event.data.payload)
   router.push(route.query.return ? decodeURIComponent(String(route.query.return)) : ROUTES.ui.home)
 }
 

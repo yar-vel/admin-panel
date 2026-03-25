@@ -9,7 +9,7 @@ import { FC, PropsWithChildren } from "react";
 import { theme } from "@/shared/ui/theme";
 
 export const FormLink: FC<
-  PropsWithChildren & Omit<LinkProps, "as"> & { mui: MUILinkProps }
+  PropsWithChildren<Omit<LinkProps, "as"> & { mui: MUILinkProps }>
 > = ({ children, mui, ...props }) => {
   return (
     <LinkStyled passHref {...props}>

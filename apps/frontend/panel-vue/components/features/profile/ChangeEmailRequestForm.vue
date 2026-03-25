@@ -4,10 +4,11 @@ import type { SubmitEventPromise } from 'vuetify'
 import profileApi from '~/components/entities/profile/profileApi'
 
 const { t, locale } = useI18n()
-const mainStore = useMainStore()
-const email = ref(mainStore.profile?.email || '')
+const alertsStore = useAlertsStore()
+const profileStore = useProfileStore()
+const email = ref('')
 const emailIsValid = (value: string) =>
-  value.length > 0 || t('emailValidationI18N')
+  value.length > 0 || profileStore.profile?.email || t('emailValidationI18N')
 const { status, error, execute } = profileApi.changeEmailRequest({ newEmail: email })
 const confirmModal = ref(false)
 const rights = useRights(ROUTES.api.profile._)
@@ -19,8 +20,8 @@ async function submitHandler(event: SubmitEventPromise) {
     return
   }
 
-  if (email.value === mainStore.profile?.email) {
-    mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
+  if (email.value === profileStore.profile?.email) {
+    alertsStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
   }
   else {
     execute()
@@ -32,7 +33,7 @@ watch(error, () => {
     return
   }
 
-  mainStore.addAlert({
+  alertsStore.addAlert({
     type: 'error',
     text: getErrorText(error.value, locale.value),
   })
@@ -49,7 +50,7 @@ watch(status, () => {
   <FormBase @submit="submitHandler">
     <FormField
       v-model="email"
-      :hint="$t('emailValidationI18N')"
+      :hint="profileStore.profile?.email || $t('emailValidationI18N')"
       :label="$t('email')"
       name="email"
       required

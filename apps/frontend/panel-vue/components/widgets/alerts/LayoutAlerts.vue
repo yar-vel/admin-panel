@@ -1,26 +1,38 @@
 <script setup lang="ts">
-const mainStore = useMainStore()
+const alertsStore = useAlertsStore()
+const closedAlerts = ref(new Set<IAlert['id']>())
+
+function handleClose(id: IAlert['id']) {
+  closedAlerts.value.add(id)
+}
+
+function handleDelete(id: IAlert['id']) {
+  if (closedAlerts.value.has(id)) {
+    alertsStore.removeAlert(id)
+    closedAlerts.value.delete(id)
+  }
+}
 </script>
 
 <template>
   <div class="alerts">
     <v-snackbar
-      v-for="alert of mainStore.alerts"
-      :key="`alert:${alert.id}`"
+      v-for="alert of alertsStore.alerts"
+      :key="alert.id"
       class="alerts__item"
       :color="alert.type"
       contained
       content-class="alerts__content"
       location="bottom right"
-      :model-value="!alert.deleted"
+      :model-value="!closedAlerts.has(alert.id)"
       multi-line
       :timeout="5000"
-      @update:model-value="mainStore.deleteAlert(alert.id, 1000)"
     >
       <template #actions>
         <v-btn
           variant="text"
-          @click="mainStore.deleteAlert(alert.id, 1000)"
+          @click="handleClose(alert.id)"
+          @vue:unmounted="handleDelete(alert.id)"
         >
           {{ $t('close') }}
         </v-btn>

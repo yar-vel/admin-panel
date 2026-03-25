@@ -3,50 +3,42 @@ import Skeleton from "@mui/material/Skeleton";
 import { useTranslation } from "react-i18next";
 
 import { SessionForm } from "@/features/profile/SessionForm";
-import { addAlert } from "@/app/store/main/main";
-import { useAppDispatch } from "@/app/store/hooks";
-import { TSessionExternal } from "@ap/shared/dist/types";
-import { getErrorText } from "@ap/shared/dist/libs";
-import { profileApi } from "@/entities/profile/api";
+import { TSessionExternal } from "@workspace/shared/dist/types";
+import { getErrorText } from "@workspace/shared/dist/libs";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
+import { useSessionsQuery } from "@/entities/profile/queries";
 
 export const ProfileSessions: FC = () => {
-  const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
-  const { data, isLoading, error } = profileApi.useGetSessionsQuery();
-  const [sessions, setSessions] = useState<TSessionExternal[]>();
+  const addAlert = useAlertsStore((s) => s.addAlert);
+  const sessions = useSessionsQuery();
+  const [deletedSessions, setDeletedSessions] = useState<TSessionExternal[]>(
+    [],
+  );
 
   useEffect(() => {
-    setSessions(
-      data &&
-        Array.from(data).sort((a, b) => (!a.current && b.current ? 1 : -1)),
-    );
-  }, [data]);
-
-  useEffect(() => {
-    if (error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(error, i18n.language),
-        }),
-      );
+    if (sessions.error) {
+      addAlert({
+        type: "error",
+        text: getErrorText(sessions.error, i18n.language),
+      });
     }
-  }, [dispatch, error, i18n]);
+  }, [addAlert, sessions.error, i18n]);
 
   return (
     <>
-      {isLoading && (
+      {sessions.isLoading && (
         <Skeleton variant="rounded" width="100%" height={56} sx={{ mb: 1 }} />
       )}
-      {sessions?.map((session) => (
-        <SessionForm
-          key={session.id}
-          session={session}
-          onDelete={() =>
-            setSessions(sessions.filter((item) => item.id !== session.id))
-          }
-        />
-      ))}
+      {sessions.data
+        ?.filter((s) => !deletedSessions.includes(s))
+        .map((session) => (
+          <SessionForm
+            key={session.id}
+            session={session}
+            onDelete={() => setDeletedSessions(deletedSessions.concat(session))}
+          />
+        ))}
     </>
   );
 };

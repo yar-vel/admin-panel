@@ -11,7 +11,7 @@ import fastifyHelmet from '@fastify/helmet';
 import { AppModule } from './app.module';
 import { version, name } from '../package.json';
 import { cfg } from 'config/configuration';
-import { getT } from '@ap/shared/dist/locales';
+import { getT } from '@workspace/shared/dist/locales';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -36,13 +36,16 @@ async function bootstrap() {
     .setDescription(getT().adminPanelAPIDescription)
     .setVersion(version)
     .addTag(name)
+    .addServer(cfg.urls.api.startsWith('/') ? cfg.urls.api : '/')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, documentFactory);
 
   app.enableCors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
+      if (!origin) {
+        return callback(null, true);
+      }
 
       const hostname = new URL(origin).hostname;
       const allowedHosts = [cfg.urls.nginx];

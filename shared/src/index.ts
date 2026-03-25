@@ -1,4 +1,5 @@
-export * as libs from './libs';
-export * as locales from './locales';
-export * as types from './types';
-export * as server from './server';
+export * from './libs';
+export * from './locales';
+export * from './types';
+export * from './schemas';
+export * from './server';

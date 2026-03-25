@@ -1,4 +1,4 @@
-FROM oven/bun:alpine AS base
+FROM oven/bun:1-alpine AS base
 ENV NUXT_TELEMETRY_DISABLED=1
 ARG APP_DIR=/usr/src/app
 ARG HOST_DIR=/apps/frontend/panel-vue
@@ -9,8 +9,6 @@ COPY ./shared ${APP_DIR}/shared
 
 FROM base AS development
 ENV NODE_ENV=development
-# NOTE: Windows hot reload fix
-ENV CHOKIDAR_USEPOLLING=true
 RUN bun install
 CMD ["bun", "--bun", "run", "dev"]
 

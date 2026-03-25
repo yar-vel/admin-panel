@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UI_ROUTES = exports.API_ROUTES = exports.TEST = exports.DEV = exports.PASSWORD_REGEX = exports.EMAIL_REGEX = exports.NAME_REGEX = void 0;
+exports.UI_ROUTES = exports.API_ROUTES = exports.REQ_LIST_MAX_LIMIT = exports.REQ_LIST_DEFAULT_LIMIT = exports.REQ_LIST_DEFAULT_PAGE = exports.TEST = exports.DEV = exports.PASSWORD_REGEX = exports.EMAIL_REGEX = exports.NAME_REGEX = void 0;
 /** Name validation regex */
 exports.NAME_REGEX = /^[\w ]{1,100}$/;
 /** Email validation regex */
@@ -9,6 +9,9 @@ exports.EMAIL_REGEX = /^[\w.]+@\w+\.+\w{2,4}$/;
 exports.PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\W]{10,100}$/;
 exports.DEV = 'development';
 exports.TEST = 'test';
+exports.REQ_LIST_DEFAULT_PAGE = 1;
+exports.REQ_LIST_DEFAULT_LIMIT = 25;
+exports.REQ_LIST_MAX_LIMIT = 100;
 /** Supported API routes */
 exports.API_ROUTES = {
     auth: {
@@ -45,9 +48,9 @@ exports.API_ROUTES = {
 };
 /** Supported UI routes */
 exports.UI_ROUTES = {
-    signUp: '/registration',
-    signIn: '/authorization',
-    signInGoogle: '/authorization/google',
+    signUp: '/sign-up',
+    signIn: '/sign-in',
+    signInGoogle: '/sign-in/google',
     forgotPassword: '/forgot-password',
     home: '/',
     profile: '/profile',

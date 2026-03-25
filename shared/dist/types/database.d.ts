@@ -10,9 +10,12 @@ export interface IRights {
     reading: boolean;
     updating: boolean;
     deleting: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 export interface IUsersRoles {
     userId: IUser['id'];
     roleId: IRole['id'];
+    createdAt?: Date;
 }
 //# sourceMappingURL=database.d.ts.map

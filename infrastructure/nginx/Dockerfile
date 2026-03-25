@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM nginx:1-alpine
 COPY ./html /usr/share/nginx/html
 COPY ./ssl /usr/share/nginx/ssl
 COPY ./snippets /etc/nginx/snippets

@@ -1,5 +1,5 @@
-import { DEV, TEST } from '@ap/shared/dist/libs';
-import { readSecret } from '@ap/shared/dist/server';
+import { DEV, TEST } from '@workspace/shared/dist/libs';
+import { readSecret } from '@workspace/shared/dist/server';
 
 export const cfg = {
   mode: process.env.NODE_ENV || DEV,
@@ -25,7 +25,7 @@ export const cfg = {
     },
   },
   urls: {
-    nginx: process.env.NGINX_HOST || 'localhost',
+    nginx: process.env.NGINX_URL || 'localhost',
     api: process.env.API_URL || '/api/',
     panelReact: process.env.PANEL_REACT_URL || '/',
     panelVue: process.env.PANEL_VUE_URL || '/vue/',

@@ -1,22 +1,20 @@
 import { FC, MouseEventHandler, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 import { FormLink } from "@/shared/ui/form/FormLink";
-import { useAppDispatch } from "@/app/store/hooks";
-import { setProfile } from "@/app/store/main/main";
-import { IUser, IWindowMessage } from "@ap/shared/dist/types";
-import { getGoogleSignInUrl } from "@ap/shared/dist/libs";
+import { IUser, IWindowMessage } from "@workspace/shared/dist/types";
+import { getGoogleSignInUrl } from "@workspace/shared/dist/libs";
 import { ROUTES } from "@/shared/lib/constants";
+import { useProfileStore } from "@/entities/profile/store";
 
-export const SignInGoogleLink: FC = () => {
+export const SignInGoogleLink: FC<{ onSuccess?: () => void }> = ({
+  onSuccess,
+}) => {
   const { t } = useTranslation();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const dispatch = useAppDispatch();
-  const timeout = useRef<NodeJS.Timeout>(undefined);
+  const setProfile = useProfileStore((s) => s.setProfile);
+  const interval = useRef<ReturnType<typeof setInterval>>(undefined);
 
-  const googleHandler: MouseEventHandler<HTMLAnchorElement> = (event) => {
+  const handleGoogle: MouseEventHandler<HTMLAnchorElement> = (event) => {
     event.preventDefault();
 
     const redirectUri =
@@ -41,34 +39,32 @@ export const SignInGoogleLink: FC = () => {
       "top=100,left=100,width=500,height=500",
     );
 
-    clearTimeout(timeout.current);
-    timeout.current = setInterval(() => {
+    clearInterval(interval.current);
+    interval.current = setInterval(() => {
       googleWindow?.postMessage(message);
     }, 1000);
   };
 
   useEffect(() => {
-    const messageHandler = (event: MessageEvent<IWindowMessage<IUser>>) => {
+    const handleMessage = (event: MessageEvent<IWindowMessage<IUser>>) => {
       if (event.data.type !== ROUTES.ui.signInGoogle) {
         return;
       }
 
-      dispatch(setProfile(event.data.payload));
-      router.push(
-        decodeURIComponent(searchParams.get("return") || ROUTES.ui.home),
-      );
+      setProfile(event.data.payload);
+      onSuccess?.();
     };
 
-    window.addEventListener("message", messageHandler);
+    window.addEventListener("message", handleMessage);
 
     return () => {
-      window.removeEventListener("message", messageHandler);
+      window.removeEventListener("message", handleMessage);
     };
-  }, [dispatch, router, searchParams]);
+  }, [setProfile, onSuccess]);
 
   useEffect(() => {
     return () => {
-      clearTimeout(timeout.current);
+      clearInterval(interval.current);
     };
   }, []);
 
@@ -78,7 +74,7 @@ export const SignInGoogleLink: FC = () => {
 
   return (
     <FormLink
-      onClick={googleHandler}
+      onClick={handleGoogle}
       href={ROUTES.ui.signInGoogle}
       mui={{ align: "center" }}
     >

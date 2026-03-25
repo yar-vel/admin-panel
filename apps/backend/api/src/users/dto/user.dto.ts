@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
   IsBoolean,
+  IsDate,
   IsString,
   IsUUID,
   Matches,
@@ -10,8 +11,12 @@ import {
 import { Transform, Type } from 'class-transformer';
 
 import { RoleExternalDto } from 'src/roles/dto/role-external.dto';
-import { IUser } from '@ap/shared/dist/types';
-import { EMAIL_REGEX, NAME_REGEX, PASSWORD_REGEX } from '@ap/shared/dist/libs';
+import { IUser } from '@workspace/shared/dist/types';
+import {
+  EMAIL_REGEX,
+  NAME_REGEX,
+  PASSWORD_REGEX,
+} from '@workspace/shared/dist/libs';
 import { toBoolean } from 'libs/utils';
 
 export class UserDto implements IUser {
@@ -69,4 +74,12 @@ export class UserDto implements IUser {
   @ValidateNested({ each: true })
   @Type(() => RoleExternalDto)
   roles: RoleExternalDto[];
+
+  @ApiProperty({ type: Date, example: new Date() })
+  @IsDate()
+  createdAt: Date;
+
+  @ApiProperty({ type: Date, example: new Date() })
+  @IsDate()
+  updatedAt: Date;
 }

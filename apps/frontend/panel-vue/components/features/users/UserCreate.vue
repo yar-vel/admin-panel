@@ -12,19 +12,19 @@ const newData = ref<TUserCreate>({
   name: '',
 })
 const { data, error, execute, status } = usersApi.create(newData)
-const mainStore = useMainStore()
+const alertsStore = useAlertsStore()
 const rights = useRights(ROUTES.api.users._)
 
 watch(data, () => {
   if (data.value) {
-    mainStore.addAlert({ type: 'success', text: t('success') })
+    alertsStore.addAlert({ type: 'success', text: t('success') })
     emit('create', data.value)
   }
 })
 
 watch(error, () => {
   if (error.value) {
-    mainStore.addAlert({
+    alertsStore.addAlert({
       type: 'error',
       text: getErrorText(error.value, locale.value),
     })

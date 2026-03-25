@@ -8,7 +8,7 @@ const router = useRouter()
 const title = computed(() => route.meta.title ? t(String(route.meta.title)) : '?')
 const description = computed(() => route.meta.description ? t(String(route.meta.description)) : '')
 const name = computed(() => route.meta.name ? t(String(route.meta.name)) : '?')
-const mainStore = useMainStore()
+const appStore = useAppStore()
 const loading = ref(false)
 const { status, error, execute } = authApi.signOut()
 
@@ -19,7 +19,7 @@ watch(
   [status, error],
   () => {
     if (status.value === 'success' || error.value?.statusCode === 401) {
-      router.push(ROUTES.ui.signIn)
+      router.push({ path: ROUTES.ui.signIn, query: { return: encodeURIComponent(route.path) } })
     }
   },
 )
@@ -43,7 +43,7 @@ watch(
         :flat="true"
       >
         <template #prepend>
-          <v-app-bar-nav-icon @click="mainStore.toggleSideBar(!mainStore.isSideBarOpened)" />
+          <v-app-bar-nav-icon @click="appStore.toggleSideBar(!appStore.isSideBarOpened)" />
         </template>
         <template #append>
           <v-app-bar-nav-icon

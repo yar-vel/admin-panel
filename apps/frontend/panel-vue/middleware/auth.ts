@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   const accessToken = useCookie('accessToken')
   const refreshToken = useCookie('refreshToken')
-  const mainStore = useMainStore()
+  const profileStore = useProfileStore()
   const isAuthRoute
     = to.path === ROUTES.ui.signIn
       || to.path === ROUTES.ui.signInGoogle
@@ -15,13 +15,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
       || to.path === ROUTES.ui.forgotPassword
 
   if (accessToken.value || refreshToken.value) {
-    // Attempt to authorize the user
     const { data, execute } = profileApi.getProfile()
     await execute()
-    mainStore.setProfile(data.value)
+    profileStore.setProfile(data.value)
   }
 
-  if (mainStore.profile) {
+  if (profileStore.profile) {
     if (isAuthRoute) {
       return navigateTo(
         {

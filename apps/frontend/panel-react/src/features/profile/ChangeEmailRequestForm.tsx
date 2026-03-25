@@ -1,11 +1,4 @@
-import {
-  FC,
-  FormEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { FC, SubmitEventHandler, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { FormBase } from "@/shared/ui/form/FormBase";
@@ -13,59 +6,55 @@ import { FormField } from "@/shared/ui/form/FormField";
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { CustomModal } from "@/shared/ui/modal/CustomModal";
 import { useRights } from "@/shared/hooks/useRights";
-import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import { addAlert } from "@/app/store/main/main";
 import { ChangeEmailConfirmForm } from "./ChangeEmailConfirmForm";
-import { EMAIL_REGEX, getErrorText, testString } from "@ap/shared/dist/libs";
-import { profileApi } from "@/entities/profile/api";
+import {
+  EMAIL_REGEX,
+  getErrorText,
+  testString,
+} from "@workspace/shared/dist/libs";
 import { ROUTES } from "@/shared/lib/constants";
+import { useProfileStore } from "@/entities/profile/store";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
+import { useChangeEmailRequestMutation } from "./mutations";
 
 export const ChangeEmailRequestForm: FC = () => {
-  const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation();
   const [confirmModal, setConfirmModal] = useState(false);
-  const [changeEmailRequest, { isSuccess, error, isLoading }] =
-    profileApi.useChangeEmailRequestMutation();
+  const changeEmailRequest = useChangeEmailRequestMutation();
   const rights = useRights(ROUTES.api.profile._);
-  const profile = useAppSelector((store) => store.main.profile);
-  const [email, setEmail] = useState(profile?.email || "");
+  const profile = useProfileStore((s) => s.profile);
+  const addAlert = useAlertsStore((s) => s.addAlert);
+  const [email, setEmail] = useState("");
   const emailIsValid = useMemo(() => testString(EMAIL_REGEX, email), [email]);
-  const onClose = useCallback(() => setConfirmModal(false), []);
+  const onClose = () => setConfirmModal(false);
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
     if (emailIsValid) {
       if (email === profile?.email) {
-        dispatch(addAlert({ type: "warning", text: t("nothingToUpdate") }));
+        addAlert({ type: "warning", text: t("nothingToUpdate") });
       } else {
-        changeEmailRequest({ newEmail: email });
+        changeEmailRequest.mutate(
+          { newEmail: email },
+          {
+            onSuccess: () => setConfirmModal(true),
+            onError: (error) =>
+              addAlert({
+                type: "error",
+                text: getErrorText(error, i18n.language),
+              }),
+          },
+        );
       }
     } else {
-      dispatch(addAlert({ type: "warning", text: t("unknownError") }));
+      addAlert({ type: "warning", text: t("unknownError") });
     }
   };
 
-  useEffect(() => {
-    if (error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(error, i18n.language),
-        }),
-      );
-    }
-  }, [dispatch, error, i18n]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      setConfirmModal(true);
-    }
-  }, [isSuccess]);
-
   return (
     <>
-      <FormBase onSubmit={submitHandler}>
+      <FormBase onSubmit={handleSubmit}>
         <FormField
           required
           name="email"
@@ -73,16 +62,16 @@ export const ChangeEmailRequestForm: FC = () => {
           label={t("email")}
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          helperText={t("emailValidation")}
+          helperText={profile?.email || t("emailValidation")}
           color={emailIsValid ? "success" : "error"}
           error={!emailIsValid && email.length > 0}
-          disabled={isLoading}
+          disabled={changeEmailRequest.isPending}
         />
         <FormButton
           type="submit"
           color="success"
           disabled={!rights.updating}
-          loading={isLoading}
+          loading={changeEmailRequest.isPending}
         >
           {t("change")}
         </FormButton>

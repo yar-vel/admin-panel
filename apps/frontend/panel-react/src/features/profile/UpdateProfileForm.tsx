@@ -1,78 +1,62 @@
-import { FC, FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FC, SubmitEventHandler, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormField } from "@/shared/ui/form/FormField";
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { useRights } from "@/shared/hooks/useRights";
-import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import { addAlert, setProfile } from "@/app/store/main/main";
 import {
   getErrorText,
   getUpdatedValues,
   NAME_REGEX,
   testString,
-} from "@ap/shared/dist/libs";
-import { IUser } from "@ap/shared/dist/types";
-import { profileApi } from "@/entities/profile/api";
+} from "@workspace/shared/dist/libs";
+import { IUser } from "@workspace/shared/dist/types";
+import { useUpdateProfileMutation } from "@/features/profile/mutations";
+import { useProfileStore } from "@/entities/profile/store";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
 import { ROUTES } from "@/shared/lib/constants";
 
 export const UpdateProfileForm: FC = () => {
-  const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation();
-  const [update, { isSuccess, isLoading, error }] =
-    profileApi.useUpdateProfileMutation();
+  const updateProfile = useUpdateProfileMutation();
   const rights = useRights(ROUTES.api.profile._);
-  const profile = useAppSelector((store) => store.main.profile);
-  const profileRef = useRef(profile);
+  const profile = useProfileStore((s) => s.profile);
+  const setProfile = useProfileStore((s) => s.setProfile);
+  const addAlert = useAlertsStore((s) => s.addAlert);
   const [newData, setNewData] = useState(profile);
   const nameIsValid = useMemo(
     () => newData?.name && testString(NAME_REGEX, newData.name),
     [newData],
   );
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
-    if (profile && newData && nameIsValid) {
-      const updatedValues = getUpdatedValues<IUser>(profile, newData);
-
-      if (Object.keys(updatedValues).length === 0) {
-        dispatch(addAlert({ type: "warning", text: t("nothingToUpdate") }));
-      } else {
-        update(updatedValues);
-      }
-    } else {
-      dispatch(addAlert({ type: "warning", text: t("unknownError") }));
+    if (!profile || !newData || !nameIsValid) {
+      addAlert({ type: "warning", text: t("unknownError") });
+      return;
     }
+
+    const updatedValues = getUpdatedValues<IUser>(profile, newData);
+
+    if (Object.keys(updatedValues).length === 0) {
+      addAlert({ type: "warning", text: t("nothingToUpdate") });
+      return;
+    }
+
+    updateProfile.mutate(updatedValues, {
+      onSuccess: () => {
+        setProfile({ ...profile, ...updatedValues });
+        addAlert({ type: "success", text: t("success") });
+      },
+      onError: (error) =>
+        addAlert({ type: "error", text: getErrorText(error, i18n.language) }),
+    });
   };
 
-  useEffect(() => {
-    if (profileRef.current) {
-      profileRef.current = { ...profileRef.current, ...newData };
-    }
-  }, [newData]);
-
-  useEffect(() => {
-    if (error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(error, i18n.language),
-        }),
-      );
-    }
-  }, [dispatch, error, i18n]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      dispatch(setProfile(profileRef.current));
-      dispatch(addAlert({ type: "success", text: t("success") }));
-    }
-  }, [isSuccess, dispatch, t]);
-
   return (
-    <FormBase onSubmit={submitHandler}>
+    <FormBase onSubmit={handleSubmit}>
       {profile?.googleId && (
         <FormField
           name="googleId"
@@ -97,7 +81,7 @@ export const UpdateProfileForm: FC = () => {
         type="submit"
         color="success"
         disabled={!rights.updating}
-        loading={isLoading}
+        loading={updateProfile.isPending}
       >
         {t("update")}
       </FormButton>

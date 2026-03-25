@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { UAParser } from 'ua-parser-js'
 
-import authApi from '~/components/entities/auth/authApi'
 import profileApi from '~/components/entities/profile/profileApi'
 
 const props = defineProps<{
@@ -12,66 +11,37 @@ const emit = defineEmits<{
 }>()
 
 const { t, locale } = useI18n()
-const router = useRouter()
 const rights = useRights(ROUTES.api.profile._)
-const mainStore = useMainStore()
+const alertsStore = useAlertsStore()
 const userAgent = new UAParser(props.session.userAgent).getResult()
 const updatedAt = getDateString(props.session.updatedAt)
-const { status: dsStatus, error: dsError, execute: dsExecute } = profileApi.deleteSessions({ items: [props.session.id] })
-const { status: soStatus, error: soError, execute: soExecute } = authApi.signOut()
+const { status, error, execute } = profileApi.deleteSessions({ items: [props.session.id] })
 
-async function submitHandler() {
-  if (props.session.current) {
-    soExecute()
-  }
-  else {
-    dsExecute()
-  }
+function handleSubmit() {
+  execute()
 }
 
-watch(dsError, () => {
-  if (!dsError.value) {
+watch(error, () => {
+  if (!error.value) {
     return
   }
 
-  mainStore.addAlert({
+  alertsStore.addAlert({
     type: 'error',
-    text: getErrorText(dsError.value, locale.value),
+    text: getErrorText(error.value, locale.value),
   })
 })
 
-watch(dsStatus, () => {
-  if (dsStatus.value === 'success') {
-    mainStore.addAlert({ type: 'success', text: t('success') })
+watch(status, () => {
+  if (status.value === 'success') {
+    alertsStore.addAlert({ type: 'success', text: t('success') })
     emit('delete')
-  }
-})
-
-watch(soError, () => {
-  if (!soError.value) {
-    return
-  }
-
-  if (soError.value.statusCode === 401) {
-    router.push(ROUTES.ui.signIn)
-  }
-  else {
-    mainStore.addAlert({
-      type: 'error',
-      text: getErrorText(soError.value, locale.value),
-    })
-  }
-})
-
-watch(soStatus, () => {
-  if (soStatus.value === 'success') {
-    router.push(ROUTES.ui.signIn)
   }
 })
 </script>
 
 <template>
-  <FormBase @submit="submitHandler">
+  <FormBase @submit="handleSubmit">
     <v-card class="mb-1 d-flex flex-row">
       <v-card-text class="d-flex flex-row align-center">
         <template v-if="userAgent.device.vendor">
@@ -116,7 +86,7 @@ watch(soStatus, () => {
       <v-card-actions>
         <v-btn
           color="error"
-          :disabled="!rights.updating || dsStatus === 'pending' || dsStatus === 'success'"
+          :disabled="!rights.updating || status === 'pending' || status === 'success' || session.current"
           icon="mdi-delete"
           type="submit"
           variant="text"

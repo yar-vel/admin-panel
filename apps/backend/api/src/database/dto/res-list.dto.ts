@@ -8,43 +8,60 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 
-import { IResList, IResListMeta, ISort } from '@ap/shared/dist/types';
-import { Type } from 'class-transformer';
+import {
+  ESortOrder,
+  IResList,
+  IResListMeta,
+  ISort,
+} from '@workspace/shared/dist/types';
 
-export class SortDto<T> implements ISort<T> {
+class SortDto<T extends object> implements ISort<T> {
+  @ApiProperty({ type: String, example: 'someField' })
   @IsString()
-  field: T extends object ? keyof T : string;
+  field: keyof T;
 
-  @IsEnum(['ASC', 'DESC'])
-  order: 'ASC' | 'DESC';
+  @ApiProperty({ enum: ESortOrder, example: ESortOrder.ASC })
+  @IsEnum(ESortOrder)
+  order: ESortOrder;
 }
 
-export class MetaDto<T> implements IResListMeta<T> {
+class MetaDto<T extends object> implements IResListMeta<T> {
+  @ApiPropertyOptional({ type: Number, example: 1 })
   @IsOptional()
   @IsNumber()
   page?: number;
 
+  @ApiPropertyOptional({ type: Number, example: 25 })
   @IsOptional()
   @IsNumber()
   limit?: number;
 
+  @ApiPropertyOptional({ type: Number, example: 100 })
   @IsOptional()
   @IsNumber()
   total?: number;
 
+  @ApiPropertyOptional({ type: SortDto<T> })
   @IsOptional()
   @ValidateNested()
-  @Type(() => SortDto)
+  @Type(() => SortDto<T>)
   sort?: SortDto<T>;
 
+  @ApiPropertyOptional({ type: Object, example: { someField: 'someValue' } })
   @IsOptional()
   @IsObject()
-  filters?: T extends object ? Partial<T> : { [K: string]: unknown };
+  @Transform(({ value }) =>
+    value && Object.keys(value as object).length > 0
+      ? (value as Partial<T>)
+      : undefined,
+  )
+  filters?: Partial<T>;
 }
 
-export class ResListDto<T> implements IResList<T> {
-  @ApiProperty({ type: Array })
+export class ResListDto<T extends object> implements IResList<T> {
+  @ApiProperty({ type: Array, example: [{ someField: 'someValue' }] })
   @IsArray()
   rows: T[];
 

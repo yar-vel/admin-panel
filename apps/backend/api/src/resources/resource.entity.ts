@@ -1,7 +1,14 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { RightsEntity } from 'src/database/rights.entity';
-import { IResource } from '@ap/shared/dist/types';
+import { IResource } from '@workspace/shared/dist/types';
 import { EmptyStringToNull } from 'src/database/database.utils';
 
 @Entity('resources')
@@ -31,4 +38,10 @@ export class ResourceEntity implements IResource {
 
   @OneToMany(() => RightsEntity, (right) => right.resource)
   rights?: RightsEntity[];
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt?: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt?: Date;
 }

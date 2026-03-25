@@ -40,14 +40,6 @@ const fs = __importStar(require("fs"));
  * @returns {string | undefined} File contents or undefined
  */
 const readSecret = (path) => {
-    // try {
-    //   return fs.readFileSync(path, 'utf8').trim();
-    // } catch (error: unknown) {
-    //   if (error && typeof error === 'object' && 'message' in error) {
-    //     console.warn(error.message);
-    //   }
-    //   return undefined;
-    // }
     return fs.readFileSync(path, 'utf8').trim();
 };
 exports.readSecret = readSecret;

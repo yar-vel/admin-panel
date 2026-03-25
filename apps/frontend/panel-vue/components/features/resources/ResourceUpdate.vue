@@ -10,7 +10,7 @@ const emit = defineEmits<{
 
 const { t, locale } = useI18n()
 const rights = useRights(ROUTES.api.resources._)
-const mainStore = useMainStore()
+const alertsStore = useAlertsStore()
 const cachedData = ref<IResource>(props.data)
 const updatedValues = ref<TResourceUpdate>({})
 const {
@@ -37,20 +37,20 @@ function updateHandler(fields: TResourceUpdate) {
     uExecute()
   }
   else {
-    mainStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
+    alertsStore.addAlert({ type: 'warning', text: t('nothingToUpdate') })
   }
 }
 
 watch(uStatus, () => {
   if (uStatus.value === 'success') {
-    mainStore.addAlert({ type: 'success', text: t('success') })
+    alertsStore.addAlert({ type: 'success', text: t('success') })
     cachedData.value = { ...cachedData.value, ...updatedValues.value }
   }
 })
 
 watch(uError, () => {
   if (uError.value) {
-    mainStore.addAlert({
+    alertsStore.addAlert({
       type: 'error',
       text: getErrorText(uError.value, locale.value),
     })
@@ -59,14 +59,14 @@ watch(uError, () => {
 
 watch(dStatus, () => {
   if (dStatus.value === 'success') {
-    mainStore.addAlert({ type: 'success', text: t('success') })
+    alertsStore.addAlert({ type: 'success', text: t('success') })
     emit('delete')
   }
 })
 
 watch(dError, () => {
   if (dError.value) {
-    mainStore.addAlert({
+    alertsStore.addAlert({
       type: 'error',
       text: getErrorText(dError.value, locale.value),
     })

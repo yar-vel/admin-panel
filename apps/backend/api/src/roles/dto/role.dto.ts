@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
   IsBoolean,
+  IsDate,
   IsUUID,
   Length,
   MaxLength,
@@ -10,7 +11,7 @@ import {
 import { Transform, Type } from 'class-transformer';
 
 import { RightsDto } from 'src/database/dto/rights.dto';
-import { IRole } from '@ap/shared/dist/types';
+import { IRole } from '@workspace/shared/dist/types';
 import { toBoolean } from 'libs/utils';
 
 export class RoleDto implements IRole {
@@ -49,4 +50,12 @@ export class RoleDto implements IRole {
   @ValidateNested({ each: true })
   @Type(() => RightsDto)
   rights: RightsDto[];
+
+  @ApiProperty({ type: Date, example: new Date() })
+  @IsDate()
+  createdAt: Date;
+
+  @ApiProperty({ type: Date, example: new Date() })
+  @IsDate()
+  updatedAt: Date;
 }

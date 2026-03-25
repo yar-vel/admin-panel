@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS base
+FROM node:24-alpine AS base
 ARG APP_DIR=/usr/src/app
 ARG HOST_DIR=/apps/backend/mailer
 ARG HOME_DIR=${APP_DIR}${HOST_DIR}

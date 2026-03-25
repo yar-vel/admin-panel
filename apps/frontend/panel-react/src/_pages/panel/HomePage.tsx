@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 
-import { PanelLayout } from "./PanelLayout";
+import { PanelLayout } from "@/widgets/layout/PanelLayout";
 import { TPage } from "../types";
 
 export const HomePage: FC<TPage> = ({ h1 }) => {

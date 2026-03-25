@@ -8,6 +8,8 @@ export interface IResource {
     enabled: boolean;
     default: boolean;
     rights?: IRights[];
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 export type TResourceCreate = Required<Pick<IResource, 'name' | 'path'>> & Partial<Pick<IResource, 'enabled' | 'description'>>;
 export type TResourceReqListParams = Partial<Pick<IResource, 'name' | 'path' | 'enabled' | 'default'>>;
