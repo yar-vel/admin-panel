@@ -2,9 +2,15 @@
   "name": "admin-panel",
   "version": "1.0.0",
   "description": "This is a boilerplate project that implements the functionality of the admin panel.\r The project is built using microservices architecture.\r To run it, you will need to install [Docker](https://github.com/docker).",
+  "private": true,
+  "workspaces": [
+    "apps/backend/*",
+    "apps/frontend/*",
+    "shared",
+    "scripts"
+  ],
   "scripts": {
-    "ci:all": "npm --prefix apps/backend/api ci && npm --prefix apps/backend/mailer ci && npm --prefix apps/frontend/panel-react ci && npm --prefix apps/frontend/panel-vue ci && npm --prefix shared ci && npm --prefix scripts ci",
-    "lint:all": "npm --prefix apps/backend/api run lint:fix && npm --prefix apps/backend/mailer run lint:fix && npm --prefix apps/frontend/panel-react run lint:fix && npm --prefix apps/frontend/panel-vue run lint:fix && npm --prefix shared run lint:fix"
+    "lint:all": "npm run lint --workspaces --if-present"
   },
   "keywords": [],
   "author": "",

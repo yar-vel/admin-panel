@@ -1,31 +1,46 @@
 FROM oven/bun:1-alpine AS base
+ARG ROOT_DIR=/usr/src/app
+ARG APP_DIR=apps/frontend/panel-vue
+WORKDIR ${ROOT_DIR}
+COPY ./package*.json ./
+COPY ./shared/package*.json ./shared/
+COPY ./${APP_DIR}/package*.json ./${APP_DIR}/
 ENV NUXT_TELEMETRY_DISABLED=1
-ARG APP_DIR=/usr/src/app
-ARG HOST_DIR=/apps/frontend/panel-vue
-ARG HOME_DIR=${APP_DIR}${HOST_DIR}
-WORKDIR ${HOME_DIR}
-COPY ${HOST_DIR}/package*.json .
-COPY ./shared ${APP_DIR}/shared
+# NOTE: bun workspaces fix
+COPY ./apps/frontend/panel-react/package*.json ./apps/frontend/panel-react/
+COPY ./apps/backend/api/package*.json ./apps/backend/api/
+COPY ./apps/backend/mailer/package*.json ./apps/backend/mailer/
+COPY ./scripts/package*.json ./scripts/
 
-FROM base AS development
+FROM base AS dependencies
+# NOTE: use the "--frozen-lockfile" flag if you have the "bun.lock"-file
+RUN bun install --filter panel-vue
+
+FROM dependencies AS code
+COPY ./shared ./shared/
+COPY ./${APP_DIR} ./${APP_DIR}/
+
+FROM code AS development
 ENV NODE_ENV=development
-RUN bun install
+WORKDIR ${ROOT_DIR}/${APP_DIR}
 CMD ["bun", "--bun", "run", "dev"]
 
-FROM base AS builder
+FROM code AS builder
 ARG PANEL_VUE_URL
 ARG API_HOST
 ARG API_PORT
 ARG API_URL
 ARG GOOGLE_CLIENT_ID
-RUN bun install
-COPY ${HOST_DIR} .
-RUN bun run build
+RUN bun --filter shared run build
+RUN bun --filter panel-vue run build
+# NOTE: use the "--frozen-lockfile" flag if you have the "bun.lock"-file
+RUN bun install --production --filter panel-vue
 
 FROM base AS production
 ENV NODE_ENV=production
 ARG USER=bun
 ARG GROUP=bun
-COPY --from=builder --chown=${USER}:${GROUP} ${HOME_DIR}/.output ./.output
+COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/${APP_DIR}/.output ./${APP_DIR}/.output
 USER ${USER}
+WORKDIR ${ROOT_DIR}/${APP_DIR}
 ENTRYPOINT ["bun", ".output/server/index.mjs"]

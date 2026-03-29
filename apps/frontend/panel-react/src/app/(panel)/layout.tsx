@@ -7,7 +7,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { usePathname, useRouter } from "next/navigation";
-import { FC, PropsWithChildren, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -26,7 +26,7 @@ import { useProfileStore } from "@/entities/profile/store";
 import { useAlertsStore } from "@/shared/model/useAlertsStore";
 import { useSignOutMutation } from "@/features/auth/mutations";
 
-const Layout: FC<PropsWithChildren> = ({ children }) => {
+const Layout: FC<LayoutProps<"/">> = ({ children }) => {
   const router = useRouter();
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(true);

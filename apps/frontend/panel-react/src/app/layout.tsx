@@ -1,11 +1,11 @@
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
-import { FC, PropsWithChildren } from "react";
+import { FC } from "react";
 
 import { I18nClientProvider } from "./providers/I18nClientProvider";
 import { AuthProvider } from "./providers/AuthProvider";
 import { TanstackQueryProvider } from "./providers/TanstackQueryProvider";
 
-const Layout: FC<PropsWithChildren> = ({ children }) => {
+const Layout: FC<LayoutProps<"/">> = ({ children }) => {
   return (
     <html lang="en">
       <body>

@@ -209,8 +209,8 @@ ENTRYPOINT ["./custom-entrypoint.sh"]
 ## Other Folders
 
 The `shared` folder is intended to store common types, utilities, and dictionaries between the frontend and backend.
-Currently, containers are configured to use this folder (adding a dependency to `package.json` for development
-and `tsconfig.json` for build, and mounting volumes for Docker) without switching to `npm workspaces`.
+Currently, containers are configured to use this folder (adding the dependency to `package.json`
+and mounting volumes for Docker) using `npm workspaces`.
 
 The `scripts` folder currently contains only a hook for `git`, which is configured to run
 tests and linters in applications before commit, and a small script for installing it.

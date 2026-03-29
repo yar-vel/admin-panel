@@ -1,6 +1,17 @@
 # general
-apps/**/Dockerfile
-apps/**/node_modules
+.git
+.gitignore
+.dockerignore
+.env
+.env.*
+secrets
+docs
+node_modules
+README.md
+**/.gitignore
+**/Dockerfile
+**/node_modules
+**/README.md
 
 # backend
 apps/backend/**/dist

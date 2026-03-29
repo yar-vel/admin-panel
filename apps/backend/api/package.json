@@ -38,7 +38,7 @@
     "@nestjs/terminus": "^11.0.0",
     "@nestjs/throttler": "^6.4.0",
     "@nestjs/typeorm": "^11.0.0",
-    "@workspace/shared": "file:../../../shared",
+    "@workspace/shared": "*",
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.7",
     "argon2": "^0.41.1",
