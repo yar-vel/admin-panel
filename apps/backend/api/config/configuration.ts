@@ -1,5 +1,6 @@
-import { DEV, TEST } from '@ap/shared/dist/libs';
-import { readSecret } from '@ap/shared/dist/server';
+import * as fs from 'fs';
+
+import { DEV, TEST } from '@workspace/shared';
 
 export const cfg = {
   mode: process.env.NODE_ENV || DEV,
@@ -12,7 +13,7 @@ export const cfg = {
       secret:
         process.env.NODE_ENV === TEST
           ? 'accessTokenSecretKey'
-          : readSecret('/run/secrets/access-token'),
+          : fs.readFileSync('/run/secrets/access-token', 'utf8').trim(),
     },
     refresh: {
       /** Time in seconds */
@@ -21,11 +22,11 @@ export const cfg = {
       secret:
         process.env.NODE_ENV === TEST
           ? 'refreshTokenSecretKey'
-          : readSecret('/run/secrets/refresh-token'),
+          : fs.readFileSync('/run/secrets/refresh-token', 'utf8').trim(),
     },
   },
   urls: {
-    nginx: process.env.NGINX_HOST || 'localhost',
+    nginx: process.env.NGINX_URL || 'localhost',
     api: process.env.API_URL || '/api/',
     panelReact: process.env.PANEL_REACT_URL || '/',
     panelVue: process.env.PANEL_VUE_URL || '/vue/',

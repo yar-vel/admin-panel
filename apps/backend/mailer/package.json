@@ -21,13 +21,13 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@ap/shared": "file:../../../shared",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/microservices": "^11.0.20",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.1.4",
+    "@workspace/shared": "*",
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.7",
     "class-transformer": "^0.5.1",

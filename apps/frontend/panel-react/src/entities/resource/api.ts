@@ -1,48 +1,71 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-
+import { fetchWithAuth } from "@/shared/api/fetchWithAuth";
+import { ROUTES } from "@workspace/shared";
 import {
+  IFetchUpdate,
   IReqItems,
   IResource,
-  IFetchUpdate,
   TResourceCreate,
-  TResourceUpdate,
-  TResourceResList,
   TResourceReqList,
-} from "@ap/shared/dist/types";
-import { baseQueryWithReauth } from "@/app/api/baseQueryWithReauth";
-import { resourcesService } from "./service";
+  TResourceResList,
+  TResourceUpdate,
+} from "@workspace/shared";
 
-export const resourcesApi = createApi({
-  reducerPath: "resources",
-  baseQuery: baseQueryWithReauth,
-  tagTypes: ["CountedEntities", "Entities", "Entity"],
-  endpoints: (builder) => ({
-    create: builder.mutation<IResource, TResourceCreate>({
-      query: resourcesService.createArgs,
-      invalidatesTags: ["CountedEntities"],
-    }),
+export const createResource = async (
+  payload: TResourceCreate,
+): Promise<IResource> => {
+  const response = await fetchWithAuth(ROUTES.api.resources._, {
+    method: "POST",
+    credentials: "include",
+    body: payload,
+  });
 
-    getOne: builder.query<IResource, IResource["id"]>({
-      query: resourcesService.getOneArgs,
-      providesTags: ["Entity"],
-    }),
+  return response.json();
+};
 
-    getList: builder.query<TResourceResList, TResourceReqList | void>({
-      query: resourcesService.getListArgs,
-      providesTags: ["Entities"],
-    }),
+export const getResource = async (
+  id: IResource["id"],
+  headers?: HeadersInit,
+): Promise<IResource> => {
+  const response = await fetchWithAuth(ROUTES.api.resources.resource(id), {
+    method: "GET",
+    credentials: "include",
+    headers,
+  });
 
-    update: builder.mutation<
-      undefined,
-      IFetchUpdate<TResourceUpdate, IResource["id"]>
-    >({
-      query: resourcesService.updateArgs,
-      invalidatesTags: ["Entity"],
-    }),
+  return response.json();
+};
 
-    delete: builder.mutation<undefined, IReqItems<IResource["id"]>>({
-      query: resourcesService.deleteArgs,
-      invalidatesTags: ["CountedEntities"],
-    }),
-  }),
-});
+export const getResourceList = async (
+  params?: TResourceReqList,
+  headers?: HeadersInit,
+): Promise<TResourceResList> => {
+  const response = await fetchWithAuth(ROUTES.api.resources._, {
+    method: "GET",
+    credentials: "include",
+    params,
+    headers,
+  });
+
+  return response.json();
+};
+
+export const updateResource = async ({
+  id,
+  fields,
+}: IFetchUpdate<TResourceUpdate, IResource["id"]>): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.resources.resource(id), {
+    method: "PATCH",
+    credentials: "include",
+    body: fields,
+  });
+};
+
+export const deleteResources = async (
+  payload: IReqItems<IResource["id"]>,
+): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.resources._, {
+    method: "DELETE",
+    credentials: "include",
+    body: payload,
+  });
+};

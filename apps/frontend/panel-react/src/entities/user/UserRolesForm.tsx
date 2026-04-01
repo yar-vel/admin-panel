@@ -1,25 +1,29 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, SubmitEventHandler, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { useTranslation } from "react-i18next";
 
 import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { FormCheckbox } from "@/shared/ui/form/FormCheckbox";
-import { IRole, IUser, IUsersRoles } from "@ap/shared/dist/types";
+import { IRole, IUser, IUsersRoles } from "@workspace/shared";
 import { IEntityFormUpdate } from "@/shared/lib/types";
 
 export const UserRolesForm: FC<
-  {
+  IEntityFormUpdate<IUsersRoles[]> & {
     user: IUser;
     roles: IRole[];
-  } & IEntityFormUpdate<IUsersRoles[]>
+  }
 > = ({ user, roles, onUpdate, updateDisabled, updateLoading }) => {
   const { t } = useTranslation();
   const [updatedRoles, setUpdatedRoles] = useState<IUsersRoles[]>(
-    user.roles?.map((value) => ({ roleId: value.id, userId: user.id })) ?? [],
+    () =>
+      user.roles?.map((value) => ({
+        roleId: value.id,
+        userId: user.id,
+      })) ?? [],
   );
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     onUpdate?.(updatedRoles);
   };
@@ -44,7 +48,7 @@ export const UserRolesForm: FC<
   };
 
   return (
-    <FormBase onSubmit={submitHandler}>
+    <FormBase onSubmit={handleSubmit}>
       {roles.map((role) => (
         <FormCheckbox
           key={role.id}

@@ -1,10 +1,10 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, SubmitEventHandler, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { useTranslation } from "react-i18next";
 
 import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormButton } from "@/shared/ui/form/FormButton";
-import { IResource, IRights, IRole } from "@ap/shared/dist/types";
+import { IResource, IRights, IRole } from "@workspace/shared";
 import { ResourceRights } from "@/entities/resource/ResourceRights";
 import { IEntityFormUpdate } from "@/shared/lib/types";
 
@@ -17,7 +17,7 @@ export const RoleRightsForm: FC<
   const { t } = useTranslation();
   const [updatedRights, setUpdatedRights] = useState(role.rights ?? []);
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     onUpdate?.(updatedRights);
   };
@@ -47,7 +47,7 @@ export const RoleRightsForm: FC<
   };
 
   return (
-    <FormBase onSubmit={submitHandler}>
+    <FormBase onSubmit={handleSubmit}>
       {resources.map((resource) => (
         <ResourceRights
           key={resource.id}

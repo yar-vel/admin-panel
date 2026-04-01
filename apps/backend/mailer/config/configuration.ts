@@ -1,5 +1,6 @@
-import { DEV, TEST } from '@ap/shared/dist/libs';
-import { readSecret } from '@ap/shared/dist/server';
+import * as fs from 'fs';
+
+import { DEV, TEST } from '@workspace/shared';
 
 export const cfg = {
   mode: process.env.NODE_ENV || DEV,
@@ -26,7 +27,7 @@ export const cfg = {
     password:
       process.env.NODE_ENV === TEST
         ? 'password'
-        : readSecret('/run/secrets/smtp'),
+        : fs.readFileSync('/run/secrets/smtp', 'utf8').trim(),
     from: `"No Reply" <no-reply@${process.env.PROJECT_TAG}>`,
   },
 };

@@ -1,39 +1,49 @@
 import Snackbar from "@mui/material/Snackbar";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 
 import { theme } from "@/shared/ui/theme";
-import { deleteAlert } from "@/app/store/main/main";
-import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
+import { IAlert } from "@workspace/shared";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
 
 export const LayoutAlerts: FC = () => {
-  const dispatch = useAppDispatch();
-  const alerts = useAppSelector((state) => state.main.alerts);
+  const alerts = useAlertsStore((store) => store.alerts);
+  const removeAlert = useAlertsStore((store) => store.removeAlert);
+  const [closedAlerts, setClosedAlerts] = useState<Set<IAlert["id"]>>(
+    () => new Set(),
+  );
 
-  const closeHandler = (id: number, delay?: boolean, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
+  const handleClose = (id: IAlert["id"], reason?: string) => {
+    if (reason !== "clickaway") {
+      const newSet = new Set<IAlert["id"]>(closedAlerts);
+      newSet.add(id);
+      setClosedAlerts(newSet);
     }
+  };
 
-    dispatch(deleteAlert({ id, delay }));
+  const handleDelete = (id: IAlert["id"]) => {
+    if (closedAlerts.has(id)) {
+      removeAlert(id);
+      closedAlerts.delete(id);
+    }
   };
 
   return (
     <AlertsContainer>
       {alerts.map((alert) => (
         <Snackbar
-          key={`alert:${alert.id}`}
-          open={alert.deleted !== true}
+          key={alert.id}
+          open={!closedAlerts.has(alert.id)}
           autoHideDuration={5000}
           sx={{ py: 1 }}
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          onClose={(_, reason) => closeHandler(alert.id, true, reason)}
-          onTransitionEnd={() => alert.deleted && closeHandler(alert.id)}
+          onClose={(_, reason) => handleClose(alert.id, reason)}
+          onTransitionEnd={() => handleDelete(alert.id)}
         >
           <Alert
-            onClose={() => closeHandler(alert.id, true)}
+            onClose={() => handleClose(alert.id)}
             severity={alert.type}
             variant="filled"
             sx={{ whiteSpace: "break-spaces" }}

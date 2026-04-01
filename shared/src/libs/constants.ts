@@ -1,3 +1,5 @@
+import { buildRoutes } from './utils';
+
 /** Name validation regex */
 export const NAME_REGEX = /^[\w ]{1,100}$/;
 /** Email validation regex */
@@ -8,6 +10,10 @@ export const PASSWORD_REGEX =
 
 export const DEV = 'development';
 export const TEST = 'test';
+
+export const REQ_LIST_DEFAULT_PAGE = 1;
+export const REQ_LIST_DEFAULT_LIMIT = 25;
+export const REQ_LIST_MAX_LIMIT = 100;
 
 /** Supported API routes */
 export const API_ROUTES = {
@@ -46,9 +52,9 @@ export const API_ROUTES = {
 
 /** Supported UI routes */
 export const UI_ROUTES = {
-  signUp: '/registration',
-  signIn: '/authorization',
-  signInGoogle: '/authorization/google',
+  signUp: '/sign-up',
+  signIn: '/sign-in',
+  signInGoogle: '/sign-in/google',
   forgotPassword: '/forgot-password',
   home: '/',
   profile: '/profile',
@@ -62,3 +68,9 @@ export const UI_ROUTES = {
   newResource: '/resources/new',
   resource: (id: string | number) => `/resources/${id}`,
 } as const;
+
+/** All supported routes */
+export const ROUTES = {
+  ui: buildRoutes(UI_ROUTES),
+  api: buildRoutes(API_ROUTES),
+};

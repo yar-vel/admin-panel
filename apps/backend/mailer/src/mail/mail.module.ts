@@ -1,6 +1,6 @@
 import { Logger, Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { PugAdapter } from '@nestjs-modules/mailer/adapters/pug.adapter';
 import * as nodemailer from 'nodemailer';
 
 import { cfg } from 'config/configuration';

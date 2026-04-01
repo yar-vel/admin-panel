@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { IRole, IUser } from "@ap/shared/dist/types";
-import { ROUTES } from "@/shared/lib/constants";
+import { IRole, IUser } from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
 
 export const UserTable: FC<Omit<DataGridProps<IUser>, "columns">> = (props) => {
   const { t } = useTranslation();
@@ -82,7 +82,6 @@ export const UserTable: FC<Omit<DataGridProps<IUser>, "columns">> = (props) => {
       isRowSelectable={(params) =>
         rights.deleting && !params.row.roles?.some((role) => role.admin)
       }
-      paginationMode="server"
       checkboxSelection
     />
   );

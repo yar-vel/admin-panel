@@ -1,46 +1,40 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { useAppDispatch } from "@/app/store/hooks";
-import { addAlert } from "@/app/store/main/main";
-import { getErrorText } from "@ap/shared/dist/libs";
+import { getErrorText, IUser, TUserCreate } from "@workspace/shared";
 import { UserForm } from "@/entities/user/UserForm";
-import { IUser } from "@ap/shared/dist/types";
-import { usersApi } from "@/entities/user/api";
-import { ROUTES } from "@/shared/lib/constants";
+import { useCreateUserMutation } from "./mutations";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
+import { ROUTES } from "@workspace/shared";
 
 export const UserCreate: FC<{ onCreate?: (data: IUser) => void }> = ({
   onCreate,
 }) => {
-  const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation();
-  const [create, createReq] = usersApi.useCreateMutation();
+  const createUser = useCreateUserMutation();
   const rights = useRights(ROUTES.api.users._);
+  const addAlert = useAlertsStore((s) => s.addAlert);
 
-  useEffect(() => {
-    if (createReq.data) {
-      dispatch(addAlert({ type: "success", text: t("success") }));
-      onCreate?.(createReq.data);
-    }
-  }, [createReq.data, dispatch, onCreate, t]);
-
-  useEffect(() => {
-    if (createReq.error) {
-      dispatch(
+  const handleCreate = (fields: TUserCreate) => {
+    createUser.mutate(fields, {
+      onSuccess: (data) => {
+        addAlert({ type: "success", text: t("success") });
+        onCreate?.(data);
+      },
+      onError: (error) =>
         addAlert({
           type: "error",
-          text: getErrorText(createReq.error, i18n.language),
+          text: getErrorText(error, i18n.language),
         }),
-      );
-    }
-  }, [createReq.error, dispatch, i18n]);
+    });
+  };
 
   return (
     <UserForm
-      onCreate={(fields) => create(fields)}
+      onCreate={handleCreate}
       createDisabled={!rights.creating}
-      createLoading={createReq.isLoading || Boolean(createReq.data)}
+      createLoading={createUser.isPending || Boolean(createUser.data)}
     />
   );
 };

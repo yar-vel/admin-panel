@@ -3,6 +3,8 @@ import { HttpStatus } from '@nestjs/common';
 
 import { adminCookies, app, userCookies, wrongId } from './app.setup';
 import {
+  API_ROUTES,
+  buildRoutes,
   IReqItems,
   IUser,
   IUsersRoles,
@@ -10,8 +12,7 @@ import {
   TUserReqList,
   TUserResList,
   TUserUpdate,
-} from '@ap/shared/dist/types';
-import { API_ROUTES, buildRoutes } from '@ap/shared/dist/libs';
+} from '@workspace/shared';
 
 const ROUTES = buildRoutes(API_ROUTES);
 
@@ -231,8 +232,6 @@ export const runUsersTests = () => {
             items: [{ roleId: role.id, userId: entity.id }],
           } satisfies IReqItems<IUsersRoles>)
           .expect(HttpStatus.NO_CONTENT);
-
-        entity.name = entity.name + entity.name;
 
         const getOneResBody = await request(app.getHttpServer())
           .get(ROUTES.users.user(entity.id))

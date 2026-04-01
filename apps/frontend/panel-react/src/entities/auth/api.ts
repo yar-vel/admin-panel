@@ -1,5 +1,5 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-
+import { fetchWithAuth } from "@/shared/api/fetchWithAuth";
+import { ROUTES } from "@workspace/shared";
 import {
   IForgotPassword,
   IResetPassword,
@@ -8,44 +8,63 @@ import {
   IUser,
   IVerifyUser,
   TSignUp,
-} from "@ap/shared/dist/types";
-import { baseQueryWithReauth } from "@/app/api/baseQueryWithReauth";
-import { authService } from "./service";
+} from "@workspace/shared";
 
-export const authApi = createApi({
-  reducerPath: "auth",
-  baseQuery: baseQueryWithReauth,
-  endpoints: (builder) => ({
-    signUp: builder.query<IUser, TSignUp>({
-      query: authService.signUpArgs,
-    }),
+export const signUp = async (payload: TSignUp): Promise<IUser> => {
+  const response = await fetchWithAuth(ROUTES.api.auth.sighUp, {
+    method: "POST",
+    body: payload,
+  });
 
-    forgotPassword: builder.query<undefined, IForgotPassword>({
-      query: authService.forgotPasswordArgs,
-    }),
+  return response.json();
+};
 
-    resetPassword: builder.query<undefined, IResetPassword>({
-      query: authService.resetPasswordArgs,
-    }),
+export const forgotPassword = async (
+  payload: IForgotPassword,
+): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.auth.forgotPassword, {
+    method: "POST",
+    body: payload,
+  });
+};
 
-    verifyUser: builder.query<undefined, IVerifyUser>({
-      query: authService.verifyUserArgs,
-    }),
+export const resetPassword = async (payload: IResetPassword): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.auth.resetPassword, {
+    method: "POST",
+    body: payload,
+  });
+};
 
-    signIn: builder.query<IUser, ISignIn>({
-      query: authService.signInArgs,
-    }),
+export const signIn = async (payload: ISignIn): Promise<IUser> => {
+  const response = await fetchWithAuth(ROUTES.api.auth.signIn, {
+    method: "POST",
+    credentials: "include",
+    body: payload,
+  });
 
-    signInGoogle: builder.query<IUser, ISignInGoogle>({
-      query: authService.signInGoogleArgs,
-    }),
+  return response.json();
+};
 
-    refresh: builder.query<undefined, void>({
-      query: authService.refreshArgs,
-    }),
+export const verifyUser = async (payload: IVerifyUser): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.auth.verifyUser, {
+    method: "POST",
+    body: payload,
+  });
+};
 
-    signOut: builder.mutation<undefined, void>({
-      query: authService.signOutArgs,
-    }),
-  }),
-});
+export const signInGoogle = async (payload: ISignInGoogle): Promise<IUser> => {
+  const response = await fetchWithAuth(ROUTES.api.auth.signInGoogle, {
+    method: "POST",
+    credentials: "include",
+    body: payload,
+  });
+
+  return response.json();
+};
+
+export const signOut = async (): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.auth.signOut, {
+    method: "DELETE",
+    credentials: "include",
+  });
+};

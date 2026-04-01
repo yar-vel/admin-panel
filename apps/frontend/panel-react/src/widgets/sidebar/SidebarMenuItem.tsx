@@ -9,8 +9,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import { usePathname, useRouter } from "next/navigation";
 
-import { IMenuItem } from "@ap/shared/dist/types";
-import { checkActiveLink } from "@ap/shared/dist/libs";
+import { checkActiveLink, IMenuItem } from "@workspace/shared";
 
 export const SidebarMenuItem: FC<IMenuItem<ReactNode>> = ({
   href,
@@ -21,10 +20,10 @@ export const SidebarMenuItem: FC<IMenuItem<ReactNode>> = ({
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(() =>
-    checkActiveLink(pathname, { href, childs })
+    checkActiveLink(pathname, { href, childs }),
   );
 
-  const linkHandler: MouseEventHandler<HTMLDivElement> = (event) => {
+  const handleLink: MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
 
     if (href) {
@@ -56,7 +55,7 @@ export const SidebarMenuItem: FC<IMenuItem<ReactNode>> = ({
         <ListItemButton
           {...(href && { href })}
           selected={selected}
-          onClick={linkHandler}
+          onClick={handleLink}
         >
           {icon && <ListItemIcon>{icon}</ListItemIcon>}
           <ListItemText primary={title} />

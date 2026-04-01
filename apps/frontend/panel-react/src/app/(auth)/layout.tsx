@@ -7,11 +7,11 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import Container from "@mui/material/Container";
-import { FC, PropsWithChildren } from "react";
+import { FC } from "react";
 
 import { theme } from "@/shared/ui/theme";
 
-const Layout: FC<PropsWithChildren> = ({ children }) => {
+const Layout: FC<LayoutProps<"/">> = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

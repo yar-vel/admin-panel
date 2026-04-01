@@ -9,6 +9,8 @@ export interface IResource {
   enabled: boolean;
   default: boolean;
   rights?: IRights[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export type TResourceCreate = Required<Pick<IResource, 'name' | 'path'>> &

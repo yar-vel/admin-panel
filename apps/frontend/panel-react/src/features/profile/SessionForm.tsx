@@ -1,4 +1,4 @@
-import { FC, FormEvent, useEffect, useRef } from "react";
+import { FC, SubmitEventHandler, useState } from "react";
 import { UAParser } from "ua-parser-js";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ComputerIcon from "@mui/icons-material/Computer";
@@ -15,62 +15,53 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { FormBase } from "@/shared/ui/form/FormBase";
-import { useAppDispatch } from "@/app/store/hooks";
-import { addAlert, setProfile } from "@/app/store/main/main";
 import { theme } from "@/shared/ui/theme";
 import { useRights } from "@/shared/hooks/useRights";
-import { TSessionExternal } from "@ap/shared/dist/types";
-import { getDateString, getErrorText } from "@ap/shared/dist/libs";
-import { profileApi } from "@/entities/profile/api";
-import { ROUTES } from "@/shared/lib/constants";
+import {
+  getDateString,
+  getErrorText,
+  TSessionExternal,
+} from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
+import { useDeleteSessionsMutation } from "./mutations";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
 
 export const SessionForm: FC<{
   session: TSessionExternal;
   onDelete?: () => void;
 }> = ({ session, onDelete }) => {
-  const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation();
   const rights = useRights(ROUTES.api.profile._);
-  const userAgent = useRef(new UAParser(session.userAgent).getResult());
-  const [remove, removeReq] = profileApi.useDeleteSessionsMutation();
+  const [userAgent] = useState(() =>
+    new UAParser(session.userAgent).getResult(),
+  );
+  const deleteSessions = useDeleteSessionsMutation();
+  const addAlert = useAlertsStore((s) => s.addAlert);
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
-    remove({ items: [session.id] });
+    deleteSessions.mutate(
+      { items: [session.id] },
+      {
+        onSuccess: () => {
+          addAlert({ type: "success", text: t("success") });
+          onDelete?.();
+        },
+        onError: (error) =>
+          addAlert({ type: "error", text: getErrorText(error, i18n.language) }),
+      },
+    );
   };
 
-  useEffect(() => {
-    if (removeReq.error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(removeReq.error, i18n.language),
-        }),
-      );
-    }
-  }, [dispatch, removeReq.error, i18n]);
-
-  useEffect(() => {
-    if (removeReq.isSuccess) {
-      dispatch(addAlert({ type: "success", text: t("success") }));
-      onDelete?.();
-
-      if (session.current) {
-        dispatch(setProfile(null));
-      }
-    }
-  }, [removeReq.isSuccess, dispatch, session, t, onDelete]);
-
   return (
-    <FormBase onSubmit={submitHandler}>
+    <FormBase onSubmit={handleSubmit}>
       <Session>
         <SessionContent>
-          {userAgent.current.device.vendor ? (
+          {userAgent.device.vendor ? (
             <>
               <SmartphoneIcon sx={{ mr: 1 }} />
               <Typography component="span" variant="body2">
-                {userAgent.current.device.vendor}{" "}
-                {userAgent.current.device.model}
+                {userAgent.device.vendor} {userAgent.device.model}
                 {","}&nbsp;
               </Typography>
             </>
@@ -78,13 +69,13 @@ export const SessionForm: FC<{
             <>
               <ComputerIcon sx={{ mr: 1 }} />
               <Typography component="span" variant="body2">
-                {userAgent.current.os.name} {userAgent.current.os.version}
+                {userAgent.os.name} {userAgent.os.version}
                 {","}&nbsp;
               </Typography>
             </>
           )}
           <Typography component="span" variant="body2">
-            {userAgent.current.browser.name} {userAgent.current.browser.version}
+            {userAgent.browser.name} {userAgent.browser.version}
             {","}&nbsp;
           </Typography>
           <Typography component="span" variant="body2" sx={{ opacity: 0.8 }}>
@@ -114,7 +105,10 @@ export const SessionForm: FC<{
             aria-label="sign out"
             title={t("signOut")}
             disabled={
-              !rights.updating || removeReq.isLoading || removeReq.isSuccess
+              !rights.updating ||
+              deleteSessions.isPending ||
+              deleteSessions.isSuccess ||
+              session.current
             }
             type="submit"
           >

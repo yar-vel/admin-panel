@@ -22,6 +22,8 @@ async function bootstrap() {
       },
     );
 
+  microservice.enableShutdownHooks();
+
   await microservice.listen();
 }
 bootstrap();

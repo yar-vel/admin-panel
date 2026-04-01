@@ -3,14 +3,14 @@
 import { FC } from "react";
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "react-i18next";
-
-import { PanelLayout } from "../PanelLayout";
-import { TPage } from "@/_pages/types";
-import { IResource, IRole } from "@ap/shared/dist/types";
-import { RoleUpdate } from "@/features/roles/RoleUpdate";
 import { useRouter } from "next/navigation";
+
+import { PanelLayout } from "@/widgets/layout/PanelLayout";
+import { TPage } from "@/_pages/types";
+import { IResource, IRole } from "@workspace/shared";
+import { RoleUpdate } from "@/features/roles/RoleUpdate";
 import { RoleRightsUpdate } from "@/features/roles/RoleRightsUpdate";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 
 export const EditRolePage: FC<
   TPage<{

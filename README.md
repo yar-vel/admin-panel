@@ -52,16 +52,20 @@ docker compose down --remove-orphans
 
 ### Additional Commands
 
-Clean install of all dependencies in `apps`, `shared` and `scripts` (pre-commit hook):
+For local development, you can install all dependencies from the root repository directory:
 
 ```sh
-npm run install:all
+npm ci # for clean install
+# or
+npm i # for install with update
 ```
 
-Run linting (with `--fix`) for all apps:
+Run linting for all apps:
 
 ```sh
-npm run lint:all
+npm run lint
+# or
+npm run lint:fix
 ```
 
 ## Microservices
@@ -81,8 +85,8 @@ In it, you can set a list of protected links, create roles with rights for links
 The service is written in [React](https://github.com/facebook/react), [Next.js](https://github.com/vercel/next.js)
 and [TypeScript](https://github.com/microsoft/TypeScript) with FSD-like structure.
 [Material UI](https://github.com/mui/material-ui) is used as the UI kit.
-[Redux Toolkit](https://github.com/reduxjs/redux-toolkit) is used as the application state manager.
-[RTK Query](https://github.com/rtk-incubator/rtk-query) is used for API requests.
+[Zustand](https://github.com/pmndrs/zustand) is used as the application state manager.
+[TanStack Query](https://github.com/TanStack/query) is used for API requests.
 
 Service folder: `apps/frontend/panel-react`.
 
@@ -209,8 +213,8 @@ ENTRYPOINT ["./custom-entrypoint.sh"]
 ## Other Folders
 
 The `shared` folder is intended to store common types, utilities, and dictionaries between the frontend and backend.
-Currently, containers are configured to use this folder (adding a dependency to `package.json` for development
-and `tsconfig.json` for build, and mounting volumes for Docker) without switching to `npm workspaces`.
+Currently, containers are configured to use this folder (adding the dependency to `package.json`
+and mounting volumes for Docker) using `npm workspaces`.
 
 The `scripts` folder currently contains only a hook for `git`, which is configured to run
 tests and linters in applications before commit, and a small script for installing it.
@@ -223,13 +227,13 @@ you'll need to edit the `.env` file. For example:
 ```sh
 # ...
 # api
-API_URL="api.${NGINX_HOST}"
+API_URL="api.${NGINX_URL}"
 # ...
 # panel-react
-PANEL_REACT_URL="${NGINX_HOST}"
+PANEL_REACT_URL="${NGINX_URL}"
 # ...
 # panel-vue
-PANEL_VUE_URL="vue.${NGINX_HOST}"
+PANEL_VUE_URL="vue.${NGINX_URL}"
 # ...
 ```
 

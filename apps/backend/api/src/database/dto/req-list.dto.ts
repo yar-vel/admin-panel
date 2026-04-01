@@ -8,10 +8,10 @@ import {
   IsString,
 } from 'class-validator';
 
-import { IReqList } from '@ap/shared/dist/types';
+import { ESortOrder, IReqList } from '@workspace/shared';
 import { toBoolean } from 'libs/utils';
 
-export class ReqListDto<T> implements IReqList<T> {
+export class ReqListDto<T extends object> implements IReqList<T> {
   @ApiPropertyOptional({ type: Number, example: 2 })
   @IsOptional()
   @Transform(({ value }) => Number(value))
@@ -33,10 +33,10 @@ export class ReqListDto<T> implements IReqList<T> {
   @ApiPropertyOptional({ type: String, example: 'someField' })
   @IsOptional()
   @IsString()
-  reqSortField?: T extends object ? keyof T : string;
+  reqSortField?: keyof T;
 
-  @ApiPropertyOptional({ type: String, example: 'ASC' })
+  @ApiPropertyOptional({ enum: ESortOrder, example: ESortOrder.ASC })
   @IsOptional()
-  @IsEnum(['ASC', 'DESC'])
-  reqSortOrder?: 'ASC' | 'DESC';
+  @IsEnum(ESortOrder)
+  reqSortOrder?: ESortOrder;
 }

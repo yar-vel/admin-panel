@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-import { ISignInGoogle } from '@ap/shared/dist/types';
+import { ISignInGoogle } from '@workspace/shared';
 
 export class SignInGoogleDto implements ISignInGoogle {
   @ApiProperty({ type: String, example: 'googleAccessToken' })

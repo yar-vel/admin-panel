@@ -1,86 +1,81 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { useAppDispatch } from "@/app/store/hooks";
-import { addAlert } from "@/app/store/main/main";
-import { IRole, TRoleUpdate } from "@ap/shared/dist/types";
-import { getErrorText, getUpdatedValues } from "@ap/shared/dist/libs";
+import {
+  getErrorText,
+  getUpdatedValues,
+  IRole,
+  TRoleUpdate,
+} from "@workspace/shared";
 import { RoleForm } from "@/entities/role/RoleForm";
-import { rolesApi } from "@/entities/role/api";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
+import { useDeleteRolesMutation, useUpdateRoleMutation } from "./mutations";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
 
 export const RoleUpdate: FC<{ data: IRole; onDelete?: () => void }> = ({
   data,
   onDelete,
 }) => {
-  const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation();
-  const [update, updateReq] = rolesApi.useUpdateMutation();
-  const [destroy, deleteReq] = rolesApi.useDeleteMutation();
-  const [cachedData, setCachedData] = useState<IRole>(data);
+  const updateRole = useUpdateRoleMutation();
+  const deleteRoles = useDeleteRolesMutation();
+  const cachedData = useRef(data);
   const rights = useRights(ROUTES.api.roles._);
+  const addAlert = useAlertsStore((s) => s.addAlert);
 
-  const updateHandler = (fields: TRoleUpdate) => {
-    const updatedValues = getUpdatedValues<TRoleUpdate>(cachedData, fields);
+  const handleUpdate = (fields: TRoleUpdate) => {
+    const updatedValues = getUpdatedValues<TRoleUpdate>(
+      cachedData.current,
+      fields,
+    );
 
-    if (Object.keys(updatedValues).length > 0) {
-      update({ id: data.id, fields: updatedValues });
-    } else {
-      dispatch(addAlert({ type: "warning", text: t("nothingToUpdate") }));
+    if (Object.keys(updatedValues).length === 0) {
+      addAlert({ type: "warning", text: t("nothingToUpdate") });
+      return;
     }
+
+    updateRole.mutate(
+      { id: data.id, fields: updatedValues },
+      {
+        onSuccess: () => {
+          addAlert({ type: "success", text: t("success") });
+          cachedData.current = { ...cachedData.current, ...updatedValues };
+        },
+        onError: (error) =>
+          addAlert({ type: "error", text: getErrorText(error, i18n.language) }),
+      },
+    );
   };
 
-  useEffect(() => {
-    if (updateReq.isSuccess) {
-      dispatch(addAlert({ type: "success", text: t("success") }));
-      setCachedData((prev) => ({ ...prev, ...updateReq.originalArgs?.fields }));
-    }
-  }, [updateReq.isSuccess, updateReq.originalArgs, dispatch, t]);
-
-  useEffect(() => {
-    if (updateReq.error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(updateReq.error, i18n.language),
-        }),
-      );
-    }
-  }, [updateReq.error, dispatch, i18n]);
-
-  useEffect(() => {
-    if (deleteReq.isSuccess) {
-      dispatch(addAlert({ type: "success", text: t("success") }));
-      onDelete?.();
-    }
-  }, [deleteReq.isSuccess, dispatch, onDelete, t]);
-
-  useEffect(() => {
-    if (deleteReq.error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(deleteReq.error, i18n.language),
-        }),
-      );
-    }
-  }, [deleteReq.error, dispatch, i18n]);
+  const handleDelete = () => {
+    deleteRoles.mutate(
+      { items: [data.id] },
+      {
+        onSuccess: () => {
+          addAlert({ type: "success", text: t("success") });
+          onDelete?.();
+        },
+        onError: (error) =>
+          addAlert({ type: "error", text: getErrorText(error, i18n.language) }),
+      },
+    );
+  };
 
   return (
     <RoleForm
       initialData={data}
-      onUpdate={(fields) => updateHandler(fields)}
+      onUpdate={handleUpdate}
       updateDisabled={
         !rights.updating ||
         data.default ||
-        deleteReq.isLoading ||
-        deleteReq.isSuccess
+        deleteRoles.isPending ||
+        deleteRoles.isSuccess
       }
-      updateLoading={updateReq.isLoading}
-      onDelete={() => destroy({ items: [data.id] })}
-      deleteDisabled={!rights.deleting || deleteReq.isSuccess || data.default}
-      deleteLoading={deleteReq.isLoading}
+      updateLoading={updateRole.isPending}
+      onDelete={handleDelete}
+      deleteDisabled={!rights.deleting || deleteRoles.isSuccess || data.default}
+      deleteLoading={deleteRoles.isPending}
     />
   );
 };

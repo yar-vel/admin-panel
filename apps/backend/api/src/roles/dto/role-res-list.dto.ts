@@ -4,7 +4,7 @@ import { IsArray, ValidateNested } from 'class-validator';
 
 import { ResListDto } from 'src/database/dto/res-list.dto';
 import { RoleExternalDto } from './role-external.dto';
-import { TRoleResList } from '@ap/shared/dist/types';
+import { TRoleResList } from '@workspace/shared';
 
 export class RoleResListDto
   extends ResListDto<RoleExternalDto>

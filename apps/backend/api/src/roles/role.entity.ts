@@ -1,14 +1,16 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { UserEntity } from '../users/user.entity';
 import { RightsEntity } from 'src/database/rights.entity';
-import { IRole } from '@ap/shared/dist/types';
+import { IRole } from '@workspace/shared';
 import { EmptyStringToNull } from 'src/database/database.utils';
 
 @Entity('roles')
@@ -41,4 +43,10 @@ export class RoleEntity implements IRole {
 
   @OneToMany(() => RightsEntity, (rights) => rights.role)
   rights?: RightsEntity[];
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt?: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt?: Date;
 }

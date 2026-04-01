@@ -51,7 +51,7 @@ services:
     restart: unless-stopped
     environment:
       - TZ
-      - NGINX_HOST
+      - NGINX_URL
       - NGINX_PORT
       - NGINX_SSL_PORT
       - API_HOST
@@ -75,7 +75,7 @@ services:
       - API_URL
       - API_ACCESS_TOKEN_LIFETIME
       - API_REFRESH_TOKEN_LIFETIME
-      - NGINX_HOST
+      - NGINX_URL
       - PANEL_REACT_URL
       - PANEL_VUE_URL
       - RABBITMQ_HOST
@@ -125,17 +125,17 @@ services:
         - API_HOST
         - API_PORT
         - API_URL
-        - NGINX_HOST
         - NGINX_PORT
+        - NGINX_URL
         - GOOGLE_CLIENT_ID
     restart: unless-stopped
     deploy:
       resources:
         limits:
-          cpus: '1.000'
-          memory: 1024M
+          cpus: '1.0'
+          memory: 1G
         reservations:
-          cpus: '0.250'
+          cpus: '0.25'
           memory: 256M
   panel-vue:
     build:
@@ -146,15 +146,15 @@ services:
         - API_HOST
         - API_PORT
         - API_URL
-        - NGINX_HOST
         - NGINX_PORT
+        - NGINX_URL
         - GOOGLE_CLIENT_ID
     restart: unless-stopped
     deploy:
       resources:
         limits:
-          cpus: '1.000'
-          memory: 1024M
+          cpus: '1.0'
+          memory: 1G
         reservations:
-          cpus: '0.250'
+          cpus: '0.25'
           memory: 256M

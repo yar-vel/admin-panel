@@ -1,18 +1,12 @@
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import { dictionary, getT } from '@workspace/shared'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
-    '@nuxt/eslint',
-    '@nuxt/test-utils/module',
     '@pinia/nuxt',
+    'vuetify-nuxt-module',
     '@nuxtjs/i18n',
-    (_options, nuxt) => {
-      nuxt.hooks.hook('vite:extendConfig', (config) => {
-        // @ts-expect-error: Vuetify Error
-        config.plugins.push(vuetify({ autoImport: true }))
-      })
-    },
+    '@nuxt/eslint',
   ],
   components: [
     {
@@ -40,27 +34,32 @@ export default defineNuxtConfig({
       googleClientId: process.env.GOOGLE_CLIENT_ID || '',
     },
   },
-  build: {
-    transpile: ['vuetify'],
-  },
-  compatibilityDate: '2024-11-01',
+  build: { transpile: ['@workspace/shared'] },
+  compatibilityDate: '2025-07-15',
   vite: {
-    server: {
-      allowedHosts: [
-        process.env.PANEL_VUE_URL?.startsWith('/')
-          ? `${process.env.NGINX_HOST}:${process.env.NGINX_PORT}`
-          : process.env.PANEL_VUE_URL || 'localhost',
+    optimizeDeps: {
+      include: [
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
       ],
-    },
-    vue: {
-      template: {
-        transformAssetUrls,
-      },
     },
   },
   eslint: {
     config: {
       stylistic: true,
+    },
+  },
+  i18n: {
+    strategy: 'no_prefix',
+    defaultLocale: getT().langCode,
+    locales: Object.values(dictionary).map(l => ({
+      code: l.langCode,
+      name: l.langName,
+    })),
+  },
+  vuetify: {
+    vuetifyOptions: {
+      theme: { defaultTheme: 'dark' },
     },
   },
 })

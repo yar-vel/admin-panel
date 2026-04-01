@@ -7,7 +7,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { usePathname, useRouter } from "next/navigation";
-import { FC, PropsWithChildren, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -17,48 +17,39 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import Divider from "@mui/material/Divider";
 import { useTranslation } from "react-i18next";
 
-import { useAppSelector } from "@/app/store/hooks";
 import { theme, sideBarOpenedWidth, sideBarWidth } from "@/shared/ui/theme";
-import { useAppDispatch } from "@/app/store/hooks";
-import { addAlert, setProfile } from "@/app/store/main/main";
 import { SideBar } from "@/widgets/sidebar/Sidebar";
 import { LayoutAlerts } from "@/widgets/alerts/LayoutAlerts";
-import { getErrorText } from "@ap/shared/dist/libs";
-import { authApi } from "@/entities/auth/api";
-import { ROUTES } from "@/shared/lib/constants";
+import { getErrorText } from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
+import { useProfileStore } from "@/entities/profile/store";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
+import { useSignOutMutation } from "@/features/auth/mutations";
 
-const Layout: FC<PropsWithChildren> = ({ children }) => {
-  const dispatch = useAppDispatch();
+const Layout: FC<LayoutProps<"/">> = ({ children }) => {
   const router = useRouter();
   const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(true);
-  const [signOut, { isSuccess, error, isLoading }] =
-    authApi.useSignOutMutation();
-  const profile = useAppSelector((store) => store.main.profile);
+  const signOut = useSignOutMutation();
+  const profile = useProfileStore((s) => s.profile);
+  const isProfileChecked = useProfileStore((s) => s.isProfileChecked);
+  const setProfile = useProfileStore((s) => s.setProfile);
+  const addAlert = useAlertsStore((s) => s.addAlert);
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!profile) {
-      signOut();
-    }
-  }, [profile, signOut]);
-
-  useEffect(() => {
-    if (isSuccess || (error && "status" in error && error.status === 401)) {
+    if (isProfileChecked && !profile) {
       router.push(`${ROUTES.ui.signIn}?return=${encodeURIComponent(pathname)}`);
     }
-  }, [isSuccess, router, pathname, error]);
+  }, [isProfileChecked, profile, router, pathname]);
 
-  useEffect(() => {
-    if (error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(error, i18n.language),
-        }),
-      );
-    }
-  }, [dispatch, error, i18n]);
+  const handleSignOut = () => {
+    signOut.mutate(undefined, {
+      onSuccess: () => setProfile(null),
+      onError: (error) =>
+        addAlert({ type: "error", text: getErrorText(error, i18n.language) }),
+    });
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -87,8 +78,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 color="error"
                 aria-label="sign out"
                 title={t("signOut")}
-                disabled={isLoading || isSuccess}
-                onClick={() => dispatch(setProfile(null))}
+                disabled={signOut.isPending || signOut.isSuccess}
+                onClick={handleSignOut}
               >
                 <LogoutIcon />
               </IconButton>

@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, SubmitEventHandler, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -12,7 +12,7 @@ import {
   IResource,
   TResourceCreate,
   TResourceUpdate,
-} from "@ap/shared/dist/types";
+} from "@workspace/shared";
 import { IEntityForm } from "@/shared/lib/types";
 
 export const ResourceForm: FC<
@@ -31,17 +31,18 @@ export const ResourceForm: FC<
 }) => {
   const { t } = useTranslation();
   const [data, setData] = useState<IResource>(
-    initialData ?? {
-      id: "",
-      name: "",
-      path: "",
-      description: "",
-      default: false,
-      enabled: false,
-    },
+    () =>
+      initialData ?? {
+        id: "",
+        name: "",
+        path: "",
+        description: "",
+        default: false,
+        enabled: false,
+      },
   );
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     onCreate?.({
       name: data.name,
@@ -58,7 +59,7 @@ export const ResourceForm: FC<
   };
 
   return (
-    <FormBase onSubmit={submitHandler}>
+    <FormBase onSubmit={handleSubmit}>
       <FormField
         required
         name="name"
@@ -76,7 +77,7 @@ export const ResourceForm: FC<
       <FormField
         name="description"
         label={t("description")}
-        value={data.description}
+        value={data.description ?? ""}
         onChange={(event) =>
           setData({ ...data, description: event.target.value })
         }

@@ -6,4 +6,9 @@ export default withNuxt({
     'vue/valid-v-slot': 'warn',
     'vue/no-multiple-template-root': 'off',
   },
+  languageOptions: {
+    parserOptions: {
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
 })

@@ -1,7 +1,7 @@
 import { IntersectionType, PartialType, PickType } from '@nestjs/swagger';
 
 import { RoleDto } from './role.dto';
-import { TRoleCreate } from '@ap/shared/dist/types';
+import { TRoleCreate } from '@workspace/shared';
 
 export class RoleCreateDto
   extends IntersectionType(

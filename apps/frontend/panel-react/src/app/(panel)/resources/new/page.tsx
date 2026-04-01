@@ -13,7 +13,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const Page: FC = async () => {
+const Page: FC<PageProps<"/resources/new">> = async () => {
   const t = await getServerT();
 
   return <CreateResourcePage h1={t("newResource")} />;

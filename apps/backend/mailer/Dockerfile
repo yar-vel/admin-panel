@@ -1,29 +1,36 @@
-FROM node:lts-alpine AS base
-ARG APP_DIR=/usr/src/app
-ARG HOST_DIR=/apps/backend/mailer
-ARG HOME_DIR=${APP_DIR}${HOST_DIR}
-WORKDIR ${HOME_DIR}
-COPY ${HOST_DIR}/package*.json .
-COPY ./shared ${APP_DIR}/shared
+FROM node:24-alpine AS base
+RUN apk add --no-cache libc6-compat
+ARG ROOT_DIR=/usr/src/app
+ARG APP_DIR=apps/backend/mailer
+WORKDIR ${ROOT_DIR}
+COPY ./package*.json ./
+COPY ./shared/package*.json ./shared/
+COPY ./${APP_DIR}/package*.json ./${APP_DIR}/
 
-FROM base AS development
+FROM base AS dependencies
+RUN npm ci -w mailer --include-workspace-root
+
+FROM dependencies AS code
+COPY ./shared ./shared/
+COPY ./${APP_DIR} ./${APP_DIR}/
+
+FROM code AS development
 ENV NODE_ENV=development
-RUN npm install
+WORKDIR ${ROOT_DIR}/${APP_DIR}
 CMD ["npm", "run", "start:dev"]
 
-FROM base AS builder
-RUN apk add --no-cache libc6-compat
-RUN npm ci
-COPY ${HOST_DIR} .
-RUN npm run build
-RUN npm prune --production
+FROM code AS builder
+RUN npm run build -w @workspace/shared -w mailer
+RUN npm ci --omit=dev -w mailer
 
 FROM base AS production
 ENV NODE_ENV=production
 ARG USER=node
 ARG GROUP=node
-COPY --from=builder --chown=${USER}:${GROUP} ${HOME_DIR}/node_modules ./node_modules
-COPY --from=builder --chown=${USER}:${GROUP} ${HOME_DIR}/dist ./dist
-COPY --from=builder --chown=${USER}:${GROUP} ${HOME_DIR}/templates ./templates
+COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/shared/dist ./shared/dist
+COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/node_modules ./node_modules
+COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/${APP_DIR}/dist ./${APP_DIR}/dist
+COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/${APP_DIR}/templates ./${APP_DIR}/templates
 USER ${USER}
+WORKDIR ${ROOT_DIR}/${APP_DIR}
 ENTRYPOINT ["node", "./dist/src/main.js"]

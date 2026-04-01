@@ -1,21 +1,20 @@
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
-import { FC, PropsWithChildren } from "react";
-import { headers } from "next/headers";
+import { FC } from "react";
 
-import { StoreProvider } from "./store/StoreProvider";
-import { I18nClientProvider } from "./I18nClientProvider";
+import { I18nClientProvider } from "./providers/I18nClientProvider";
+import { AuthProvider } from "./providers/AuthProvider";
+import { TanstackQueryProvider } from "./providers/TanstackQueryProvider";
 
-const Layout: FC<PropsWithChildren> = async ({ children }) => {
-  const headersList = await headers();
-  const profileJson = headersList.get("store-profile");
-
+const Layout: FC<LayoutProps<"/">> = ({ children }) => {
   return (
     <html lang="en">
       <body>
         <I18nClientProvider>
-          <StoreProvider profileJson={profileJson}>
-            <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
-          </StoreProvider>
+          <TanstackQueryProvider>
+            <AuthProvider>
+              <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
+            </AuthProvider>
+          </TanstackQueryProvider>
         </I18nClientProvider>
       </body>
     </html>

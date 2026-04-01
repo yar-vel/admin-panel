@@ -1,11 +1,17 @@
 import { FC } from "react";
 import { Metadata } from "next/types";
-import { notFound } from "next/navigation";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 
-import { IAppPage } from "@/app/types";
 import { ListRolesPage } from "@/_pages/panel/roles/ListRolesPage";
-import { rolesService } from "@/entities/role/service";
 import { getServerT } from "@/shared/config/i18n/server";
+import { handleServerError } from "@/shared/api/handleServerError";
+import { roleListQueryOptions } from "@/entities/role/queries";
+import { getServerHeaders } from "@/shared/api/getServerHeaders ";
+import { roleReqListSchema } from "@workspace/shared";
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = await getServerT();
@@ -16,14 +22,23 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const Page: FC<IAppPage> = async ({ searchParams }) => {
+const Page: FC<PageProps<"/roles">> = async ({ searchParams }) => {
   const t = await getServerT();
-  const { data } = await rolesService.getList(await searchParams);
+  const queryClient = new QueryClient();
+  const params = roleReqListSchema.parse({
+    ...(await searchParams),
+    reqCount: true,
+  });
+  const data = await handleServerError(async () =>
+    queryClient.ensureQueryData(
+      roleListQueryOptions(params, undefined, await getServerHeaders()),
+    ),
+  );
 
-  if (data) {
-    return <ListRolesPage data={data} h1={t("roles")} />;
-  }
-
-  return notFound();
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ListRolesPage h1={t("roles")} data={data} />
+    </HydrationBoundary>
+  );
 };
 export default Page;

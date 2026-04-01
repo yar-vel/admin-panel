@@ -1,6 +1,4 @@
-import { FC, FormEvent, useEffect, useMemo, useState } from "react";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { useRouter } from "next/navigation";
+import { FC, SubmitEventHandler, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { FormBase } from "@/shared/ui/form/FormBase";
@@ -17,12 +15,12 @@ import {
   NAME_REGEX,
   PASSWORD_REGEX,
   testString,
-} from "@ap/shared/dist/libs";
-import { authApi } from "@/entities/auth/api";
-import { ROUTES } from "@/shared/lib/constants";
+} from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
+import { useSignUpMutation } from "./mutations";
+import { FetchError } from "@/shared/api/FetchError";
 
-export const SignUpForm: FC = () => {
-  const router = useRouter();
+export const SignUpForm: FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
   const { t, i18n } = useTranslation();
   const [name, setName] = useState("");
   const nameIsValid = useMemo(() => testString(NAME_REGEX, name), [name]);
@@ -34,54 +32,44 @@ export const SignUpForm: FC = () => {
     [password],
   );
   const [successModal, setSuccessModal] = useState(false);
-  const [errorText, setErrorText] = useState<string | null>(null);
-  const [signUp, { data, error, isLoading }] = authApi.useLazySignUpQuery();
+  const signUp = useSignUpMutation();
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const errorText = useMemo(() => {
+    if (signUp.error instanceof FetchError) {
+      switch (signUp.error.status) {
+        case 409:
+          return t("userAlreadyExist");
+        default:
+          return getErrorText(signUp.error, i18n.language);
+      }
+    }
+
+    return null;
+  }, [t, i18n, signUp.error]);
+
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
     if (nameIsValid && emailIsValid && passwordIsValid) {
-      signUp({
-        name: name.trim(),
-        email: email.trim(),
-        password,
-      });
+      signUp.mutate(
+        {
+          name: name.trim(),
+          email: email.trim(),
+          password,
+        },
+        { onSuccess: () => setSuccessModal(true) },
+      );
     }
   };
 
-  const successHandler = () => {
+  const handleSuccess = () => {
     setSuccessModal(false);
-    router.push(ROUTES.ui.signIn);
+    onSuccess?.();
   };
-
-  useEffect(() => {
-    if (isLoading) {
-      setErrorText(null);
-    }
-  }, [isLoading]);
-
-  useEffect(() => {
-    if (error) {
-      switch ((error as FetchBaseQueryError).status) {
-        case 409:
-          setErrorText(t("userAlreadyExist"));
-          break;
-        default:
-          setErrorText(getErrorText(error, i18n.language));
-          break;
-      }
-    }
-  }, [error, t, i18n]);
-
-  useEffect(() => {
-    if (data) {
-      setSuccessModal(true);
-    }
-  }, [data]);
 
   return (
     <>
-      <FormBase onSubmit={submitHandler}>
+      <FormBase onSubmit={handleSubmit}>
         {errorText && <FormAlert severity="error">{errorText}</FormAlert>}
         <FormField
           required
@@ -115,7 +103,7 @@ export const SignUpForm: FC = () => {
           color={passwordIsValid ? "success" : "error"}
           error={!passwordIsValid && password.length > 0}
         />
-        <FormButton type="submit" fullWidth loading={isLoading}>
+        <FormButton type="submit" fullWidth loading={signUp.isPending}>
           {t("signUp")}
         </FormButton>
         <FormLink href={ROUTES.ui.signIn} mui={{ align: "center" }}>
@@ -130,7 +118,7 @@ export const SignUpForm: FC = () => {
         title={t("registration")}
         onClose={() => setSuccessModal(false)}
       >
-        <SignUpSuccessForm onClose={successHandler} />
+        <SignUpSuccessForm onClose={handleSuccess} />
       </CustomModal>
     </>
   );

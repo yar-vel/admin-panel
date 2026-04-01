@@ -9,8 +9,8 @@ import ApiIcon from "@mui/icons-material/Api";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { IMenuItem } from "@ap/shared/dist/types";
-import { ROUTES } from "@/shared/lib/constants";
+import { IMenuItem } from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
 import { SidebarMenuItem } from "./SidebarMenuItem";
 
 export const SideBarMenu: FC = () => {

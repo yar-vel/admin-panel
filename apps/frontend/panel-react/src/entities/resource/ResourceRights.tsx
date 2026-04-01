@@ -8,7 +8,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { FormCheckbox } from "@/shared/ui/form/FormCheckbox";
-import { IResource, IRights } from "@ap/shared/dist/types";
+import { IResource, IRights } from "@workspace/shared";
 
 export const ResourceRights: FC<{
   roleId: string;

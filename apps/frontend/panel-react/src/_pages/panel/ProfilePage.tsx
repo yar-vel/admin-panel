@@ -4,7 +4,7 @@ import { FC } from "react";
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "react-i18next";
 
-import { PanelLayout } from "./PanelLayout";
+import { PanelLayout } from "@/widgets/layout/PanelLayout";
 import { UpdateProfileForm } from "@/features/profile/UpdateProfileForm";
 import { TPage } from "../types";
 import { ProfileSessions } from "@/features/profile/ProfileSessions";

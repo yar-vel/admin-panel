@@ -25,9 +25,12 @@ import { ResourceUpdateDto } from './dto/resource-update.dto';
 import { ReqItemsDto } from 'src/database/dto/req-items.dto';
 import { ResourceExternalDto } from './dto/resource-external.dto';
 import { ResourceResListDto } from './dto/resource-res-list.dto';
-import { getT } from '@ap/shared/dist/locales';
-import { IResource, TResourceResList } from '@ap/shared/dist/types';
-import { API_ROUTES } from '@ap/shared/dist/libs';
+import {
+  getT,
+  IResource,
+  TResourceResList,
+  API_ROUTES,
+} from '@workspace/shared';
 
 const route = API_ROUTES.resources._;
 

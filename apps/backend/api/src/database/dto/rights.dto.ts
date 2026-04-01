@@ -4,7 +4,7 @@ import { Type } from 'class-transformer';
 
 import { RoleDto } from 'src/roles/dto/role.dto';
 import { ResourceDto } from 'src/resources/dto/resource.dto';
-import { IResource, IRights, IRole } from '@ap/shared/dist/types';
+import { IResource, IRights, IRole } from '@workspace/shared';
 
 export class RightsDto implements IRights {
   @ApiProperty({

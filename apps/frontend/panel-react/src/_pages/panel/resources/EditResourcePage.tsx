@@ -3,11 +3,11 @@
 import { FC } from "react";
 import { useRouter } from "next/navigation";
 
-import { PanelLayout } from "../PanelLayout";
+import { PanelLayout } from "@/widgets/layout/PanelLayout";
 import { TPage } from "@/_pages/types";
-import { IResource } from "@ap/shared/dist/types";
+import { IResource } from "@workspace/shared";
 import { ResourceUpdate } from "@/features/resources/ResourceUpdate";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 
 export const EditResourcePage: FC<TPage<IResource>> = ({ h1, data }) => {
   const router = useRouter();

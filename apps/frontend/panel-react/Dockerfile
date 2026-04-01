@@ -1,36 +1,40 @@
-FROM node:lts-alpine AS base
+FROM node:24-alpine AS base
+RUN apk add --no-cache libc6-compat
+ARG ROOT_DIR=/usr/src/app
+ARG APP_DIR=apps/frontend/panel-react
+WORKDIR ${ROOT_DIR}
+COPY ./package*.json ./
+COPY ./shared/package*.json ./shared/
+COPY ./${APP_DIR}/package*.json ./${APP_DIR}/
 ENV NEXT_TELEMETRY_DISABLED=1
-ARG APP_DIR=/usr/src/app
-ARG HOST_DIR=/apps/frontend/panel-react
-ARG HOME_DIR=${APP_DIR}${HOST_DIR}
-WORKDIR ${HOME_DIR}
-COPY ${HOST_DIR}/package*.json .
-COPY ./shared ${APP_DIR}/shared
 
-FROM base AS development
+FROM base AS dependencies
+RUN npm ci -w panel-react --include-workspace-root
+
+FROM dependencies AS code
+COPY ./shared ./shared/
+COPY ./${APP_DIR} ./${APP_DIR}/
+
+FROM code AS development
 ENV NODE_ENV=development
-# NOTE: Windows hot reload fix
-ENV WATCHPACK_POLLING=true
-RUN npm install
-CMD ["npx", "next", "dev"]
+WORKDIR ${ROOT_DIR}/${APP_DIR}
+CMD ["npm", "run", "dev"]
 
-FROM base AS builder
+FROM code AS builder
 ARG PANEL_REACT_URL
 ARG API_HOST
 ARG API_PORT
 ARG API_URL
 ARG GOOGLE_CLIENT_ID
-RUN apk add --no-cache libc6-compat
-RUN npm ci
-COPY ${HOST_DIR} .
-RUN npm run build
+RUN npm run build -w @workspace/shared -w panel-react
 
 FROM base AS production
 ENV NODE_ENV=production
 ARG USER=node
 ARG GROUP=node
-COPY --from=builder ${HOME_DIR}/public ./public
-COPY --from=builder --chown=${USER}:${GROUP} ${HOME_DIR}/.next/standalone ./
-COPY --from=builder --chown=${USER}:${GROUP} ${HOME_DIR}/.next/static ./.next/static
+COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/${APP_DIR}/.next/standalone ./
+COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/${APP_DIR}/.next/static ./${APP_DIR}/.next/static
+COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/${APP_DIR}/public ./${APP_DIR}/public
 USER ${USER}
+WORKDIR ${ROOT_DIR}/${APP_DIR}
 ENTRYPOINT ["node", "server.js"]

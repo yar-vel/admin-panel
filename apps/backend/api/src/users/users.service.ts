@@ -26,6 +26,7 @@ import { createHash } from 'libs/utils';
 import { RoleEntity } from 'src/roles/role.entity';
 import { UsersRolesEntity } from 'src/database/users-roles.entity';
 import {
+  getField,
   IUsersRoles,
   TUserCreate,
   TUserUpdate,
@@ -34,8 +35,7 @@ import {
   IRole,
   IUser,
   TUserCreateGoogle,
-} from '@ap/shared/dist/types';
-import { getField } from '@ap/shared/dist/libs';
+} from '@workspace/shared';
 
 @Injectable()
 export class UsersService {
@@ -148,11 +148,6 @@ export class UsersService {
     options.relations = { roles: true };
     options.where = {};
     meta.filters = {};
-
-    if (fields?.reqSortField && fields.reqSortOrder) {
-      options.order = { [fields.reqSortField]: fields.reqSortOrder };
-      meta.sort = { field: fields.reqSortField, order: fields.reqSortOrder };
-    }
 
     if (fields?.name) {
       options.where.name = ILike(`%${fields.name}%`);

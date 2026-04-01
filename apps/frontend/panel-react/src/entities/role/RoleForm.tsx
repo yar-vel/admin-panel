@@ -1,4 +1,4 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, SubmitEventHandler, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -8,7 +8,7 @@ import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormField } from "@/shared/ui/form/FormField";
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { FormCheckbox } from "@/shared/ui/form/FormCheckbox";
-import { IRole, TRoleCreate, TRoleUpdate } from "@ap/shared/dist/types";
+import { IRole, TRoleCreate, TRoleUpdate } from "@workspace/shared";
 import { IEntityForm } from "@/shared/lib/types";
 
 export const RoleForm: FC<IEntityForm<IRole, TRoleCreate, TRoleUpdate>> = ({
@@ -25,17 +25,18 @@ export const RoleForm: FC<IEntityForm<IRole, TRoleCreate, TRoleUpdate>> = ({
 }) => {
   const { t } = useTranslation();
   const [data, setData] = useState<IRole>(
-    initialData ?? {
-      id: "",
-      name: "",
-      description: "",
-      default: false,
-      enabled: false,
-      admin: false,
-    },
+    () =>
+      initialData ?? {
+        id: "",
+        name: "",
+        description: "",
+        default: false,
+        enabled: false,
+        admin: false,
+      },
   );
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     onCreate?.({
       name: data.name,
@@ -50,7 +51,7 @@ export const RoleForm: FC<IEntityForm<IRole, TRoleCreate, TRoleUpdate>> = ({
   };
 
   return (
-    <FormBase onSubmit={submitHandler}>
+    <FormBase onSubmit={handleSubmit}>
       <FormField
         required
         name="name"
@@ -61,7 +62,7 @@ export const RoleForm: FC<IEntityForm<IRole, TRoleCreate, TRoleUpdate>> = ({
       <FormField
         name="description"
         label={t("description")}
-        value={data.description}
+        value={data.description ?? ""}
         onChange={(event) =>
           setData({ ...data, description: event.target.value })
         }

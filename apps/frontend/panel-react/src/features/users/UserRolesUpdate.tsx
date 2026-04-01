@@ -1,53 +1,41 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { useAppDispatch } from "@/app/store/hooks";
-import { addAlert } from "@/app/store/main/main";
-import { IRole, IUser } from "@ap/shared/dist/types";
-import { getErrorText } from "@ap/shared/dist/libs";
+import { getErrorText, IRole, IUser } from "@workspace/shared";
 import { UserRolesForm } from "@/entities/user/UserRolesForm";
-import { usersApi } from "@/entities/user/api";
-import { ROUTES } from "@/shared/lib/constants";
+import { useUpdateUserRolesMutation } from "./mutations";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
+import { ROUTES } from "@workspace/shared";
 
 export const UserRolesUpdate: FC<{
   user: IUser;
   roles: IRole[];
 }> = ({ user, roles }) => {
-  const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation();
-  const [update, updateReq] = usersApi.useUpdateRolesMutation();
+  const updateUserRoles = useUpdateUserRolesMutation();
   const rights = useRights(ROUTES.api.users._);
-
-  useEffect(() => {
-    if (updateReq.isSuccess) {
-      dispatch(addAlert({ type: "success", text: t("success") }));
-    }
-  }, [updateReq.isSuccess, dispatch, t]);
-
-  useEffect(() => {
-    if (updateReq.error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(updateReq.error, i18n.language),
-        }),
-      );
-    }
-  }, [updateReq.error, dispatch, i18n]);
+  const addAlert = useAlertsStore((s) => s.addAlert);
 
   return (
     <UserRolesForm
       user={user}
       roles={roles}
       onUpdate={(newUserRoles) =>
-        update({
-          id: user.id,
-          fields: { items: newUserRoles },
-        })
+        updateUserRoles.mutate(
+          { id: user.id, fields: { items: newUserRoles } },
+          {
+            onSuccess: () => addAlert({ type: "success", text: t("success") }),
+            onError: (error) =>
+              addAlert({
+                type: "error",
+                text: getErrorText(error, i18n.language),
+              }),
+          },
+        )
       }
       updateDisabled={!rights.updating}
-      updateLoading={updateReq.isLoading}
+      updateLoading={updateUserRoles.isPending}
     />
   );
 };

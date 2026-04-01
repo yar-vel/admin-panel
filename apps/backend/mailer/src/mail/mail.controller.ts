@@ -3,7 +3,7 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 
 import { EmailCodeDto } from './dto/email-code.dto';
 import { cfg } from 'config/configuration';
-import { IQueuePattern } from '@ap/shared/dist/types';
+import { IQueuePattern } from '@workspace/shared';
 import { MailService } from './mail.service';
 
 @Controller()

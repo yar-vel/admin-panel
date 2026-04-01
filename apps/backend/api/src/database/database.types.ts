@@ -1,6 +1,6 @@
 import { FindManyOptions } from 'typeorm';
 
-export type TDatabaseGetList<T = unknown> = Required<
-  Pick<FindManyOptions, 'skip' | 'take'>
-> &
-  Pick<FindManyOptions<T>, 'where' | 'order' | 'relations'>;
+export type TDatabaseGetList<T = unknown> = Pick<
+  FindManyOptions<T>,
+  'skip' | 'take' | 'where' | 'order' | 'relations'
+>;

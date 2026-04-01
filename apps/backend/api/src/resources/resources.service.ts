@@ -12,13 +12,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ResourceEntity } from './resource.entity';
 import { DatabaseService } from 'src/database/database.service';
 import {
+  getField,
   TResourceCreate,
   TResourceUpdate,
   TResourceReqList,
   TResourceResList,
   IResource,
-} from '@ap/shared/dist/types';
-import { getField } from '@ap/shared/dist/libs';
+} from '@workspace/shared';
 
 @Injectable()
 export class ResourcesService {
@@ -76,11 +76,6 @@ export class ResourcesService {
       this.databaseService.buildGetListOptions<ResourceEntity>(fields);
     options.where = {};
     meta.filters = {};
-
-    if (fields?.reqSortField && fields.reqSortOrder) {
-      options.order = { [fields.reqSortField]: fields.reqSortOrder };
-      meta.sort = { field: fields.reqSortField, order: fields.reqSortOrder };
-    }
 
     if (fields?.name) {
       options.where.name = ILike(`%${fields.name}%`);

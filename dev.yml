@@ -53,10 +53,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.200'
+          cpus: '0.2'
           memory: 256M
         reservations:
-          cpus: '0.050'
+          cpus: '0.05'
           memory: 64M
     logging:
       driver: "json-file"
@@ -94,9 +94,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ./apps/backend/api:/usr/src/app/apps/backend/api
       - ./shared:/usr/src/app/shared
-      - api-node-modules:/usr/src/app/apps/backend/api/node_modules
+      - ./apps/backend/api:/usr/src/app/apps/backend/api
+      - api-node-modules:/usr/src/app/node_modules
   mailer:
     build:
       target: development
@@ -104,9 +104,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ./apps/backend/mailer:/usr/src/app/apps/backend/mailer
       - ./shared:/usr/src/app/shared
-      - mailer-node-modules:/usr/src/app/apps/backend/mailer/node_modules
+      - ./apps/backend/mailer:/usr/src/app/apps/backend/mailer
+      - mailer-node-modules:/usr/src/app/node_modules
   panel-react:
     build:
       target: development
@@ -114,17 +114,17 @@ services:
     env_file:
       - .env
     volumes:
-      - ./apps/frontend/panel-react:/usr/src/app/apps/frontend/panel-react
       - ./shared:/usr/src/app/shared
-      - panel-react-node-modules:/usr/src/app/apps/frontend/panel-react/node_modules
+      - ./apps/frontend/panel-react:/usr/src/app/apps/frontend/panel-react
+      - panel-react-node-modules:/usr/src/app/node_modules
     deploy:
       resources:
         limits:
-          cpus: '4.000'
-          memory: 4096M
+          cpus: '4.0'
+          memory: 4G
         reservations:
-          cpus: '1.000'
-          memory: 1024M
+          cpus: '1.0'
+          memory: 1G
   panel-vue:
     build:
       target: development
@@ -132,14 +132,14 @@ services:
     env_file:
       - .env
     volumes:
-      - ./apps/frontend/panel-vue:/usr/src/app/apps/frontend/panel-vue
       - ./shared:/usr/src/app/shared
-      - panel-vue-node-modules:/usr/src/app/apps/frontend/panel-vue/node_modules
+      - ./apps/frontend/panel-vue:/usr/src/app/apps/frontend/panel-vue
+      - panel-vue-node-modules:/usr/src/app/node_modules
     deploy:
       resources:
         limits:
-          cpus: '4.000'
-          memory: 4096M
+          cpus: '4.0'
+          memory: 4G
         reservations:
-          cpus: '1.000'
-          memory: 1024M
+          cpus: '1.0'
+          memory: 1G

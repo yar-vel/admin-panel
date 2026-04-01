@@ -1,27 +1,40 @@
-export interface IReqList<T = unknown> {
+export interface IReqList<T extends object> {
   reqLimit?: number;
   reqPage?: number;
   reqCount?: boolean;
-  reqSortField?: T extends object ? keyof T : string;
-  reqSortOrder?: 'ASC' | 'DESC';
+  reqSortField?: keyof T;
+  reqSortOrder?: ESortOrder;
 }
 
-export interface IResList<T = unknown, S = T, F = T> {
+export interface IResList<
+  T extends object,
+  S extends object = T,
+  F extends object = T,
+> {
   rows: T[];
   meta?: IResListMeta<T, S, F>;
 }
 
-export interface IResListMeta<T = unknown, S = T, F = T> {
+export interface IResListMeta<
+  T extends object,
+  S extends object = T,
+  F extends object = T,
+> {
   page?: number;
   limit?: number;
   total?: number;
   sort?: ISort<S>;
-  filters?: F extends object ? Partial<F> : { [K: string]: unknown };
+  filters?: Partial<F>;
 }
 
-export interface ISort<T = unknown> {
-  field: T extends object ? keyof T : string;
-  order: 'ASC' | 'DESC';
+export interface ISort<T extends object> {
+  field: keyof T;
+  order: ESortOrder;
+}
+
+export enum ESortOrder {
+  ASC = 'ASC',
+  DESC = 'DESC',
 }
 
 export interface IReqItems<T = string | number> {

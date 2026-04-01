@@ -1,11 +1,19 @@
 import { IntersectionType, PartialType, PickType } from '@nestjs/swagger';
 
 import { ResourceDto } from './resource.dto';
-import { IResource } from '@ap/shared/dist/types';
+import { IResource } from '@workspace/shared';
 
 export class ResourceExternalDto
   extends IntersectionType(
-    PickType(ResourceDto, ['id', 'name', 'path', 'enabled', 'default']),
+    PickType(ResourceDto, [
+      'id',
+      'name',
+      'path',
+      'enabled',
+      'default',
+      'createdAt',
+      'updatedAt',
+    ]),
     PartialType(PickType(ResourceDto, ['description'])),
   )
   implements IResource {}

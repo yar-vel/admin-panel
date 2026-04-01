@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
+// import path from "path";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  transpilePackages: ["@workspace/shared"],
   output: "standalone",
   env: {
     HOST: process.env.PANEL_REACT_URL || "localhost",
@@ -15,7 +17,7 @@ const nextConfig: NextConfig = {
   },
   allowedDevOrigins: [
     process.env.PANEL_REACT_URL?.startsWith("/")
-      ? `${process.env.NGINX_HOST}:${process.env.NGINX_PORT}`
+      ? `${process.env.NGINX_URL}:${process.env.NGINX_PORT}`
       : process.env.PANEL_REACT_URL || "localhost",
   ],
   basePath:

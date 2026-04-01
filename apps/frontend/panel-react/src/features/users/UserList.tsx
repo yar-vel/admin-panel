@@ -1,88 +1,86 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { useTranslation } from "react-i18next";
+import { GridPaginationModel, GridRowSelectionModel } from "@mui/x-data-grid";
 
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { useRights } from "@/shared/hooks/useRights";
-import { useAppDispatch } from "@/app/store/hooks";
-import { addAlert } from "@/app/store/main/main";
-import { IUser } from "@ap/shared/dist/types";
-import { getErrorText } from "@ap/shared/dist/libs";
+import {
+  getErrorText,
+  REQ_LIST_DEFAULT_LIMIT,
+  REQ_LIST_DEFAULT_PAGE,
+  resListMetaToReq,
+  IUser,
+  TUserReqList,
+} from "@workspace/shared";
 import { UserTable } from "@/entities/user/UserTable";
-import { usersApi } from "@/entities/user/api";
+import { useUserListQuery } from "@/entities/user/queries";
+import { useDeleteUsersMutation } from "./mutations";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
 import { IEntityList } from "@/shared/lib/types";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 
 export const UserList: FC<IEntityList<IUser>> = ({
-  initialRows,
   initialMeta,
   onMetaUpdate,
 }) => {
-  const dispatch = useAppDispatch();
   const { t, i18n } = useTranslation();
   const rights = useRights(ROUTES.api.users._);
-  const [getList, getListReq] = usersApi.useLazyGetListQuery();
-  const [destroy, destroyReq] = usersApi.useDeleteMutation();
+  const addAlert = useAlertsStore((s) => s.addAlert);
   const [selectedRows, setSelectedRows] = useState<IUser["id"][]>([]);
-  const [rows, setRows] = useState(initialRows);
-  const meta = useRef(initialMeta);
+  const [params, setParams] = useState<TUserReqList>(() =>
+    resListMetaToReq<IUser>(initialMeta ?? {}),
+  );
+  const userList = useUserListQuery(params, {
+    placeholderData: (previousData) => previousData,
+  });
+  const deleteUsers = useDeleteUsersMutation();
+
+  const handlePagination = (model: GridPaginationModel) => {
+    const newParams: TUserReqList = {
+      ...params,
+      reqPage: model.page + 1,
+      reqLimit: model.pageSize,
+      reqCount: false,
+    };
+    setParams(newParams);
+    onMetaUpdate?.({
+      ...userList.data?.meta,
+      page: newParams.reqPage,
+      limit: newParams.reqLimit,
+    });
+  };
+
+  const handleSelection = (rowSelectionModel: GridRowSelectionModel) =>
+    setSelectedRows(
+      rowSelectionModel.ids
+        .values()
+        .toArray()
+        .map((value) => value.toString()),
+    );
+
+  const handleDelete = () =>
+    deleteUsers.mutate(
+      { items: selectedRows },
+      {
+        onSuccess: () => {
+          addAlert({ type: "success", text: t("success") });
+          setParams((prev) => ({ ...prev, reqCount: true }));
+        },
+        onError: (error) =>
+          addAlert({ type: "error", text: getErrorText(error, i18n.language) }),
+      },
+    );
 
   useEffect(() => {
-    if (!rows) {
-      getList({
-        reqPage: meta.current?.page,
-        reqLimit: meta.current?.limit,
-        reqCount: true,
+    if (userList.error) {
+      addAlert({
+        type: "error",
+        text: getErrorText(userList.error, i18n.language),
       });
     }
-  }, [rows, getList]);
-
-  useEffect(() => {
-    if (getListReq.data) {
-      setRows(getListReq.data.rows);
-
-      if (getListReq.data.meta) {
-        meta.current = {
-          ...getListReq.data.meta,
-          total: getListReq.data.meta.total ?? meta.current?.total,
-        };
-        onMetaUpdate?.(meta.current);
-      }
-    }
-  }, [getListReq.data, onMetaUpdate]);
-
-  useEffect(() => {
-    if (getListReq.error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(getListReq.error, i18n.language),
-        }),
-      );
-    }
-  }, [dispatch, getListReq.error, i18n]);
-
-  useEffect(() => {
-    if (destroyReq.isSuccess) {
-      getList({
-        reqPage: meta.current?.page,
-        reqLimit: meta.current?.limit,
-        reqCount: true,
-      });
-    }
-  }, [destroyReq.isSuccess, getList]);
-
-  useEffect(() => {
-    if (destroyReq.error) {
-      dispatch(
-        addAlert({
-          type: "error",
-          text: getErrorText(destroyReq.error, i18n.language),
-        }),
-      );
-    }
-  }, [dispatch, destroyReq.error, i18n]);
+  }, [userList.error, addAlert, i18n]);
 
   return (
     <>
@@ -98,8 +96,8 @@ export const UserList: FC<IEntityList<IUser>> = ({
         color="error"
         startIcon={<DeleteIcon />}
         disabled={!rights.deleting || selectedRows.length === 0}
-        loading={destroyReq.isLoading}
-        onClick={() => destroy({ items: selectedRows })}
+        loading={deleteUsers.isPending}
+        onClick={handleDelete}
       >
         {t("delete")}
       </FormButton>
@@ -107,26 +105,21 @@ export const UserList: FC<IEntityList<IUser>> = ({
         initialState={{
           pagination: {
             paginationModel: {
-              page: (meta.current?.page || 1) - 1,
-              pageSize: meta.current?.limit ?? 25,
+              page: (params.reqPage || REQ_LIST_DEFAULT_PAGE) - 1,
+              pageSize: params.reqLimit || REQ_LIST_DEFAULT_LIMIT,
             },
           },
         }}
+        rows={userList.data?.rows}
+        rowCount={
+          userList.data?.meta?.total ??
+          initialMeta?.total ??
+          userList.data?.rows?.length
+        }
+        onRowSelectionModelChange={handleSelection}
+        onPaginationModelChange={handlePagination}
         paginationMode="server"
-        rows={rows}
-        rowCount={meta.current?.total ?? rows?.length}
-        loading={getListReq.isLoading || destroyReq.isLoading}
-        onRowSelectionModelChange={(rowSelectionModel) =>
-          setSelectedRows(
-            rowSelectionModel.ids
-              .values()
-              .toArray()
-              .map((value) => value.toString()),
-          )
-        }
-        onPaginationModelChange={(model) =>
-          getList({ reqPage: model.page + 1, reqLimit: model.pageSize })
-        }
+        loading={userList.isLoading || deleteUsers.isPending}
       />
     </>
   );

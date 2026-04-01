@@ -11,15 +11,16 @@ import {
   userCookies,
   wrongValue,
 } from './app.setup';
-import { API_ROUTES, buildRoutes } from '@ap/shared/dist/libs';
 import {
+  API_ROUTES,
+  buildRoutes,
   IForgotPassword,
   IResetPassword,
   ISignIn,
   IUser,
   IVerifyUser,
   TSignUp,
-} from '@ap/shared/dist/types';
+} from '@workspace/shared';
 
 const ROUTES = buildRoutes(API_ROUTES);
 

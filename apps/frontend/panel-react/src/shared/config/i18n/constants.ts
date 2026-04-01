@@ -1,17 +1,17 @@
 import { InitOptions, Resource } from "i18next";
 
-import { en } from "@ap/shared/dist/locales/list/en";
+import { dictionary } from "@workspace/shared";
 
 export const languages = {
   en: {
-    translation: en,
+    translation: dictionary.en,
   },
 } as const satisfies Resource;
 
 export const i18nInitOptions: InitOptions = {
   resources: languages,
-  lng: en.langCode,
-  fallbackLng: en.langCode,
+  lng: dictionary.en.langCode,
+  fallbackLng: dictionary.en.langCode,
   interpolation: {
     escapeValue: false,
   },

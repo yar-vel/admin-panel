@@ -13,7 +13,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const Page: FC = async () => {
+const Page: FC<PageProps<"/profile">> = async () => {
   const t = await getServerT();
 
   return <ProfilePage h1={t("profile")} />;

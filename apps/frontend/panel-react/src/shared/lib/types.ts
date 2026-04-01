@@ -1,12 +1,12 @@
-import { IResListMeta } from "@ap/shared/dist/types";
+import { IResListMeta } from "@workspace/shared";
 
-export interface IEntityFormCreate<T = unknown> {
+export interface IEntityFormCreate<T extends object> {
   onCreate?: (fields: T) => void;
   createDisabled?: boolean;
   createLoading?: boolean;
 }
 
-export interface IEntityFormUpdate<T = unknown> {
+export interface IEntityFormUpdate<T extends object> {
   onUpdate?: (fields: T) => void;
   updateDisabled?: boolean;
   updateLoading?: boolean;
@@ -18,15 +18,12 @@ export interface IEntityFormDelete {
   deleteLoading?: boolean;
 }
 
-export interface IEntityForm<T = unknown, C = unknown, U = unknown>
-  extends IEntityFormCreate<C>,
-    IEntityFormUpdate<U>,
-    IEntityFormDelete {
+export interface IEntityForm<T extends object, C extends object, U extends object>
+  extends IEntityFormCreate<C>, IEntityFormUpdate<U>, IEntityFormDelete {
   initialData?: T;
 }
 
-export interface IEntityList<T = unknown> {
-  initialRows?: T[];
+export interface IEntityList<T extends object> {
   initialMeta?: IResListMeta<T>;
   onMetaUpdate?: (newMeta: IResListMeta<T>) => void;
 }

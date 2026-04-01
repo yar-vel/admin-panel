@@ -1,34 +1,31 @@
 "use client";
 
 import { FC } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 
-import { PanelLayout } from "../PanelLayout";
-import { IResListMeta, IRole, TRoleResList } from "@ap/shared/dist/types";
-import { RoleList } from "@/features/roles/RoleList";
+import { PanelLayout } from "@/widgets/layout/PanelLayout";
 import { TPage } from "@/_pages/types";
-import { createSearchParams, resListMetaToReq } from "@ap/shared/dist/libs";
+import {
+  createSearchParams,
+  resListMetaToReq,
+  IResListMeta,
+  IRole,
+  TRoleResList,
+} from "@workspace/shared";
+import { RoleList } from "@/features/roles/RoleList";
 
 export const ListRolesPage: FC<TPage<TRoleResList>> = ({ h1, data }) => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const updateHandler = (newMeta: IResListMeta<IRole>) => {
+  const handleUpdate = (newMeta: IResListMeta<IRole>) => {
     const newParams = createSearchParams({
       data: resListMetaToReq<IRole>(newMeta),
       exclude: ["total"],
-      searchParams,
+      searchParams: window.location.search,
     });
-    router.push(`?${newParams.toString()}`);
+    window.history.replaceState(null, "", `?${newParams.toString()}`);
   };
 
   return (
     <PanelLayout h1={h1}>
-      <RoleList
-        initialRows={data.rows}
-        initialMeta={data.meta}
-        onMetaUpdate={updateHandler}
-      />
+      <RoleList initialMeta={data.meta} onMetaUpdate={handleUpdate} />
     </PanelLayout>
   );
 };

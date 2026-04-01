@@ -1,56 +1,81 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-
+import { fetchWithAuth } from "@/shared/api/fetchWithAuth";
+import { ROUTES } from "@workspace/shared";
 import {
-  IReqItems,
-  IFetchUpdate,
-  IUser,
-  IUsersRoles,
   TUserCreate,
-  TUserUpdate,
-  TUserResList,
+  IUser,
   TUserReqList,
-} from "@ap/shared/dist/types";
-import { baseQueryWithReauth } from "@/app/api/baseQueryWithReauth";
-import { usersService } from "./service";
+  TUserResList,
+  IFetchUpdate,
+  TUserUpdate,
+  IReqItems,
+  IUsersRoles,
+} from "@workspace/shared";
 
-export const usersApi = createApi({
-  reducerPath: "users",
-  baseQuery: baseQueryWithReauth,
-  tagTypes: ["CountedEntities", "Entities", "Entity"],
-  endpoints: (builder) => ({
-    create: builder.mutation<IUser, TUserCreate>({
-      query: usersService.createArgs,
-      invalidatesTags: ["CountedEntities"],
-    }),
+export const createUser = async (payload: TUserCreate): Promise<IUser> => {
+  const response = await fetchWithAuth(ROUTES.api.users._, {
+    method: "POST",
+    credentials: "include",
+    body: payload,
+  });
 
-    getOne: builder.query<IUser, IUser["id"]>({
-      query: usersService.getOneArgs,
-      providesTags: ["Entity"],
-    }),
+  return response.json();
+};
 
-    getList: builder.query<TUserResList, TUserReqList | void>({
-      query: usersService.getListArgs,
-      providesTags: ["Entities"],
-    }),
+export const getUser = async (
+  id: IUser["id"],
+  headers?: HeadersInit,
+): Promise<IUser> => {
+  const response = await fetchWithAuth(ROUTES.api.users.user(id), {
+    method: "GET",
+    credentials: "include",
+    headers,
+  });
 
-    update: builder.mutation<undefined, IFetchUpdate<TUserUpdate, IUser["id"]>>(
-      {
-        query: usersService.updateArgs,
-        invalidatesTags: ["Entity"],
-      },
-    ),
+  return response.json();
+};
 
-    updateRoles: builder.mutation<
-      undefined,
-      IFetchUpdate<IReqItems<IUsersRoles>, IUser["id"]>
-    >({
-      query: usersService.updateRolesArgs,
-      invalidatesTags: ["Entity"],
-    }),
+export const getUserList = async (
+  params?: TUserReqList,
+  headers?: HeadersInit,
+): Promise<TUserResList> => {
+  const response = await fetchWithAuth(ROUTES.api.users._, {
+    method: "GET",
+    credentials: "include",
+    params,
+    headers,
+  });
 
-    delete: builder.mutation<undefined, IReqItems<IUser["id"]>>({
-      query: usersService.deleteArgs,
-      invalidatesTags: ["CountedEntities"],
-    }),
-  }),
-});
+  return response.json();
+};
+
+export const updateUser = async ({
+  id,
+  fields,
+}: IFetchUpdate<TUserUpdate, IUser["id"]>): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.users.user(id), {
+    method: "PATCH",
+    credentials: "include",
+    body: fields,
+  });
+};
+
+export const updateUserRoles = async ({
+  id,
+  fields,
+}: IFetchUpdate<IReqItems<IUsersRoles>, IUser["id"]>): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.users.userRoles(id), {
+    method: "PATCH",
+    credentials: "include",
+    body: fields,
+  });
+};
+
+export const deleteUsers = async (
+  payload: IReqItems<IUser["id"]>,
+): Promise<void> => {
+  await fetchWithAuth(ROUTES.api.users._, {
+    method: "DELETE",
+    credentials: "include",
+    body: payload,
+  });
+};

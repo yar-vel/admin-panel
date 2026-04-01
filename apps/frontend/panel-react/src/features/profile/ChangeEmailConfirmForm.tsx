@@ -1,77 +1,59 @@
-import { FC, FormEvent, useEffect, useRef, useState } from "react";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { FC, SubmitEventHandler, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { FormField } from "@/shared/ui/form/FormField";
-import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import { addAlert, setProfile } from "@/app/store/main/main";
 import { useRights } from "@/shared/hooks/useRights";
-import { getErrorText } from "@ap/shared/dist/libs";
-import { profileApi } from "@/entities/profile/api";
-import { ROUTES } from "@/shared/lib/constants";
+import { getErrorText } from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
+import { useChangeEmailConfirmMutation } from "./mutations";
+import { useProfileStore } from "@/entities/profile/store";
+import { useAlertsStore } from "@/shared/model/useAlertsStore";
+import { FetchError } from "@/shared/api/FetchError";
 
 export const ChangeEmailConfirmForm: FC<{
   email: string;
   onClose?: () => void;
 }> = ({ email, onClose }) => {
-  const dispatch = useAppDispatch();
+  const profile = useProfileStore((s) => s.profile);
+  const setProfile = useProfileStore((s) => s.setProfile);
+  const addAlert = useAlertsStore((s) => s.addAlert);
   const { t, i18n } = useTranslation();
-  const [changeEmailConfirm, { isSuccess, error, isLoading }] =
-    profileApi.useChangeEmailConfirmMutation();
+  const changeEmailConfirm = useChangeEmailConfirmMutation();
   const rights = useRights(ROUTES.api.profile._);
-  const profile = useAppSelector((store) => store.main.profile);
-  const emailRef = useRef(email);
-  const profileRef = useRef(profile);
   const [code, setCode] = useState("");
 
-  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
-    changeEmailConfirm({ code });
-  };
 
-  useEffect(() => {
-    if (error) {
-      switch ((error as FetchBaseQueryError).status) {
-        case 404:
-          dispatch(
-            addAlert({
-              type: "error",
-              text: t("wrongEmailOrCode"),
-            }),
-          );
-          break;
-        default:
-          dispatch(
+    changeEmailConfirm.mutate(
+      { code },
+      {
+        onSuccess: () => {
+          if (profile) {
+            setProfile({ ...profile, email });
+          }
+
+          addAlert({ type: "success", text: t("success") });
+          onClose?.();
+        },
+        onError: (error) => {
+          if (error instanceof FetchError && error.status === 404) {
+            addAlert({ type: "error", text: t("wrongEmailOrCode") });
+          } else {
             addAlert({
               type: "error",
               text: getErrorText(error, i18n.language),
-            }),
-          );
-          break;
-      }
-    }
-  }, [error, t, i18n, dispatch]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      onClose?.();
-
-      if (profileRef.current) {
-        dispatch(
-          setProfile({ ...profileRef.current, email: emailRef.current }),
-        );
-      }
-    }
-  }, [isSuccess, onClose, dispatch]);
-
-  useEffect(() => {
-    profileRef.current = profile;
-  }, [profile]);
+            });
+          }
+        },
+      },
+    );
+  };
 
   return (
-    <FormBase onSubmit={submitHandler}>
+    <FormBase onSubmit={handleSubmit}>
       <FormField
         required
         autoComplete="off"
@@ -85,7 +67,7 @@ export const ChangeEmailConfirmForm: FC<{
         type="submit"
         fullWidth
         disabled={!rights.updating}
-        loading={isLoading || isSuccess}
+        loading={changeEmailConfirm.isPending || changeEmailConfirm.isSuccess}
       >
         {t("confirm")}
       </FormButton>

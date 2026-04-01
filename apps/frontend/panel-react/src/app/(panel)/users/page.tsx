@@ -1,11 +1,17 @@
 import { FC } from "react";
 import { Metadata } from "next/types";
-import { notFound } from "next/navigation";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 
-import { IAppPage } from "@/app/types";
 import { ListUsersPage } from "@/_pages/panel/users/ListUsersPage";
-import { usersService } from "@/entities/user/service";
 import { getServerT } from "@/shared/config/i18n/server";
+import { handleServerError } from "@/shared/api/handleServerError";
+import { userListQueryOptions } from "@/entities/user/queries";
+import { getServerHeaders } from "@/shared/api/getServerHeaders ";
+import { userReqListSchema } from "@workspace/shared";
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = await getServerT();
@@ -16,14 +22,23 @@ export const generateMetadata = async (): Promise<Metadata> => {
   };
 };
 
-const Page: FC<IAppPage> = async ({ searchParams }) => {
+const Page: FC<PageProps<"/users">> = async ({ searchParams }) => {
   const t = await getServerT();
-  const { data } = await usersService.getList(await searchParams);
+  const queryClient = new QueryClient();
+  const params = userReqListSchema.parse({
+    ...(await searchParams),
+    reqCount: true,
+  });
+  const data = await handleServerError(async () =>
+    queryClient.ensureQueryData(
+      userListQueryOptions(params, undefined, await getServerHeaders()),
+    ),
+  );
 
-  if (data) {
-    return <ListUsersPage data={data} h1={t("users")} />;
-  }
-
-  return notFound();
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ListUsersPage h1={t("users")} data={data} />
+    </HydrationBoundary>
+  );
 };
 export default Page;
