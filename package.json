@@ -10,6 +10,7 @@
     "scripts"
   ],
   "scripts": {
+    "postinstall": "npm run build -w @workspace/shared",
     "lint": "npm run lint --workspaces --if-present",
     "lint:fix": "npm run lint:fix --workspaces --if-present"
   },
