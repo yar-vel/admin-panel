@@ -10,7 +10,7 @@ import {
 
 import { RoleEntity } from 'src/roles/role.entity';
 import { USERS_ROLES_TABLE } from 'libs/constants';
-import { IRole, IUser, IUsersRoles } from '@workspace/shared/dist/types';
+import { IRole, IUser, IUsersRoles } from '@workspace/shared';
 import { EmptyStringToNull } from 'src/database/database.utils';
 
 @Entity('users')

@@ -3,8 +3,7 @@ import Skeleton from "@mui/material/Skeleton";
 import { useTranslation } from "react-i18next";
 
 import { SessionForm } from "@/features/profile/SessionForm";
-import { TSessionExternal } from "@workspace/shared/dist/types";
-import { getErrorText } from "@workspace/shared/dist/libs";
+import { getErrorText, TSessionExternal } from "@workspace/shared";
 import { useAlertsStore } from "@/shared/model/useAlertsStore";
 import { useSessionsQuery } from "@/entities/profile/queries";
 

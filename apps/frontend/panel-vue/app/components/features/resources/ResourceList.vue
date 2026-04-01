@@ -9,7 +9,7 @@ const emit = defineEmits<{
   'meta-update': [value: IResListMeta<IResource>]
 }>()
 
-const { t, locale } = useI18n()
+const { locale } = useI18n()
 const rights = useRights(ROUTES.api.resources._)
 const alertsStore = useAlertsStore()
 const rows = ref(props.initialRows)
@@ -48,7 +48,6 @@ watch([reqPage, reqLimit], () => {
 
 watch(glData, () => {
   if (glData.value) {
-    alertsStore.addAlert({ type: 'success', text: t('success') })
     rows.value = glData.value.rows
 
     if (glData.value.meta) {

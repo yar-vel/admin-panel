@@ -3,14 +3,15 @@ import { HttpStatus } from '@nestjs/common';
 
 import { adminCookies, app, userCookies, wrongId } from './app.setup';
 import {
+  API_ROUTES,
+  buildRoutes,
   IReqItems,
   IResource,
   TResourceCreate,
   TResourceReqList,
   TResourceResList,
   TResourceUpdate,
-} from '@workspace/shared/dist/types';
-import { API_ROUTES, buildRoutes } from '@workspace/shared/dist/libs';
+} from '@workspace/shared';
 
 const ROUTES = buildRoutes(API_ROUTES);
 

@@ -1,7 +1,7 @@
 import { en as $vuetify } from 'vuetify/locale'
 
-import type { TLangList, TLangDictionary } from '@workspace/shared/src/locales'
-import { dictionary, getT } from '@workspace/shared/src/locales'
+import type { TLangList, TLangDictionary } from '@workspace/shared'
+import { dictionary, getT } from '@workspace/shared'
 
 export default defineI18nConfig(() => {
   const messages: Record<

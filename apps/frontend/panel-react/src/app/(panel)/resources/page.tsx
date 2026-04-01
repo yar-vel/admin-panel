@@ -11,7 +11,7 @@ import { getServerT } from "@/shared/config/i18n/server";
 import { resourceListQueryOptions } from "@/entities/resource/queries";
 import { handleServerError } from "@/shared/api/handleServerError";
 import { getServerHeaders } from "@/shared/api/getServerHeaders ";
-import { resourceReqListSchema } from "@workspace/shared/dist/schemas";
+import { resourceReqListSchema } from "@workspace/shared";
 
 export const generateMetadata = async (): Promise<Metadata> => {
   const t = await getServerT();

@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import { TDatabaseGetList } from './database.types';
-import { IReqList, IResListMeta } from '@workspace/shared/dist/types';
 import {
   REQ_LIST_DEFAULT_LIMIT,
   REQ_LIST_DEFAULT_PAGE,
   REQ_LIST_MAX_LIMIT,
-} from '@workspace/shared/dist/libs';
+  IReqList,
+  IResListMeta,
+} from '@workspace/shared';
 
 @Injectable()
 export class DatabaseService {

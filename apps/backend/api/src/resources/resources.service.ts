@@ -12,13 +12,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ResourceEntity } from './resource.entity';
 import { DatabaseService } from 'src/database/database.service';
 import {
+  getField,
   TResourceCreate,
   TResourceUpdate,
   TResourceReqList,
   TResourceResList,
   IResource,
-} from '@workspace/shared/dist/types';
-import { getField } from '@workspace/shared/dist/libs';
+} from '@workspace/shared';
 
 @Injectable()
 export class ResourcesService {

@@ -6,19 +6,20 @@ import { GridPaginationModel, GridRowSelectionModel } from "@mui/x-data-grid";
 
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { useRights } from "@/shared/hooks/useRights";
-import { IRole, TRoleReqList } from "@workspace/shared/dist/types";
 import {
   getErrorText,
   REQ_LIST_DEFAULT_LIMIT,
   REQ_LIST_DEFAULT_PAGE,
   resListMetaToReq,
-} from "@workspace/shared/dist/libs";
+  IRole,
+  TRoleReqList,
+} from "@workspace/shared";
 import { RoleTable } from "@/entities/role/RoleTable";
 import { useRoleListQuery } from "@/entities/role/queries";
 import { useDeleteRolesMutation } from "./mutations";
 import { useAlertsStore } from "@/shared/model/useAlertsStore";
 import { IEntityList } from "@/shared/lib/types";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 
 export const RoleList: FC<IEntityList<IRole>> = ({
   initialMeta,

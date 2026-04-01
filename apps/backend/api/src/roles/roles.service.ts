@@ -20,6 +20,7 @@ import { RoleEntity } from './role.entity';
 import { RightsEntity } from '../database/rights.entity';
 import { DatabaseService } from 'src/database/database.service';
 import {
+  getField,
   IResList,
   IRights,
   TRoleCreate,
@@ -27,8 +28,7 @@ import {
   TRoleReqList,
   TRoleResList,
   IRole,
-} from '@workspace/shared/dist/types';
-import { getField } from '@workspace/shared/dist/libs';
+} from '@workspace/shared';
 
 @Injectable()
 export class RolesService {

@@ -1,4 +1,4 @@
-import { ROUTES } from "../lib/constants";
+import { ROUTES } from "@workspace/shared";
 import { FetchError } from "./FetchError";
 import { getApiUrl } from "./getApiUrl";
 

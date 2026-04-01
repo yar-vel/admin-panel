@@ -4,7 +4,7 @@ import {
   IResource,
   TResourceReqList,
   TResourceResList,
-} from "@workspace/shared/dist/types";
+} from "@workspace/shared";
 import { getResource, getResourceList } from "./api";
 import { resourceKeys } from "./keys";
 

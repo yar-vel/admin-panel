@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, Validate } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { IReqItems } from '@workspace/shared/dist/types';
+import { IReqItems } from '@workspace/shared';
 
 export class ReqItemsDto<T> implements IReqItems<T> {
   @ApiProperty({

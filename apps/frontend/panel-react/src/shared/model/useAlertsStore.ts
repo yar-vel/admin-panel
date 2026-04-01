@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { IAlert } from "@workspace/shared/dist/types";
+import { IAlert } from "@workspace/shared";
 
 interface IAlertsStore {
   alerts: IAlert[];

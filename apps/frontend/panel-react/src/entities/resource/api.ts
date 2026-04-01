@@ -1,5 +1,5 @@
 import { fetchWithAuth } from "@/shared/api/fetchWithAuth";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 import {
   IFetchUpdate,
   IReqItems,
@@ -8,7 +8,7 @@ import {
   TResourceReqList,
   TResourceResList,
   TResourceUpdate,
-} from "@workspace/shared/dist/types";
+} from "@workspace/shared";
 
 export const createResource = async (
   payload: TResourceCreate,

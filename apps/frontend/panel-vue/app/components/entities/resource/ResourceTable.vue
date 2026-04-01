@@ -1,7 +1,8 @@
 <script setup lang="ts">
-defineModel<number>('page')
-defineModel<number>('limit')
-defineModel<IResource['id'][]>('selected')
+const page = defineModel<number>('page', { default: REQ_LIST_DEFAULT_PAGE })
+const limit = defineModel<number>('limit', { default: REQ_LIST_DEFAULT_LIMIT })
+const selected = defineModel<IResource['id'][]>('selected', { default: () => [] })
+
 const props = defineProps<{
   rows?: IResource[]
   total?: number
@@ -21,36 +22,38 @@ const items = computed(() => props.rows?.map(value => ({ ...value, selectable: !
 </script>
 
 <template>
-  <v-data-table-server
-    class="full-page-table"
-    hover
-    item-selectable="selectable"
-    show-select
-    :page="page"
-    :items-per-page="limit"
-    :model-value="selected"
-    :headers="columns"
-    :items="items"
-    :items-length="total ?? 25"
-    :items-per-page-options="[25, 50, 100]"
-    :loading="loading"
-    @update:page="page = $event"
-    @update:items-per-page="limit = $event"
-    @update:model-value="selected = $event"
-  >
-    <template #item.edit="{ item }">
-      <NuxtLink :href="item.default ? undefined : ROUTES.ui.resource(item.id)">
-        <v-btn
-          color="white"
-          :disabled="item.default"
-          icon="mdi-pencil"
-          size="small"
-          variant="text"
-        />
-      </NuxtLink>
+  <ClientOnly>
+    <v-data-table-server
+      v-model:page="page"
+      v-model:items-per-page="limit"
+      v-model="selected"
+      class="full-page-table"
+      hover
+      item-selectable="selectable"
+      show-select
+      :headers="columns"
+      :items="items"
+      :items-length="total ?? items?.length ?? 0"
+      :items-per-page-options="[25, 50, 100]"
+      :loading="loading"
+    >
+      <template #item.edit="{ item }">
+        <NuxtLink :href="item.default ? undefined : ROUTES.ui.resource(item.id)">
+          <v-btn
+            color="white"
+            :disabled="item.default"
+            icon="mdi-pencil"
+            size="small"
+            variant="text"
+          />
+        </NuxtLink>
+      </template>
+      <template #item.enabled="{ item }">
+        <v-icon :icon="item.enabled ? 'mdi-check' : 'mdi-close'" />
+      </template>
+    </v-data-table-server>
+    <template #fallback>
+      <v-skeleton-loader type="table-thead, table-tbody" />
     </template>
-    <template #item.enabled="{ item }">
-      <v-icon :icon="item.enabled ? 'mdi-check' : 'mdi-close'" />
-    </template>
-  </v-data-table-server>
+  </ClientOnly>
 </template>

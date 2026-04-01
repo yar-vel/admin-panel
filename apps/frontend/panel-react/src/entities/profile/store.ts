@@ -2,7 +2,7 @@ import { createStore } from "zustand/vanilla";
 import { useStore } from "zustand";
 import { createContext, useContext } from "react";
 
-import { IUser } from "@workspace/shared/dist/types";
+import { IUser } from "@workspace/shared";
 
 export interface IProfileState {
   profile: IUser | null;

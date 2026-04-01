@@ -5,15 +5,13 @@ import { FC } from "react";
 import { PanelLayout } from "@/widgets/layout/PanelLayout";
 import { TPage } from "@/_pages/types";
 import {
+  createSearchParams,
+  resListMetaToReq,
   IResListMeta,
   IRole,
   TRoleResList,
-} from "@workspace/shared/dist/types";
+} from "@workspace/shared";
 import { RoleList } from "@/features/roles/RoleList";
-import {
-  createSearchParams,
-  resListMetaToReq,
-} from "@workspace/shared/dist/libs";
 
 export const ListRolesPage: FC<TPage<TRoleResList>> = ({ h1, data }) => {
   const handleUpdate = (newMeta: IResListMeta<IRole>) => {

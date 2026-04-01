@@ -25,9 +25,7 @@ import { ChangeEmailRequestDto } from './dto/change-email-request.dto';
 import { ChangeEmailConfirmDto } from './dto/change-email-confirm.dto';
 import { ReqItemsDto } from 'src/database/dto/req-items.dto';
 import { SessionExternalDto } from './dto/session-external.dto';
-import { getT } from '@workspace/shared/dist/locales';
-import { IUser, TSessionExternal } from '@workspace/shared/dist/types';
-import { API_ROUTES } from '@workspace/shared/dist/libs';
+import { getT, IUser, TSessionExternal, API_ROUTES } from '@workspace/shared';
 import { ProfileExternalDto } from './dto/profile-external.dto';
 
 const route = API_ROUTES.profile._;

@@ -26,9 +26,7 @@ import { ReqItemsDto } from 'src/database/dto/req-items.dto';
 import { RoleExternalDto } from './dto/role-external.dto';
 import { RoleResListDto } from './dto/role-res-list.dto';
 import { RightsReqItemsDto } from 'src/database/dto/rights-req-items.dto';
-import { getT } from '@workspace/shared/dist/locales';
-import { IRole, TRoleResList } from '@workspace/shared/dist/types';
-import { API_ROUTES } from '@workspace/shared/dist/libs';
+import { getT, IRole, TRoleResList, API_ROUTES } from '@workspace/shared';
 
 const route = API_ROUTES.roles._;
 

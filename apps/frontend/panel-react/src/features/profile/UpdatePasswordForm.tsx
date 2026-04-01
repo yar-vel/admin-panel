@@ -9,8 +9,8 @@ import {
   getErrorText,
   PASSWORD_REGEX,
   testString,
-} from "@workspace/shared/dist/libs";
-import { ROUTES } from "@/shared/lib/constants";
+} from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
 import { useAlertsStore } from "@/shared/model/useAlertsStore";
 import { useUpdatePasswordMutation } from "./mutations";
 

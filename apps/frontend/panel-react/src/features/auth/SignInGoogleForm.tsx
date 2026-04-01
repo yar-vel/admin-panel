@@ -4,9 +4,8 @@ import { useTranslation } from "react-i18next";
 
 import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormAlert } from "@/shared/ui/form/FormAlert";
-import { IUser, IWindowMessage } from "@workspace/shared/dist/types";
-import { getErrorText } from "@workspace/shared/dist/libs";
-import { ROUTES } from "@/shared/lib/constants";
+import { IUser, IWindowMessage, getErrorText } from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
 import { useSignInGoogleMutation } from "./mutations";
 import { FetchError } from "@/shared/api/FetchError";
 

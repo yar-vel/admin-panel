@@ -24,9 +24,7 @@ watch(
 <template>
   <v-card :loading="loading">
     <v-layout class="content">
-      <ClientOnly>
-        <Sidebar />
-      </ClientOnly>
+      <Sidebar />
       <v-app-bar
         density="comfortable"
         :flat="true"

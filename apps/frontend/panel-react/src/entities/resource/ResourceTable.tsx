@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { IResource } from "@workspace/shared/dist/types";
-import { ROUTES } from "@/shared/lib/constants";
+import { IResource } from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
 
 export const ResourceTable: FC<Omit<DataGridProps<IResource>, "columns">> = (
   props,

@@ -2,12 +2,11 @@ import { FC } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { getErrorText } from "@workspace/shared/dist/libs";
+import { getErrorText, IRole, TRoleCreate } from "@workspace/shared";
 import { RoleForm } from "@/entities/role/RoleForm";
-import { IRole, TRoleCreate } from "@workspace/shared/dist/types";
 import { useCreateRoleMutation } from "./mutations";
 import { useAlertsStore } from "@/shared/model/useAlertsStore";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 
 export const RoleCreate: FC<{ onCreate?: (data: IRole) => void }> = ({
   onCreate,

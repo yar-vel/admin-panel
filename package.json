@@ -10,7 +10,8 @@
     "scripts"
   ],
   "scripts": {
-    "lint:all": "npm run lint --workspaces --if-present"
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:fix": "npm run lint:fix --workspaces --if-present"
   },
   "keywords": [],
   "author": "",

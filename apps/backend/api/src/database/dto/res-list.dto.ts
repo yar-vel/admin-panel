@@ -10,12 +10,7 @@ import {
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
-import {
-  ESortOrder,
-  IResList,
-  IResListMeta,
-  ISort,
-} from '@workspace/shared/dist/types';
+import { ESortOrder, IResList, IResListMeta, ISort } from '@workspace/shared';
 
 class SortDto<T extends object> implements ISort<T> {
   @ApiProperty({ type: String, example: 'someField' })

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { FormCheckbox } from "@/shared/ui/form/FormCheckbox";
-import { IRole, IUser, IUsersRoles } from "@workspace/shared/dist/types";
+import { IRole, IUser, IUsersRoles } from "@workspace/shared";
 import { IEntityFormUpdate } from "@/shared/lib/types";
 
 export const UserRolesForm: FC<

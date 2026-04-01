@@ -1,4 +1,4 @@
-import type { TRoleReqList } from "@workspace/shared/dist/types";
+import type { TRoleReqList } from "@workspace/shared";
 
 export const roleKeys = {
   all: () => ["roles"] as const,

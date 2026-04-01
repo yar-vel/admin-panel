@@ -20,8 +20,7 @@ WORKDIR ${ROOT_DIR}/${APP_DIR}
 CMD ["npm", "run", "start:dev"]
 
 FROM code AS builder
-RUN npm run build -w shared
-RUN npm run build -w api
+RUN npm run build -w @workspace/shared -w api
 RUN npm ci --omit=dev -w api
 
 FROM base AS production
@@ -29,6 +28,7 @@ ENV NODE_ENV=production
 ARG USER=node
 ARG GROUP=node
 COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/shared/dist ./shared/dist
+COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/node_modules ./node_modules
 COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/${APP_DIR}/dist ./${APP_DIR}/dist
 USER ${USER}
 WORKDIR ${ROOT_DIR}/${APP_DIR}

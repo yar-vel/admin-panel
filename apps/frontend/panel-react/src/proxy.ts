@@ -2,7 +2,7 @@ import { NextProxy, NextResponse } from "next/server";
 
 import { isTokenExpiredOrExpiringSoon } from "./shared/lib/utils";
 import { refreshToken } from "./shared/api/refreshToken";
-import { ROUTES } from "./shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 import { getServerHeaders } from "./shared/api/getServerHeaders ";
 
 export const config = {

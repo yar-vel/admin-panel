@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SignInForm } from "@/features/auth/SignInForm";
 import { TPage } from "../types";
 import { AuthLayout } from "@/widgets/layout/AuthLayout";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 
 export const SignInPage: FC<TPage> = ({ h1 }) => {
   const searchParams = useSearchParams();

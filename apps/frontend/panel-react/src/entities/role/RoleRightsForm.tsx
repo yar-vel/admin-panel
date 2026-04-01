@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormButton } from "@/shared/ui/form/FormButton";
-import { IResource, IRights, IRole } from "@workspace/shared/dist/types";
+import { IResource, IRights, IRole } from "@workspace/shared";
 import { ResourceRights } from "@/entities/resource/ResourceRights";
 import { IEntityFormUpdate } from "@/shared/lib/types";
 

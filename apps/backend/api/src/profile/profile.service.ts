@@ -13,7 +13,7 @@ import {
   IUpdatePassword,
   TSessionExternal,
   TUserUpdate,
-} from '@workspace/shared/dist/types';
+} from '@workspace/shared';
 
 @Injectable()
 export class ProfileService {

@@ -3,6 +3,8 @@ import { HttpStatus } from '@nestjs/common';
 
 import { adminCookies, app, userCookies, wrongId } from './app.setup';
 import {
+  API_ROUTES,
+  buildRoutes,
   IReqItems,
   IRights,
   IRole,
@@ -10,8 +12,7 @@ import {
   TRoleReqList,
   TRoleUpdate,
   TRoleResList,
-} from '@workspace/shared/dist/types';
-import { API_ROUTES, buildRoutes } from '@workspace/shared/dist/libs';
+} from '@workspace/shared';
 
 const ROUTES = buildRoutes(API_ROUTES);
 
@@ -202,7 +203,7 @@ export const runRolesTests = () => {
       });
     });
 
-    describe('Update Resources', () => {
+    describe('Update Rights', () => {
       it('Incorrect', async () => {
         await request(app.getHttpServer())
           .patch(ROUTES.roles.roleRights(entity.id))
@@ -246,8 +247,6 @@ export const runRolesTests = () => {
             ],
           } satisfies IReqItems<IRights>)
           .expect(HttpStatus.NO_CONTENT);
-
-        entity.name = entity.name + entity.name;
 
         const getOneResBody = await request(app.getHttpServer())
           .get(ROUTES.roles.role(entity.id))

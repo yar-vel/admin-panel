@@ -17,9 +17,12 @@ import { useTranslation } from "react-i18next";
 import { FormBase } from "@/shared/ui/form/FormBase";
 import { theme } from "@/shared/ui/theme";
 import { useRights } from "@/shared/hooks/useRights";
-import { TSessionExternal } from "@workspace/shared/dist/types";
-import { getDateString, getErrorText } from "@workspace/shared/dist/libs";
-import { ROUTES } from "@/shared/lib/constants";
+import {
+  getDateString,
+  getErrorText,
+  TSessionExternal,
+} from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
 import { useDeleteSessionsMutation } from "./mutations";
 import { useAlertsStore } from "@/shared/model/useAlertsStore";
 

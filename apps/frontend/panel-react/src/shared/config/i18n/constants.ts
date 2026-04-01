@@ -1,6 +1,6 @@
 import { InitOptions, Resource } from "i18next";
 
-import { dictionary } from "@workspace/shared/dist/locales";
+import { dictionary } from "@workspace/shared";
 
 export const languages = {
   en: {

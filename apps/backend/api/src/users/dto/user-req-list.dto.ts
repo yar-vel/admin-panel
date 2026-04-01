@@ -8,7 +8,7 @@ import { IsOptional, IsString } from 'class-validator';
 
 import { ReqListDto } from 'src/database/dto/req-list.dto';
 import { UserDto } from './user.dto';
-import { TUserReqList } from '@workspace/shared/dist/types';
+import { TUserReqList } from '@workspace/shared';
 
 export class UserReqListDto
   extends IntersectionType(

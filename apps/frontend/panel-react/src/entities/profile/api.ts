@@ -1,5 +1,5 @@
 import { fetchWithAuth } from "@/shared/api/fetchWithAuth";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 import {
   IChangeEmailConfirm,
   IChangeEmailRequest,
@@ -8,7 +8,7 @@ import {
   IUser,
   TSessionExternal,
   TUserUpdate,
-} from "@workspace/shared/dist/types";
+} from "@workspace/shared";
 
 export const getProfile = async (headers?: HeadersInit): Promise<IUser> => {
   const response = await fetchWithAuth(ROUTES.api.profile._, {

@@ -8,7 +8,7 @@ import {
   IsString,
 } from 'class-validator';
 
-import { ESortOrder, IReqList } from '@workspace/shared/dist/types';
+import { ESortOrder, IReqList } from '@workspace/shared';
 import { toBoolean } from 'libs/utils';
 
 export class ReqListDto<T extends object> implements IReqList<T> {

@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 
 import { theme } from "@/shared/ui/theme";
-import { IAlert } from "@workspace/shared/dist/types";
+import { IAlert } from "@workspace/shared";
 import { useAlertsStore } from "@/shared/model/useAlertsStore";
 
 export const LayoutAlerts: FC = () => {

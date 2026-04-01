@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { IRole } from "@workspace/shared/dist/types";
-import { ROUTES } from "@/shared/lib/constants";
+import { IRole } from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
 
 export const RoleTable: FC<Omit<DataGridProps<IRole>, "columns">> = (props) => {
   const { t } = useTranslation();

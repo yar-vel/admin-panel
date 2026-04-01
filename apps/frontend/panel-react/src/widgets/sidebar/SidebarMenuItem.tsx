@@ -9,8 +9,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import { usePathname, useRouter } from "next/navigation";
 
-import { IMenuItem } from "@workspace/shared/dist/types";
-import { checkActiveLink } from "@workspace/shared/dist/libs";
+import { checkActiveLink, IMenuItem } from "@workspace/shared";
 
 export const SidebarMenuItem: FC<IMenuItem<ReactNode>> = ({
   href,

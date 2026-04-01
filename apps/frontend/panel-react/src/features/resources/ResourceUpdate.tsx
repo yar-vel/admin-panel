@@ -2,10 +2,14 @@ import { FC, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { IResource, TResourceUpdate } from "@workspace/shared/dist/types";
-import { getErrorText, getUpdatedValues } from "@workspace/shared/dist/libs";
+import {
+  IResource,
+  TResourceUpdate,
+  getErrorText,
+  getUpdatedValues,
+} from "@workspace/shared";
 import { ResourceForm } from "@/entities/resource/ResourceForm";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 import {
   useDeleteResourcesMutation,
   useUpdateResourceMutation,

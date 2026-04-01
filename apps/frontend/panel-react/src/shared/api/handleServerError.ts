@@ -1,4 +1,4 @@
-import { notFound, forbidden } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import { FetchError } from "@/shared/api/FetchError";
 
@@ -13,12 +13,12 @@ export const handleServerError = async <T>(
         // NOTE: experimental
         // case 401:
         //   return unauthorized();
-        case 403:
-          return forbidden();
+        // case 403:
+        //   return forbidden();
         case 404:
           return notFound();
         default:
-          return forbidden();
+          return notFound();
       }
     }
 

@@ -4,7 +4,7 @@ import {
   IUser,
   TUserReqList,
   TUserResList,
-} from "@workspace/shared/dist/types";
+} from "@workspace/shared";
 import { getUser, getUserList } from "./api";
 import { userKeys } from "./keys";
 

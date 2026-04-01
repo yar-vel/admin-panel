@@ -15,8 +15,8 @@ import {
   NAME_REGEX,
   PASSWORD_REGEX,
   testString,
-} from "@workspace/shared/dist/libs";
-import { ROUTES } from "@/shared/lib/constants";
+} from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
 import { useSignUpMutation } from "./mutations";
 import { FetchError } from "@/shared/api/FetchError";
 

@@ -4,7 +4,7 @@ import { IsArray, ValidateNested } from 'class-validator';
 
 import { ResListDto } from 'src/database/dto/res-list.dto';
 import { ResourceExternalDto } from './resource-external.dto';
-import { TResourceResList } from '@workspace/shared/dist/types';
+import { TResourceResList } from '@workspace/shared';
 
 export class ResourceResListDto
   extends ResListDto<ResourceExternalDto>

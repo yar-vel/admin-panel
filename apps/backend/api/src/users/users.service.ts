@@ -26,6 +26,7 @@ import { createHash } from 'libs/utils';
 import { RoleEntity } from 'src/roles/role.entity';
 import { UsersRolesEntity } from 'src/database/users-roles.entity';
 import {
+  getField,
   IUsersRoles,
   TUserCreate,
   TUserUpdate,
@@ -34,8 +35,7 @@ import {
   IRole,
   IUser,
   TUserCreateGoogle,
-} from '@workspace/shared/dist/types';
-import { getField } from '@workspace/shared/dist/libs';
+} from '@workspace/shared';
 
 @Injectable()
 export class UsersService {

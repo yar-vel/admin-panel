@@ -8,8 +8,8 @@ import { FormLink } from "@/shared/ui/form/FormLink";
 import { FormAlert } from "@/shared/ui/form/FormAlert";
 import { CustomModal } from "@/shared/ui/modal/CustomModal";
 import { ResetPasswordForm } from "./ResetPasswordForm";
-import { getErrorText } from "@workspace/shared/dist/libs";
-import { ROUTES } from "@/shared/lib/constants";
+import { getErrorText } from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
 import { useForgotPasswordMutation } from "./mutations";
 import { FetchError } from "@/shared/api/FetchError";
 

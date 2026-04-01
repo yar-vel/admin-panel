@@ -17,7 +17,6 @@ import { IRequestUser, IToken, ITokensPair } from './auth.types';
 import { QueueService } from 'src/queue/queue.service';
 import { createHash, generateCode, verifyHash } from 'libs/utils';
 import { cfg } from 'config/configuration';
-import { getT } from '@workspace/shared/dist/locales';
 import {
   IEmailCode,
   IForgotPassword,
@@ -28,7 +27,8 @@ import {
   IVerifyUser,
   TResourceCreate,
   TSignUp,
-} from '@workspace/shared/dist/types';
+  getT,
+} from '@workspace/shared';
 
 @Injectable()
 export class AuthService {

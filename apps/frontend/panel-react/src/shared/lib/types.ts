@@ -1,4 +1,4 @@
-import { IResListMeta } from "@workspace/shared/dist/types";
+import { IResListMeta } from "@workspace/shared";
 
 export interface IEntityFormCreate<T extends object> {
   onCreate?: (fields: T) => void;

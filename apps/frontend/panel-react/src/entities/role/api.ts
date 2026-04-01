@@ -1,5 +1,5 @@
 import { fetchWithAuth } from "@/shared/api/fetchWithAuth";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 import {
   IFetchUpdate,
   IReqItems,
@@ -9,7 +9,7 @@ import {
   TRoleReqList,
   TRoleResList,
   TRoleUpdate,
-} from "@workspace/shared/dist/types";
+} from "@workspace/shared";
 
 export const createRole = async (payload: TRoleCreate): Promise<IRole> => {
   const response = await fetchWithAuth(ROUTES.api.roles._, {

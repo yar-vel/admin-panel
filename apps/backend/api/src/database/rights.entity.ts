@@ -10,7 +10,7 @@ import {
 
 import { RoleEntity } from 'src/roles/role.entity';
 import { ResourceEntity } from 'src/resources/resource.entity';
-import { IResource, IRights, IRole } from '@workspace/shared/dist/types';
+import { IResource, IRights, IRole } from '@workspace/shared';
 
 @Entity('rights')
 export class RightsEntity implements IRights {

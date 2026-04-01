@@ -8,7 +8,7 @@ import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormField } from "@/shared/ui/form/FormField";
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { FormCheckbox } from "@/shared/ui/form/FormCheckbox";
-import { IRole, TRoleCreate, TRoleUpdate } from "@workspace/shared/dist/types";
+import { IRole, TRoleCreate, TRoleUpdate } from "@workspace/shared";
 import { IEntityForm } from "@/shared/lib/types";
 
 export const RoleForm: FC<IEntityForm<IRole, TRoleCreate, TRoleUpdate>> = ({

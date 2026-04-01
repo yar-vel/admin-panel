@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ForgotPasswordForm } from "@/features/auth/ForgotPasswordForm";
 import { TPage } from "../types";
 import { AuthLayout } from "@/widgets/layout/AuthLayout";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 
 export const ForgotPasswordPage: FC<TPage> = ({ h1 }) => {
   const router = useRouter();

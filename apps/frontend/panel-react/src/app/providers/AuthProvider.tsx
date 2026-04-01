@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren } from "react";
 import { cookies } from "next/headers";
 
-import { IUser } from "@workspace/shared/dist/types";
+import { IUser } from "@workspace/shared";
 import { ProfileStoreProvider } from "./ProfileStoreProvider";
 import { getProfile } from "@/entities/profile/api";
 import { getServerHeaders } from "@/shared/api/getServerHeaders ";

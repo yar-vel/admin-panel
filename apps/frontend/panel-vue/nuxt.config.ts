@@ -1,4 +1,4 @@
-import { dictionary, getT } from '@workspace/shared/src/locales'
+import { dictionary, getT } from '@workspace/shared'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -14,11 +14,6 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
   ],
-  imports: {
-    dirs: [
-      '../../../../shared/src',
-    ],
-  },
   devtools: { enabled: true },
   app: {
     baseURL:
@@ -39,7 +34,16 @@ export default defineNuxtConfig({
       googleClientId: process.env.GOOGLE_CLIENT_ID || '',
     },
   },
+  build: { transpile: ['@workspace/shared'] },
   compatibilityDate: '2025-07-15',
+  vite: {
+    optimizeDeps: {
+      include: [
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
+      ],
+    },
+  },
   eslint: {
     config: {
       stylistic: true,

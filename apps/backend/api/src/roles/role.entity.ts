@@ -10,7 +10,7 @@ import {
 
 import { UserEntity } from '../users/user.entity';
 import { RightsEntity } from 'src/database/rights.entity';
-import { IRole } from '@workspace/shared/dist/types';
+import { IRole } from '@workspace/shared';
 import { EmptyStringToNull } from 'src/database/database.utils';
 
 @Entity('roles')

@@ -5,15 +5,13 @@ import { FC } from "react";
 import { PanelLayout } from "@/widgets/layout/PanelLayout";
 import { TPage } from "@/_pages/types";
 import {
+  createSearchParams,
+  resListMetaToReq,
   IResListMeta,
   IUser,
   TUserResList,
-} from "@workspace/shared/dist/types";
+} from "@workspace/shared";
 import { UserList } from "@/features/users/UserList";
-import {
-  createSearchParams,
-  resListMetaToReq,
-} from "@workspace/shared/dist/libs";
 
 export const ListUsersPage: FC<TPage<TUserResList>> = ({ h1, data }) => {
   const handleUpdate = (newMeta: IResListMeta<IUser>) => {

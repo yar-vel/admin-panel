@@ -4,7 +4,7 @@ import {
   IRole,
   TRoleReqList,
   TRoleResList,
-} from "@workspace/shared/dist/types";
+} from "@workspace/shared";
 import { getRole, getRoleList } from "./api";
 import { roleKeys } from "./keys";
 

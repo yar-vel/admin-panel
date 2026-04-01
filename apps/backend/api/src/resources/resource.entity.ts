@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 import { RightsEntity } from 'src/database/rights.entity';
-import { IResource } from '@workspace/shared/dist/types';
+import { IResource } from '@workspace/shared';
 import { EmptyStringToNull } from 'src/database/database.utils';
 
 @Entity('resources')

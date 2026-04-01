@@ -6,7 +6,7 @@ import {
   createProfileStore,
   ProfileStoreContext,
 } from "@/entities/profile/store";
-import { IUser } from "@workspace/shared/dist/types";
+import { IUser } from "@workspace/shared";
 
 export const ProfileStoreProvider: FC<
   PropsWithChildren<{ profile?: IUser | null }>

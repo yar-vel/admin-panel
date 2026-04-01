@@ -52,16 +52,20 @@ docker compose down --remove-orphans
 
 ### Additional Commands
 
-Clean install of all dependencies in `apps`, `shared` and `scripts` (pre-commit hook):
+For local development, you can install all dependencies from the root repository directory:
 
 ```sh
-npm run ci:all
+npm ci # for clean install
+# or
+npm i # for install with update
 ```
 
-Run linting (with `--fix`) for all apps:
+Run linting for all apps:
 
 ```sh
-npm run lint:all
+npm run lint
+# or
+npm run lint:fix
 ```
 
 ## Microservices
@@ -81,8 +85,8 @@ In it, you can set a list of protected links, create roles with rights for links
 The service is written in [React](https://github.com/facebook/react), [Next.js](https://github.com/vercel/next.js)
 and [TypeScript](https://github.com/microsoft/TypeScript) with FSD-like structure.
 [Material UI](https://github.com/mui/material-ui) is used as the UI kit.
-[Redux Toolkit](https://github.com/reduxjs/redux-toolkit) is used as the application state manager.
-[RTK Query](https://github.com/rtk-incubator/rtk-query) is used for API requests.
+[Zustand](https://github.com/pmndrs/zustand) is used as the application state manager.
+[TanStack Query](https://github.com/TanStack/query) is used for API requests.
 
 Service folder: `apps/frontend/panel-react`.
 

@@ -327,6 +327,6 @@ services:
     expose:
       - ${PANEL_VUE_PORT}
     environment:
-      - HOSTNAME=${PANEL_VUE_HOST}
+      - HOST=${PANEL_VUE_HOST}
       - PORT=${PANEL_VUE_PORT}
     logging: *default-logging

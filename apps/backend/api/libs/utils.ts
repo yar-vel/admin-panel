@@ -4,7 +4,7 @@ import { hash, verify } from 'argon2';
 import * as crypto from 'crypto';
 
 import { cfg } from 'config/configuration';
-import { DEV } from '@workspace/shared/dist/libs';
+import { DEV } from '@workspace/shared';
 
 /**
  * @param {number} length Length of the resulting string

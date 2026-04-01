@@ -11,7 +11,7 @@ import {
 import { Transform, Type } from 'class-transformer';
 
 import { RightsDto } from 'src/database/dto/rights.dto';
-import { IResource } from '@workspace/shared/dist/types';
+import { IResource } from '@workspace/shared';
 import { toBoolean } from 'libs/utils';
 
 export class ResourceDto implements IResource {

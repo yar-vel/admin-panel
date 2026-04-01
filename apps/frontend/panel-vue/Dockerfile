@@ -13,8 +13,8 @@ COPY ./apps/backend/mailer/package*.json ./apps/backend/mailer/
 COPY ./scripts/package*.json ./scripts/
 
 FROM base AS dependencies
-# NOTE: use the "--frozen-lockfile" flag if you have the "bun.lock"-file
-RUN bun install --filter panel-vue
+# NOTE: use the "--frozen-lockfile" flag if you have the "bun.lock" file
+RUN bun install --filter @workspace/shared --filter panel-vue
 
 FROM dependencies AS code
 COPY ./shared ./shared/
@@ -31,10 +31,10 @@ ARG API_HOST
 ARG API_PORT
 ARG API_URL
 ARG GOOGLE_CLIENT_ID
-RUN bun --filter shared run build
-RUN bun --filter panel-vue run build
-# NOTE: use the "--frozen-lockfile" flag if you have the "bun.lock"-file
-RUN bun install --production --filter panel-vue
+WORKDIR ${ROOT_DIR}/shared
+RUN bun run build
+WORKDIR ${ROOT_DIR}/${APP_DIR}
+RUN bun run build
 
 FROM base AS production
 ENV NODE_ENV=production

@@ -11,7 +11,7 @@ import fastifyHelmet from '@fastify/helmet';
 import { AppModule } from './app.module';
 import { version, name } from '../package.json';
 import { cfg } from 'config/configuration';
-import { getT } from '@workspace/shared/dist/locales';
+import { getT } from '@workspace/shared';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -64,6 +64,8 @@ async function bootstrap() {
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
+
+  app.enableShutdownHooks();
 
   await app.listen(cfg.port, cfg.host);
 }

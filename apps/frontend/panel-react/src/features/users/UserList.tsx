@@ -6,19 +6,20 @@ import { GridPaginationModel, GridRowSelectionModel } from "@mui/x-data-grid";
 
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { useRights } from "@/shared/hooks/useRights";
-import { IUser, TUserReqList } from "@workspace/shared/dist/types";
 import {
   getErrorText,
   REQ_LIST_DEFAULT_LIMIT,
   REQ_LIST_DEFAULT_PAGE,
   resListMetaToReq,
-} from "@workspace/shared/dist/libs";
+  IUser,
+  TUserReqList,
+} from "@workspace/shared";
 import { UserTable } from "@/entities/user/UserTable";
 import { useUserListQuery } from "@/entities/user/queries";
 import { useDeleteUsersMutation } from "./mutations";
 import { useAlertsStore } from "@/shared/model/useAlertsStore";
 import { IEntityList } from "@/shared/lib/types";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 
 export const UserList: FC<IEntityList<IUser>> = ({
   initialMeta,

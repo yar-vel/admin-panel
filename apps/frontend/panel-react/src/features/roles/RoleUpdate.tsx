@@ -2,10 +2,14 @@ import { FC, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useRights } from "@/shared/hooks/useRights";
-import { IRole, TRoleUpdate } from "@workspace/shared/dist/types";
-import { getErrorText, getUpdatedValues } from "@workspace/shared/dist/libs";
+import {
+  getErrorText,
+  getUpdatedValues,
+  IRole,
+  TRoleUpdate,
+} from "@workspace/shared";
 import { RoleForm } from "@/entities/role/RoleForm";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 import { useDeleteRolesMutation, useUpdateRoleMutation } from "./mutations";
 import { useAlertsStore } from "@/shared/model/useAlertsStore";
 

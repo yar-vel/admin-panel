@@ -1,5 +1,5 @@
 import { fetchWithAuth } from "@/shared/api/fetchWithAuth";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 import {
   TUserCreate,
   IUser,
@@ -9,7 +9,7 @@ import {
   TUserUpdate,
   IReqItems,
   IUsersRoles,
-} from "@workspace/shared/dist/types";
+} from "@workspace/shared";
 
 export const createUser = async (payload: TUserCreate): Promise<IUser> => {
   const response = await fetchWithAuth(ROUTES.api.users._, {

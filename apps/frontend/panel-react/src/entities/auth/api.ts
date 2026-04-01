@@ -1,5 +1,5 @@
 import { fetchWithAuth } from "@/shared/api/fetchWithAuth";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 import {
   IForgotPassword,
   IResetPassword,
@@ -8,7 +8,7 @@ import {
   IUser,
   IVerifyUser,
   TSignUp,
-} from "@workspace/shared/dist/types";
+} from "@workspace/shared";
 
 export const signUp = async (payload: TSignUp): Promise<IUser> => {
   const response = await fetchWithAuth(ROUTES.api.auth.sighUp, {

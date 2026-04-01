@@ -10,12 +10,12 @@ import {
   getUpdatedValues,
   NAME_REGEX,
   testString,
-} from "@workspace/shared/dist/libs";
-import { IUser } from "@workspace/shared/dist/types";
+  IUser,
+} from "@workspace/shared";
 import { useUpdateProfileMutation } from "@/features/profile/mutations";
 import { useProfileStore } from "@/entities/profile/store";
 import { useAlertsStore } from "@/shared/model/useAlertsStore";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 
 export const UpdateProfileForm: FC = () => {
   const { t, i18n } = useTranslation();
@@ -69,7 +69,7 @@ export const UpdateProfileForm: FC = () => {
         required
         name="name"
         label={t("name")}
-        value={newData?.name ?? ""}
+        value={newData?.name ?? profile?.name ?? ""}
         onChange={(event) =>
           newData && setNewData({ ...newData, name: event.target.value })
         }

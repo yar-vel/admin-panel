@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Matches } from 'class-validator';
 
-import { EMAIL_REGEX } from '@workspace/shared/dist/libs';
-import { IEmailCode } from '@workspace/shared/dist/types';
+import { EMAIL_REGEX, IEmailCode } from '@workspace/shared';
 
 export class EmailCodeDto implements IEmailCode {
   @ApiProperty({ type: String, example: 'example@mail.com' })

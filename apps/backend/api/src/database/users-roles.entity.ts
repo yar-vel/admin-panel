@@ -1,7 +1,7 @@
 import { CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
 
 import { USERS_ROLES_TABLE } from 'libs/constants';
-import { IRole, IUser, IUsersRoles } from '@workspace/shared/dist/types';
+import { IRole, IUser, IUsersRoles } from '@workspace/shared';
 
 @Entity(USERS_ROLES_TABLE)
 export class UsersRolesEntity implements IUsersRoles {

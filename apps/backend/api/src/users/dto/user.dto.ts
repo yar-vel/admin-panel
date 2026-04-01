@@ -11,12 +11,12 @@ import {
 import { Transform, Type } from 'class-transformer';
 
 import { RoleExternalDto } from 'src/roles/dto/role-external.dto';
-import { IUser } from '@workspace/shared/dist/types';
 import {
   EMAIL_REGEX,
   NAME_REGEX,
   PASSWORD_REGEX,
-} from '@workspace/shared/dist/libs';
+  IUser,
+} from '@workspace/shared';
 import { toBoolean } from 'libs/utils';
 
 export class UserDto implements IUser {

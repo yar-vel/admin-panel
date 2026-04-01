@@ -26,17 +26,15 @@ ARG API_HOST
 ARG API_PORT
 ARG API_URL
 ARG GOOGLE_CLIENT_ID
-RUN npm run build -w shared
-RUN npm run build -w panel-react
-RUN npm ci --omit=dev -w panel-react
+RUN npm run build -w @workspace/shared -w panel-react
 
 FROM base AS production
 ENV NODE_ENV=production
 ARG USER=node
 ARG GROUP=node
-COPY --from=builder ${ROOT_DIR}/${APP_DIR}/public ./${APP_DIR}/public
-COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/${APP_DIR}/.next/standalone ./${APP_DIR}
-COPY --from=builder --chown=${USER}:${GROUP} ${HOME_DIR}/${APP_DIR}/.next/static ./${APP_DIR}/.next/static
+COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/${APP_DIR}/.next/standalone ./
+COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/${APP_DIR}/.next/static ./${APP_DIR}/.next/static
+COPY --from=builder --chown=${USER}:${GROUP} ${ROOT_DIR}/${APP_DIR}/public ./${APP_DIR}/public
 USER ${USER}
 WORKDIR ${ROOT_DIR}/${APP_DIR}
 ENTRYPOINT ["node", "server.js"]

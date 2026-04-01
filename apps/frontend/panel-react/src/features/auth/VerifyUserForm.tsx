@@ -5,7 +5,7 @@ import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormField } from "@/shared/ui/form/FormField";
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { FormAlert } from "@/shared/ui/form/FormAlert";
-import { getErrorText } from "@workspace/shared/dist/libs";
+import { getErrorText } from "@workspace/shared";
 import { useVerifyUserMutation } from "./mutations";
 import { FetchError } from "@/shared/api/FetchError";
 

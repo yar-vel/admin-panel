@@ -1,16 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsDate,
-  IsOptional,
-  IsUUID,
-  ValidateNested,
-} from 'class-validator';
+import { IsBoolean, IsOptional, IsUUID, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 import { RoleDto } from 'src/roles/dto/role.dto';
 import { ResourceDto } from 'src/resources/dto/resource.dto';
-import { IResource, IRights, IRole } from '@workspace/shared/dist/types';
+import { IResource, IRights, IRole } from '@workspace/shared';
 
 export class RightsDto implements IRights {
   @ApiProperty({
@@ -54,12 +48,4 @@ export class RightsDto implements IRights {
   @ApiProperty({ type: Boolean, example: false })
   @IsBoolean()
   deleting: boolean;
-
-  @ApiProperty({ type: Date, example: new Date() })
-  @IsDate()
-  createdAt: Date;
-
-  @ApiProperty({ type: Date, example: new Date() })
-  @IsDate()
-  updatedAt: Date;
 }

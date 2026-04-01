@@ -11,7 +11,7 @@ import {
 import { Transform, Type } from 'class-transformer';
 
 import { RightsDto } from 'src/database/dto/rights.dto';
-import { IRole } from '@workspace/shared/dist/types';
+import { IRole } from '@workspace/shared';
 import { toBoolean } from 'libs/utils';
 
 export class RoleDto implements IRole {

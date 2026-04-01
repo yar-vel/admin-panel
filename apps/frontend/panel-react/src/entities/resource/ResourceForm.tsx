@@ -12,7 +12,7 @@ import {
   IResource,
   TResourceCreate,
   TResourceUpdate,
-} from "@workspace/shared/dist/types";
+} from "@workspace/shared";
 import { IEntityForm } from "@/shared/lib/types";
 
 export const ResourceForm: FC<

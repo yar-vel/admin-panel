@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
 import { Exclude } from 'class-transformer';
 
-import { TSessionExternal } from '@workspace/shared/dist/types';
+import { TSessionExternal } from '@workspace/shared';
 
 export class SessionExternalDto implements TSessionExternal {
   @ApiProperty({

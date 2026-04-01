@@ -10,7 +10,7 @@ import {
   getErrorText,
   PASSWORD_REGEX,
   testString,
-} from "@workspace/shared/dist/libs";
+} from "@workspace/shared";
 import { useResetPasswordMutation } from "./mutations";
 import { FetchError } from "@/shared/api/FetchError";
 

@@ -2,9 +2,8 @@ import { FC, MouseEventHandler, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import { FormLink } from "@/shared/ui/form/FormLink";
-import { IUser, IWindowMessage } from "@workspace/shared/dist/types";
-import { getGoogleSignInUrl } from "@workspace/shared/dist/libs";
-import { ROUTES } from "@/shared/lib/constants";
+import { IUser, IWindowMessage, getGoogleSignInUrl } from "@workspace/shared";
+import { ROUTES } from "@workspace/shared";
 import { useProfileStore } from "@/entities/profile/store";
 
 export const SignInGoogleLink: FC<{ onSuccess?: () => void }> = ({

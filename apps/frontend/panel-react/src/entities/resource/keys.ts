@@ -1,4 +1,4 @@
-import type { TResourceReqList } from "@workspace/shared/dist/types";
+import type { TResourceReqList } from "@workspace/shared";
 
 export const resourceKeys = {
   all: () => ["resources"] as const,

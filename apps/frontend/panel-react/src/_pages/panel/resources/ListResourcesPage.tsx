@@ -5,15 +5,13 @@ import { FC } from "react";
 import { PanelLayout } from "@/widgets/layout/PanelLayout";
 import { TPage } from "@/_pages/types";
 import {
+  createSearchParams,
+  resListMetaToReq,
   IResListMeta,
   IResource,
   TResourceResList,
-} from "@workspace/shared/dist/types";
+} from "@workspace/shared";
 import { ResourceList } from "@/features/resources/ResourceList";
-import {
-  createSearchParams,
-  resListMetaToReq,
-} from "@workspace/shared/dist/libs";
 
 export const ListResourcesPage: FC<TPage<TResourceResList>> = ({
   h1,

@@ -1,3 +1,5 @@
+import { buildRoutes } from './utils';
+
 /** Name validation regex */
 export const NAME_REGEX = /^[\w ]{1,100}$/;
 /** Email validation regex */
@@ -66,3 +68,9 @@ export const UI_ROUTES = {
   newResource: '/resources/new',
   resource: (id: string | number) => `/resources/${id}`,
 } as const;
+
+/** All supported routes */
+export const ROUTES = {
+  ui: buildRoutes(UI_ROUTES),
+  api: buildRoutes(API_ROUTES),
+};

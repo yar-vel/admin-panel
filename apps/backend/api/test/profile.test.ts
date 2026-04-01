@@ -10,8 +10,9 @@ import {
   userCookies,
   wrongValue,
 } from './app.setup';
-import { API_ROUTES, buildRoutes } from '@workspace/shared/dist/libs';
 import {
+  API_ROUTES,
+  buildRoutes,
   IChangeEmailConfirm,
   IChangeEmailRequest,
   IReqItems,
@@ -20,7 +21,7 @@ import {
   IUser,
   TSessionExternal,
   TUserUpdate,
-} from '@workspace/shared/dist/types';
+} from '@workspace/shared';
 
 const ROUTES = buildRoutes(API_ROUTES);
 

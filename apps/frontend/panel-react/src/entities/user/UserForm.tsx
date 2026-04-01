@@ -8,13 +8,15 @@ import { FormBase } from "@/shared/ui/form/FormBase";
 import { FormField } from "@/shared/ui/form/FormField";
 import { FormButton } from "@/shared/ui/form/FormButton";
 import { FormCheckbox } from "@/shared/ui/form/FormCheckbox";
-import { IUser, TUserCreate, TUserUpdate } from "@workspace/shared/dist/types";
 import {
   EMAIL_REGEX,
   NAME_REGEX,
   PASSWORD_REGEX,
   testString,
-} from "@workspace/shared/dist/libs";
+  IUser,
+  TUserCreate,
+  TUserUpdate,
+} from "@workspace/shared";
 import { FormPassword } from "@/shared/ui/form/FormPassword";
 import { IEntityForm } from "@/shared/lib/types";
 

@@ -7,10 +7,10 @@ import { useRouter } from "next/navigation";
 
 import { PanelLayout } from "@/widgets/layout/PanelLayout";
 import { TPage } from "@/_pages/types";
-import { IResource, IRole } from "@workspace/shared/dist/types";
+import { IResource, IRole } from "@workspace/shared";
 import { RoleUpdate } from "@/features/roles/RoleUpdate";
 import { RoleRightsUpdate } from "@/features/roles/RoleRightsUpdate";
-import { ROUTES } from "@/shared/lib/constants";
+import { ROUTES } from "@workspace/shared";
 
 export const EditRolePage: FC<
   TPage<{

@@ -8,17 +8,13 @@ server {
     include snippets/client_common.conf;
     include snippets/gzip_common.conf;
 
+    # NOTE
+    # The order is important: the root address ("/") must be processed last.
+
     # api
     location ${API_URL} {
         include snippets/proxy_common.conf;
         proxy_pass http://${API_HOST}:${API_PORT}/;
-    }
-
-    # panel-react
-    location ${PANEL_REACT_URL} {
-        include snippets/proxy_common.conf;
-        rewrite ^/?(.*)$ /$1 break;
-        proxy_pass http://${PANEL_REACT_HOST}:${PANEL_REACT_PORT}/;
     }
 
     # panel-vue
@@ -26,5 +22,12 @@ server {
         include snippets/proxy_common.conf;
         rewrite ^/?(.*)$ /$1 break;
         proxy_pass http://${PANEL_VUE_HOST}:${PANEL_VUE_PORT}/;
+    }
+
+    # panel-react
+    location ${PANEL_REACT_URL} {
+        include snippets/proxy_common.conf;
+        rewrite ^/?(.*)$ /$1 break;
+        proxy_pass http://${PANEL_REACT_HOST}:${PANEL_REACT_PORT}/;
     }
 }

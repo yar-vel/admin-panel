@@ -6,8 +6,8 @@ import {
   EMAIL_REGEX,
   NAME_REGEX,
   PASSWORD_REGEX,
-} from '@workspace/shared/dist/libs';
-import { TSignUp } from '@workspace/shared/dist/types';
+  TSignUp,
+} from '@workspace/shared';
 
 export class SignUpDto implements TSignUp {
   @ApiProperty({ type: String, example: 'example@mail.com' })

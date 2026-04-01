@@ -1,4 +1,4 @@
-import type { TUserReqList } from "@workspace/shared/dist/types";
+import type { TUserReqList } from "@workspace/shared";
 
 export const userKeys = {
   all: () => ["users"] as const,
