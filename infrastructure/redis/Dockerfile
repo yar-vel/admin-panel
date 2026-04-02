@@ -1,4 +1,2 @@
-FROM redis/redis-stack:7.4.0-v8 AS development
-
-FROM redis/redis-stack-server:7.4.0-v8 AS production
+FROM redis/redis-stack-server:7.4.0-v8
 COPY ./redis-stack.conf /redis-stack.conf

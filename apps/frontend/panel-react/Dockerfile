@@ -8,11 +8,13 @@ COPY ./shared/package*.json ./shared/
 COPY ./${APP_DIR}/package*.json ./${APP_DIR}/
 ENV NEXT_TELEMETRY_DISABLED=1
 
-FROM base AS dependencies
+FROM base AS shared
+COPY ./shared ./shared/
+
+FROM shared AS dependencies
 RUN npm ci -w panel-react --include-workspace-root
 
 FROM dependencies AS code
-COPY ./shared ./shared/
 COPY ./${APP_DIR} ./${APP_DIR}/
 
 FROM code AS development

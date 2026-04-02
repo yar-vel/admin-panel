@@ -7,11 +7,13 @@ COPY ./package*.json ./
 COPY ./shared/package*.json ./shared/
 COPY ./${APP_DIR}/package*.json ./${APP_DIR}/
 
-FROM base AS dependencies
+FROM base AS shared
+COPY ./shared ./shared/
+
+FROM shared AS dependencies
 RUN npm ci -w api --include-workspace-root
 
 FROM dependencies AS code
-COPY ./shared ./shared/
 COPY ./${APP_DIR} ./${APP_DIR}/
 
 FROM code AS development
