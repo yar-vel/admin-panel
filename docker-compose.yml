@@ -73,12 +73,14 @@ services:
     volumes:
       - prometheus-data:/prometheus
     depends_on:
-      redis-exporter:
-        condition: service_started
-      postgres-exporter:
-        condition: service_started
       rabbitmq:
         condition: service_healthy
+      postgres-exporter:
+        condition: service_started
+      redis-exporter:
+        condition: service_started
+      nginx-exporter:
+        condition: service_started
     deploy:
       resources:
         limits:
@@ -94,7 +96,9 @@ services:
       context: ./infrastructure/rabbitmq
     container_name: ${PROJECT_TAG}_rabbitmq
     networks:
-      - main
+      main:
+        aliases:
+          - ${RABBITMQ_HOST:-rabbitmq}
     expose:
       - ${RABBITMQ_PORT}
       - 15692
@@ -121,7 +125,9 @@ services:
       context: ./infrastructure/postgres
     container_name: ${PROJECT_TAG}-postgres
     networks:
-      - main
+      main:
+        aliases:
+          - ${POSTGRES_HOST:-postgres}
     expose:
       - ${POSTGRES_PORT}
     volumes:
@@ -141,7 +147,7 @@ services:
       timeout: 5s
       start_period: 30s
   postgres-exporter:
-    image: prometheuscommunity/postgres-exporter
+    image: prometheuscommunity/postgres-exporter:v0
     container_name: ${PROJECT_TAG}-postgres-exporter
     networks:
       - main
@@ -170,7 +176,9 @@ services:
       context: ./infrastructure/redis
     container_name: ${PROJECT_TAG}-redis
     networks:
-      - main
+      main:
+        aliases:
+          - ${REDIS_HOST:-redis}
     expose:
       - ${REDIS_PORT}
     volumes:
@@ -191,7 +199,7 @@ services:
       retries: 5
       start_period: 10s
   redis-exporter:
-    image: oliver006/redis_exporter
+    image: oliver006/redis_exporter:v1.82.0-alpine
     container_name: ${PROJECT_TAG}-redis-exporter
     networks:
       - main
@@ -220,9 +228,12 @@ services:
       context: ./infrastructure/nginx
     container_name: ${PROJECT_TAG}-nginx
     networks:
-      - main
+      main:
+        aliases:
+          - ${NGINX_HOST:-nginx}
     expose:
       - ${NGINX_PORT}
+      - 8080
     ports:
       - ${NGINX_PORT}:${NGINX_PORT}
       - ${NGINX_SSL_PORT}:${NGINX_SSL_PORT}
@@ -246,6 +257,27 @@ services:
       timeout: 3s
       retries: 3
       start_period: 10s
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:1.5
+    container_name: ${PROJECT_TAG}-nginx-exporter
+    networks:
+      - main
+    expose:
+      - 9113
+    command:
+      - -nginx.scrape-uri=http://${NGINX_HOST}:8080/stub_status
+    depends_on:
+      nginx:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.125'
+          memory: 64M
+    logging: *default-logging
 
   api:
     build:
@@ -253,7 +285,9 @@ services:
       dockerfile: ./apps/backend/api/Dockerfile
     container_name: ${PROJECT_TAG}-api
     networks:
-      - main
+      main:
+        aliases:
+          - ${API_HOST:-api}
     expose:
       - ${API_PORT}
     secrets:
@@ -287,7 +321,9 @@ services:
       dockerfile: ./apps/backend/mailer/Dockerfile
     container_name: ${PROJECT_TAG}-mailer
     networks:
-      - main
+      main:
+        aliases:
+          - ${MAILER_HOST:-mailer}
     expose:
       - ${MAILER_PORT}
     secrets:
@@ -310,7 +346,9 @@ services:
       dockerfile: ./apps/frontend/panel-react/Dockerfile
     container_name: ${PROJECT_TAG}-panel-react
     networks:
-      - main
+      main:
+        aliases:
+          - ${PANEL_REACT_HOST:-panel-react}
     expose:
       - ${PANEL_REACT_PORT}
     environment:
@@ -323,7 +361,9 @@ services:
       dockerfile: ./apps/frontend/panel-vue/Dockerfile
     container_name: ${PROJECT_TAG}-panel-vue
     networks:
-      - main
+      main:
+        aliases:
+          - ${PANEL_VUE_HOST:-panel-vue}
     expose:
       - ${PANEL_VUE_PORT}
     environment:

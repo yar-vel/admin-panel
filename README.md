@@ -18,8 +18,8 @@ the list of allowed origins and redirect URIs in your app settings
 in Google Cloud Console and specify the `GOOGLE_CLIENT_ID` variable in the `.env` file.
 
 If you run your project in different modes sequentially, it is recommended
-to delete the images and volumes for the `api`, `mailer`, `panel-react`, `panel-vue`,
-and `redis` containers, as they contain different startup schemes.
+to delete the images and volumes for the `api`, `mailer`, `panel-react`
+and `panel-vue` containers, as they contain different startup schemes.
 
 ### Development
 
@@ -27,9 +27,8 @@ and `redis` containers, as they contain different startup schemes.
 docker compose -f docker-compose.yml -f dev.yml up -d
 ```
 
-This startup option allows you to link microservices folders to containers and adds utilities
-for viewing the contents of PostgreSQL ([Adminer](https://github.com/vrana/adminer)),
-and Redis ([RedisInsight](https://github.com/RedisInsight/RedisInsight)).
+This launch option allows you to associate microservice folders with containers
+and opens ports for monitoring Postgres, Redis, and RabbitMQ.
 
 ### Production
 

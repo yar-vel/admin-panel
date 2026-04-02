@@ -12,12 +12,14 @@ COPY ./apps/backend/api/package*.json ./apps/backend/api/
 COPY ./apps/backend/mailer/package*.json ./apps/backend/mailer/
 COPY ./scripts/package*.json ./scripts/
 
-FROM base AS dependencies
+FROM base AS shared
+COPY ./shared ./shared/
+
+FROM shared AS dependencies
 # NOTE: use the "--frozen-lockfile" flag if you have the "bun.lock" file
 RUN bun install --filter @workspace/shared --filter panel-vue
 
 FROM dependencies AS code
-COPY ./shared ./shared/
 COPY ./${APP_DIR} ./${APP_DIR}/
 
 FROM code AS development

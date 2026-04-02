@@ -35,8 +35,6 @@ services:
     restart: unless-stopped
 
   redis:
-    build:
-      target: production
     restart: unless-stopped
     environment:
       - TZ
@@ -63,6 +61,8 @@ services:
       - PANEL_VUE_HOST
       - PANEL_VUE_PORT
       - PANEL_VUE_URL
+  nginx-exporter:
+    restart: unless-stopped
 
   api:
     build:

@@ -1,4 +1,5 @@
 include snippets/health_common.conf;
+include snippets/status_common.conf;
 
 # redirect to HTTPS for all HTTP servers
 server {

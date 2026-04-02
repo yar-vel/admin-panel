@@ -26,7 +26,7 @@ services:
   rabbitmq:
     restart: no
     ports:
-      - 15672:15672
+      - 127.0.0.1:15672:15672
     env_file:
       - .env
     volumes:
@@ -34,42 +34,19 @@ services:
 
   postgres:
     restart: no
+    ports:
+      - 127.0.0.1:${POSTGRES_PORT}:${POSTGRES_PORT}
     env_file:
       - .env
     volumes:
       - ./infrastructure/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
   postgres-exporter:
     restart: no
-  adminer:
-    image: adminer:standalone
-    container_name: ${PROJECT_TAG}-adminer
-    restart: no
-    networks:
-      - main
-    ports:
-      - 8080:8080
-    env_file:
-      - .env
-    deploy:
-      resources:
-        limits:
-          cpus: '0.2'
-          memory: 256M
-        reservations:
-          cpus: '0.05'
-          memory: 64M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "5"
 
   redis:
-    build:
-      target: development
     restart: no
     ports:
-      - 8001:8001
+      - 127.0.0.1:${REDIS_PORT}:${REDIS_PORT}
     env_file:
       - .env
     volumes:
@@ -86,6 +63,8 @@ services:
       - ./infrastructure/nginx/ssl:/usr/share/nginx/ssl
       - ./infrastructure/nginx/snippets:/etc/nginx/snippets
       - ./infrastructure/nginx/templates:/etc/nginx/templates
+  nginx-exporter:
+    restart: no
 
   api:
     build:
