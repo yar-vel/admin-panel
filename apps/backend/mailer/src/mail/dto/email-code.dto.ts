@@ -6,9 +6,9 @@ import { EMAIL_REGEX, IEmailCode } from '@workspace/shared';
 export class EmailCodeDto implements IEmailCode {
   @ApiProperty({ type: String, example: 'example@mail.com' })
   @Matches(EMAIL_REGEX)
-  email: string;
+  email!: string;
 
   @ApiProperty({ type: String, example: '1234' })
   @IsString()
-  code: string;
+  code!: string;
 }

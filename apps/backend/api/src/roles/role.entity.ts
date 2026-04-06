@@ -16,10 +16,10 @@ import { EmptyStringToNull } from 'src/database/database.utils';
 @Entity('roles')
 export class RoleEntity implements IRole {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'varchar', length: 100, unique: true })
-  name: string;
+  name!: string;
 
   @Column({
     type: 'varchar',
@@ -30,13 +30,13 @@ export class RoleEntity implements IRole {
   description?: string | null;
 
   @Column({ type: 'boolean', default: false })
-  enabled: boolean;
+  enabled!: boolean;
 
   @Column({ type: 'boolean', default: false })
-  admin: boolean;
+  admin!: boolean;
 
   @Column({ type: 'boolean', default: false })
-  default: boolean;
+  default!: boolean;
 
   @ManyToMany(() => UserEntity, (user) => user.roles)
   users?: UserEntity[];

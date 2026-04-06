@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, ReactNode, useMemo, useState } from "react";
+import { FC, ReactNode, useMemo, useState } from "react";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -7,7 +7,8 @@ import Divider from "@mui/material/Divider";
 import Collapse from "@mui/material/Collapse";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import ExpandLess from "@mui/icons-material/ExpandLess";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 import { checkActiveLink, IMenuItem } from "@workspace/shared";
 
@@ -17,29 +18,15 @@ export const SidebarMenuItem: FC<IMenuItem<ReactNode>> = ({
   icon,
   childs,
 }) => {
-  const router = useRouter();
   const pathname = usePathname();
-  const [open, setOpen] = useState(() =>
-    checkActiveLink(pathname, { href, childs }),
+  const [opened, setOpened] = useState(
+    () => checkActiveLink(pathname, { href, childs }),
   );
-
-  const handleLink: MouseEventHandler<HTMLDivElement> = (event) => {
-    event.preventDefault();
-
-    if (href) {
-      router.push(href);
-    }
-
-    if (childs) {
-      setOpen(!open);
-    }
-  };
 
   const selected = useMemo(() => {
     let result = Boolean(href);
     const pathArr = pathname.split("/");
-    const linkArr = href?.split("/") || [];
-
+    const linkArr = href?.split("/") ?? [];
     linkArr.forEach((value, index) => {
       if (value != pathArr[index]) {
         result = false;
@@ -53,21 +40,22 @@ export const SidebarMenuItem: FC<IMenuItem<ReactNode>> = ({
     <>
       <ListItem disablePadding>
         <ListItemButton
-          {...(href && { href })}
           selected={selected}
-          onClick={handleLink}
+          onClick={() => setOpened(prev => !prev)}
+          LinkComponent={href ? Link : undefined}
+          {...(href && { href })}
         >
           {icon && <ListItemIcon>{icon}</ListItemIcon>}
           <ListItemText primary={title} />
-          {childs && (open ? <ExpandLess /> : <ExpandMore />)}
+          {childs && (opened ? <ExpandLess /> : <ExpandMore />)}
         </ListItemButton>
       </ListItem>
       {childs && (
-        <Collapse in={open} timeout="auto">
+        <Collapse in={opened} timeout="auto">
           <Divider />
-          {childs.map((item, index) => (
+          {childs.map((item) => (
             <SidebarMenuItem
-              key={`sbmi:${index}:${item.title}:${item.href}`}
+              key={`sbmi:${item.title}:${item.href}`}
               {...item}
             />
           ))}

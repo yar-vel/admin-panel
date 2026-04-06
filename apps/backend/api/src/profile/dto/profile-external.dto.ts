@@ -8,5 +8,5 @@ export class ProfileExternalDto
   implements IRequestUser
 {
   @Exclude()
-  sessionId: string;
+  sessionId!: string;
 }

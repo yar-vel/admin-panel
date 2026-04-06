@@ -1,4 +1,4 @@
-import * as request from 'supertest';
+import { describe, it, expect } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 
 import { SignUpDto } from 'src/auth/dto/sign-up.dto';
@@ -7,13 +7,12 @@ import {
   adminCookies,
   app,
   queue,
+  ROUTES,
   user,
   userCookies,
   wrongValue,
 } from './app.setup';
 import {
-  API_ROUTES,
-  buildRoutes,
   IForgotPassword,
   IResetPassword,
   ISignIn,
@@ -22,324 +21,375 @@ import {
   TSignUp,
 } from '@workspace/shared';
 
-const ROUTES = buildRoutes(API_ROUTES);
-
 export const runAuthTests = () => {
   describe('Auth', () => {
     describe('Sign Up', () => {
       it('Incorrect (admin)', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.sighUp)
-          .send({ ...admin, name: wrongValue } satisfies SignUpDto)
-          .expect(HttpStatus.BAD_REQUEST);
+        const signUpRes1 = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.sighUp,
+          payload: { ...admin, name: wrongValue } satisfies SignUpDto,
+        });
+        expect(signUpRes1.statusCode).toEqual(HttpStatus.BAD_REQUEST);
 
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.sighUp)
-          .send({ ...admin, email: wrongValue } satisfies SignUpDto)
-          .expect(HttpStatus.BAD_REQUEST);
+        const signUpRes2 = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.sighUp,
+          payload: { ...admin, email: wrongValue } satisfies SignUpDto,
+        });
+        expect(signUpRes2.statusCode).toEqual(HttpStatus.BAD_REQUEST);
 
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.sighUp)
-          .send({ ...admin, password: wrongValue } satisfies SignUpDto)
-          .expect(HttpStatus.BAD_REQUEST);
+        const signUpRes3 = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.sighUp,
+          payload: { ...admin, password: wrongValue } satisfies SignUpDto,
+        });
+        expect(signUpRes3.statusCode).toEqual(HttpStatus.BAD_REQUEST);
       });
 
       it('Correct (admin)', async () => {
-        const signUpResBody = await request(app.getHttpServer())
-          .post(ROUTES.auth.sighUp)
-          .send(admin)
-          .expect(HttpStatus.CREATED)
-          .then((res) => res.body as IUser);
-
-        expect(signUpResBody.name).toBe(admin.name);
-        expect(signUpResBody.email).toBe(admin.email);
-        expect(signUpResBody.enabled).toBe(true);
-        expect(signUpResBody.verified).toBe(false);
-        expect(signUpResBody.roles![0].admin).toBe(true);
+        const signUpRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.sighUp,
+          payload: admin,
+        });
+        expect(signUpRes.statusCode).toEqual(HttpStatus.CREATED);
+        const element: IUser = signUpRes.json();
+        expect(element).toHaveProperty('name', admin.name);
+        expect(element).toHaveProperty('email', admin.email);
+        expect(element).toHaveProperty('enabled', true);
+        expect(element).toHaveProperty('verified', false);
+        expect(element).toHaveProperty('roles');
+        expect(element.roles![0]).toHaveProperty('admin', true);
       });
 
       it('Incorrect (user)', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.sighUp)
-          .send({ ...user, email: admin.email } satisfies TSignUp)
-          .expect(HttpStatus.CONFLICT);
+        const signUpRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.sighUp,
+          payload: { ...user, email: admin.email } satisfies TSignUp,
+        });
+        expect(signUpRes.statusCode).toEqual(HttpStatus.CONFLICT);
       });
 
       it('Correct (user)', async () => {
-        const signUpResBody = await request(app.getHttpServer())
-          .post(ROUTES.auth.sighUp)
-          .send(user)
-          .expect(HttpStatus.CREATED)
-          .then((res) => res.body as IUser);
-
-        expect(signUpResBody.name).toBe(user.name);
-        expect(signUpResBody.email).toBe(user.email);
-        expect(signUpResBody.enabled).toBe(true);
-        expect(signUpResBody.verified).toBe(false);
-        expect(signUpResBody.roles![0].admin).toBe(false);
+        const signUpRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.sighUp,
+          payload: user,
+        });
+        expect(signUpRes.statusCode).toEqual(HttpStatus.CREATED);
+        const element: IUser = signUpRes.json();
+        expect(element).toHaveProperty('name', user.name);
+        expect(element).toHaveProperty('email', user.email);
+        expect(element).toHaveProperty('enabled', true);
+        expect(element).toHaveProperty('verified', false);
+        expect(element).toHaveProperty('roles');
+        expect(element.roles![0]).toHaveProperty('admin', false);
       });
     });
 
-    describe('Verify User request', () => {
+    describe('Verify User Request', () => {
       it('Incorrect', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.signIn)
-          .send({
+        const verifyReqRes1 = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.signIn,
+          payload: {
             username: wrongValue,
             password: admin.password,
-          } satisfies ISignIn)
-          .expect(HttpStatus.UNAUTHORIZED);
+          } satisfies ISignIn,
+        });
+        expect(verifyReqRes1.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
 
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.signIn)
-          .send({
+        const verifyReqRes2 = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.signIn,
+          payload: {
             username: admin.email,
             password: wrongValue,
-          } satisfies ISignIn)
-          .expect(HttpStatus.UNAUTHORIZED);
+          } satisfies ISignIn,
+        });
+        expect(verifyReqRes2.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
       });
 
       it('Correct (admin)', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.signIn)
-          .send({
+        const verifyReqRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.signIn,
+          payload: {
             username: admin.email,
             password: admin.password,
-          } satisfies ISignIn)
-          .expect(HttpStatus.FORBIDDEN);
-
+          } satisfies ISignIn,
+        });
+        expect(verifyReqRes.statusCode).toEqual(HttpStatus.FORBIDDEN);
         expect(queue.at(-1)).toHaveProperty('code');
         expect(queue.at(-1)).toHaveProperty('email', admin.email);
       });
 
       it('Correct (user)', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.signIn)
-          .send({
+        const verifyReqRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.signIn,
+          payload: {
             username: user.email,
             password: user.password,
-          } satisfies ISignIn)
-          .expect(HttpStatus.FORBIDDEN);
-
+          } satisfies ISignIn,
+        });
+        expect(verifyReqRes.statusCode).toEqual(HttpStatus.FORBIDDEN);
         expect(queue.at(-1)).toHaveProperty('code');
         expect(queue.at(-1)).toHaveProperty('email', user.email);
       });
     });
 
-    describe('Verify User', () => {
+    describe('Verify User Confirm', () => {
       it('Incorrect', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.verifyUser)
-          .send({
+        const verifyConfRes1 = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.verifyUser,
+          payload: {
             code: wrongValue,
             email: queue.at(-1)!.email,
-          } satisfies IVerifyUser)
-          .expect(HttpStatus.NOT_FOUND);
+          } satisfies IVerifyUser,
+        });
+        expect(verifyConfRes1.statusCode).toEqual(HttpStatus.NOT_FOUND);
 
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.verifyUser)
-          .send({
+        const verifyConfRes2 = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.verifyUser,
+          payload: {
             code: queue.at(-1)!.code,
             email: wrongValue,
-          } satisfies IVerifyUser)
-          .expect(HttpStatus.NOT_FOUND);
+          } satisfies IVerifyUser,
+        });
+        expect(verifyConfRes2.statusCode).toEqual(HttpStatus.NOT_FOUND);
       });
 
       it('Correct (admin)', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.verifyUser)
-          .send({
+        const verifyConfRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.verifyUser,
+          payload: {
             code: queue.at(-2)!.code,
             email: queue.at(-2)!.email,
-          } satisfies IVerifyUser)
-          .expect(HttpStatus.NO_CONTENT);
+          } satisfies IVerifyUser,
+        });
+        expect(verifyConfRes.statusCode).toEqual(HttpStatus.NO_CONTENT);
       });
 
       it('Correct (user)', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.verifyUser)
-          .send({
+        const verifyConfRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.verifyUser,
+          payload: {
             code: queue.at(-1)!.code,
             email: queue.at(-1)!.email,
-          } satisfies IVerifyUser)
-          .expect(HttpStatus.NO_CONTENT);
+          } satisfies IVerifyUser,
+        });
+        expect(verifyConfRes.statusCode).toEqual(HttpStatus.NO_CONTENT);
       });
     });
 
     describe('Forgot Password', () => {
       it('Incorrect', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.forgotPassword)
-          .send({ email: wrongValue } satisfies IForgotPassword)
-          .expect(HttpStatus.NOT_FOUND);
+        const forgotRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.forgotPassword,
+          payload: { email: wrongValue } satisfies IForgotPassword,
+        });
+        expect(forgotRes.statusCode).toEqual(HttpStatus.NOT_FOUND);
       });
 
       it('Correct (admin)', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.forgotPassword)
-          .send({ email: admin.email } satisfies IForgotPassword)
-          .expect(HttpStatus.NO_CONTENT);
-
+        const forgotRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.forgotPassword,
+          payload: { email: admin.email } satisfies IForgotPassword,
+        });
+        expect(forgotRes.statusCode).toEqual(HttpStatus.NO_CONTENT);
         expect(queue.at(-1)).toHaveProperty('email', admin.email);
       });
 
       it('Correct (user)', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.forgotPassword)
-          .send({ email: user.email } satisfies IForgotPassword)
-          .expect(HttpStatus.NO_CONTENT);
-
+        const forgotRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.forgotPassword,
+          payload: { email: user.email } satisfies IForgotPassword,
+        });
+        expect(forgotRes.statusCode).toEqual(HttpStatus.NO_CONTENT);
         expect(queue.at(-1)).toHaveProperty('email', user.email);
       });
     });
 
     describe('Reset Password', () => {
       it('Incorrect', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.resetPassword)
-          .send({
+        const resetRes1 = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.resetPassword,
+          payload: {
             code: wrongValue,
             email: queue.at(-2)!.email,
             password: admin.password + admin.password,
-          } satisfies IResetPassword)
-          .expect(HttpStatus.NOT_FOUND);
+          } satisfies IResetPassword,
+        });
+        expect(resetRes1.statusCode).toEqual(HttpStatus.NOT_FOUND);
 
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.resetPassword)
-          .send({
+        const resetRes2 = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.resetPassword,
+          payload: {
             code: queue.at(-2)!.code,
             email: wrongValue,
             password: admin.password + admin.password,
-          } satisfies IResetPassword)
-          .expect(HttpStatus.NOT_FOUND);
+          } satisfies IResetPassword,
+        });
+        expect(resetRes2.statusCode).toEqual(HttpStatus.NOT_FOUND);
 
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.resetPassword)
-          .send({
+        const resetRes3 = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.resetPassword,
+          payload: {
             code: queue.at(-2)!.code,
             email: queue.at(-2)!.email,
             password: wrongValue,
-          } satisfies IResetPassword)
-          .expect(HttpStatus.BAD_REQUEST);
+          } satisfies IResetPassword,
+        });
+        expect(resetRes3.statusCode).toEqual(HttpStatus.BAD_REQUEST);
       });
 
       it('Correct (admin)', async () => {
         admin.password = admin.password + admin.password;
-
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.resetPassword)
-          .send({
+        const resetRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.resetPassword,
+          payload: {
             code: queue.at(-2)!.code,
             email: queue.at(-2)!.email,
             password: admin.password,
-          } satisfies IResetPassword)
-          .expect(HttpStatus.NO_CONTENT);
+          } satisfies IResetPassword,
+        });
+        expect(resetRes.statusCode).toEqual(HttpStatus.NO_CONTENT);
       });
 
       it('Correct (user)', async () => {
         user.password = user.password + user.password;
-
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.resetPassword)
-          .send({
+        const resetRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.resetPassword,
+          payload: {
             code: queue.at(-1)!.code,
             email: queue.at(-1)!.email,
             password: user.password,
-          } satisfies IResetPassword)
-          .expect(HttpStatus.NO_CONTENT);
+          } satisfies IResetPassword,
+        });
+        expect(resetRes.statusCode).toEqual(HttpStatus.NO_CONTENT);
       });
     });
 
     describe('Sign In', () => {
       it('Incorrect', async () => {
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.signIn)
-          .send({
+        const signInRes1 = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.signIn,
+          payload: {
             username: wrongValue,
             password: admin.password,
-          } satisfies ISignIn)
-          .expect(HttpStatus.UNAUTHORIZED);
+          } satisfies ISignIn,
+        });
+        expect(signInRes1.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
 
-        await request(app.getHttpServer())
-          .post(ROUTES.auth.signIn)
-          .send({
+        const signInRes2 = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.signIn,
+          payload: {
             username: admin.email,
             password: wrongValue,
-          } satisfies ISignIn)
-          .expect(HttpStatus.UNAUTHORIZED);
+          } satisfies ISignIn,
+        });
+        expect(signInRes2.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
       });
 
       it('Correct (admin)', async () => {
-        const signInRes = await request(app.getHttpServer())
-          .post(ROUTES.auth.signIn)
-          .send({
+        const signInRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.signIn,
+          payload: {
             username: admin.email,
             password: admin.password,
-          } satisfies ISignIn)
-          .expect(HttpStatus.CREATED);
-
+          } satisfies ISignIn,
+        });
+        expect(signInRes.statusCode).toEqual(HttpStatus.CREATED);
         expect(signInRes.headers).toHaveProperty('set-cookie');
 
-        const resBody = signInRes.body as IUser;
+        const element: IUser = signInRes.json();
+        expect(element).toHaveProperty('id');
+        expect(element).toHaveProperty('name', admin.name);
+        expect(element).toHaveProperty('email', admin.email);
+        expect(element).not.toHaveProperty('password');
 
-        expect(resBody).toHaveProperty('id');
-        expect(resBody).toHaveProperty('name', admin.name);
-        expect(resBody).toHaveProperty('email', admin.email);
-        expect(resBody).not.toHaveProperty('password');
-
-        adminCookies.push(...signInRes.headers['set-cookie']);
+        if (Array.isArray(signInRes.headers['set-cookie'])) {
+          adminCookies.value = signInRes.headers['set-cookie'].join('; ');
+        }
       });
 
       it('Correct (user)', async () => {
-        const signInRes = await request(app.getHttpServer())
-          .post(ROUTES.auth.signIn)
-          .send({
+        const signInRes = await app.inject({
+          method: 'POST',
+          url: ROUTES.auth.signIn,
+          payload: {
             username: user.email,
             password: user.password,
-          } satisfies ISignIn)
-          .expect(HttpStatus.CREATED);
+          } satisfies ISignIn,
+        });
+        expect(signInRes.statusCode).toEqual(HttpStatus.CREATED);
 
-        const resBody = signInRes.body as IUser;
-
-        expect(resBody).toHaveProperty('id');
-        expect(resBody).toHaveProperty('name', user.name);
-        expect(resBody).toHaveProperty('email', user.email);
-        expect(resBody).not.toHaveProperty('password');
+        const element: IUser = signInRes.json();
+        expect(element).toHaveProperty('id');
+        expect(element).toHaveProperty('name', user.name);
+        expect(element).toHaveProperty('email', user.email);
+        expect(element).not.toHaveProperty('password');
         expect(signInRes.headers).toHaveProperty('set-cookie');
 
-        userCookies.push(...signInRes.headers['set-cookie']);
+        if (Array.isArray(signInRes.headers['set-cookie'])) {
+          userCookies.value = signInRes.headers['set-cookie'].join('; ');
+        }
       });
     });
 
     describe('Refresh', () => {
       it('Incorrect', async () => {
-        await request(app.getHttpServer())
-          .get(ROUTES.auth.refresh)
-          .expect(HttpStatus.UNAUTHORIZED);
+        const refreshRes = await app.inject({
+          method: 'GET',
+          url: ROUTES.auth.refresh,
+        });
+        expect(refreshRes.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
       });
 
       it('Correct (admin)', async () => {
-        const refreshRes = await request(app.getHttpServer())
-          .get(ROUTES.auth.refresh)
-          .set('Cookie', adminCookies)
-          .expect(HttpStatus.NO_CONTENT);
-
+        const refreshRes = await app.inject({
+          method: 'GET',
+          url: ROUTES.auth.refresh,
+          headers: { cookie: adminCookies.value },
+        });
+        expect(refreshRes.statusCode).toEqual(HttpStatus.NO_CONTENT);
         expect(refreshRes.headers).toHaveProperty('set-cookie');
 
-        adminCookies.length = 0;
-        adminCookies.push(...refreshRes.headers['set-cookie']);
+        if (Array.isArray(refreshRes.headers['set-cookie'])) {
+          adminCookies.value = refreshRes.headers['set-cookie'].join('; ');
+        }
       });
 
       it('Correct (user)', async () => {
-        const refreshRes = await request(app.getHttpServer())
-          .get(ROUTES.auth.refresh)
-          .set('Cookie', userCookies)
-          .expect(HttpStatus.NO_CONTENT);
-
+        const refreshRes = await app.inject({
+          method: 'GET',
+          url: ROUTES.auth.refresh,
+          headers: { cookie: userCookies.value },
+        });
+        expect(refreshRes.statusCode).toEqual(HttpStatus.NO_CONTENT);
         expect(refreshRes.headers).toHaveProperty('set-cookie');
 
-        userCookies.length = 0;
-        userCookies.push(...refreshRes.headers['set-cookie']);
+        if (Array.isArray(refreshRes.headers['set-cookie'])) {
+          userCookies.value = refreshRes.headers['set-cookie'].join('; ');
+        }
       });
     });
   });

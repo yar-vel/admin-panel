@@ -67,11 +67,11 @@ watch(status, () => {
       {{ $t('confirm') }}
     </FormButton>
     <FormLink
-      :href="ROUTES.ui.signIn"
+      :to="ROUTES.ui.signIn"
       :text="$t('signInText')"
     />
     <FormLink
-      :href="ROUTES.ui.signUp"
+      :to="ROUTES.ui.signUp"
       :text="$t('signUpText')"
     />
     <CustomModal

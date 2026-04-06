@@ -20,41 +20,41 @@ export class ResourceDto implements IResource {
     example: '00000000-0000-0000-0000-000000000000',
   })
   @IsUUID()
-  id: string;
+  id!: string;
 
   @ApiProperty({ type: String, example: 'Posts' })
   @Length(1, 100)
-  name: string;
+  name!: string;
 
   @ApiProperty({ type: String, example: 'posts' })
   @Length(1, 100)
-  path: string;
+  path!: string;
 
   @ApiProperty({ type: String, example: 'Lorem ipsum' })
   @MaxLength(1000)
-  description: string;
+  description!: string;
 
   @ApiProperty({ type: Boolean, example: true })
   @Transform(({ value }) => toBoolean(value))
   @IsBoolean()
-  enabled: boolean;
+  enabled!: boolean;
 
   @ApiProperty({ type: Boolean, example: false })
   @Transform(({ value }) => toBoolean(value))
   @IsBoolean()
-  default: boolean;
+  default!: boolean;
 
   @ApiProperty({ type: () => [RightsDto] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => RightsDto)
-  rights: RightsDto[];
+  rights!: RightsDto[];
 
   @ApiProperty({ type: Date, example: new Date() })
   @IsDate()
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({ type: Date, example: new Date() })
   @IsDate()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

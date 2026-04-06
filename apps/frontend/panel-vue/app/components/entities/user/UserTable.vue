@@ -39,7 +39,7 @@ const items = computed(() => props.rows?.map(value => ({ ...value, selectable: !
       :loading="loading"
     >
       <template #item.edit="{ item }">
-        <NuxtLink :href="ROUTES.ui.user(item.id)">
+        <NuxtLink :to="ROUTES.ui.user(item.id)">
           <v-btn
             color="white"
             icon="mdi-pencil"

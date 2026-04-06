@@ -1,30 +1,10 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   title?: string
   href?: string
   icon?: string
   childs?: IMenuItem<string>[]
 }>()
-
-const route = useRoute()
-const router = useRouter()
-const selected = ref(false)
-
-watch(
-  () => route.path,
-  () => {
-    let result = Boolean(props.href)
-    const pathArr = route.path.split('/')
-    const linkArr = props.href?.split('/') || []
-    linkArr.forEach((value, index) => {
-      if (value !== pathArr[index]) {
-        result = false
-      }
-    })
-    selected.value = result
-  },
-  { immediate: true },
-)
 </script>
 
 <template>
@@ -33,9 +13,9 @@ watch(
     :fluid="true"
     :value="`${title}: ${href}`"
   >
-    <template #activator="{ props: itemProps }">
+    <template #activator="{ props: activatorProps }">
       <v-list-item
-        v-bind="itemProps"
+        v-bind="activatorProps"
         :prepend-icon="icon"
         :title="title"
       />
@@ -49,11 +29,9 @@ watch(
   </v-list-group>
   <v-list-item
     v-else
-    :active="selected"
-    :href="href"
-    link
+    :to="href"
     :prepend-icon="icon"
     :title="title"
-    @click.prevent="router.push(href || '#')"
+    link
   />
 </template>

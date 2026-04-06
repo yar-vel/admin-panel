@@ -1,4 +1,4 @@
-import * as request from 'supertest';
+import { describe, beforeAll, afterAll, it, expect } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 
 import {
@@ -6,6 +6,7 @@ import {
   app,
   closeApp,
   createApp,
+  ROUTES,
   timeout,
   userCookies,
 } from './app.setup';
@@ -32,29 +33,31 @@ describe('App (e2e)', () => {
 
   describe('Sign Out', () => {
     it('Incorrect', async () => {
-      await request(app.getHttpServer())
-        .delete('/auth/sign-out')
-        .expect(HttpStatus.UNAUTHORIZED);
+      const signOutRes = await app.inject({
+        method: 'DELETE',
+        url: ROUTES.auth.signOut,
+      });
+      expect(signOutRes.statusCode).toEqual(HttpStatus.UNAUTHORIZED);
     });
 
     it('Correct (admin)', async () => {
-      const resHeaders = await request(app.getHttpServer())
-        .delete('/auth/sign-out')
-        .set('Cookie', adminCookies)
-        .expect(HttpStatus.NO_CONTENT)
-        .then((res) => res.headers);
-
-      expect(resHeaders).toHaveProperty('set-cookie');
+      const signOutRes = await app.inject({
+        method: 'DELETE',
+        url: ROUTES.auth.signOut,
+        headers: { cookie: adminCookies.value },
+      });
+      expect(signOutRes.statusCode).toEqual(HttpStatus.NO_CONTENT);
+      expect(signOutRes.headers).toHaveProperty('set-cookie');
     });
 
     it('Correct (user)', async () => {
-      const resHeaders = await request(app.getHttpServer())
-        .delete('/auth/sign-out')
-        .set('Cookie', userCookies)
-        .expect(HttpStatus.NO_CONTENT)
-        .then((res) => res.headers);
-
-      expect(resHeaders).toHaveProperty('set-cookie');
+      const signOutRes = await app.inject({
+        method: 'DELETE',
+        url: ROUTES.auth.signOut,
+        headers: { cookie: userCookies.value },
+      });
+      expect(signOutRes.statusCode).toEqual(HttpStatus.NO_CONTENT);
+      expect(signOutRes.headers).toHaveProperty('set-cookie');
     });
   });
 });

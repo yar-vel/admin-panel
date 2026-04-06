@@ -101,11 +101,11 @@ watch(data, () => {
       {{ $t('signIn') }}
     </FormButton>
     <FormLink
-      :href="ROUTES.ui.signUp"
+      :to="ROUTES.ui.signUp"
       :text="$t('signUpText')"
     />
     <FormLink
-      :href="ROUTES.ui.forgotPassword"
+      :to="ROUTES.ui.forgotPassword"
       :text="$t('forgotPasswordText')"
     />
     <SignInGoogleLink />

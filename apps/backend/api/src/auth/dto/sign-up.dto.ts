@@ -12,14 +12,14 @@ import {
 export class SignUpDto implements TSignUp {
   @ApiProperty({ type: String, example: 'example@mail.com' })
   @Matches(EMAIL_REGEX)
-  email: string;
+  email!: string;
 
   @ApiProperty({ type: String, example: '!Q1q2w3e4r' })
   @Matches(PASSWORD_REGEX)
-  password: string;
+  password!: string;
 
   @ApiProperty({ type: String, example: 'Linus Torvalds' })
   @Matches(NAME_REGEX)
   @Transform(({ value }) => (value as string).trim())
-  name: string;
+  name!: string;
 }

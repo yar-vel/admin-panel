@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const route = useRoute()
 const { t } = useI18n()
 const profileRights = useRights(ROUTES.api.profile._)
 const usersRights = useRights(ROUTES.api.users._)
@@ -54,15 +53,15 @@ if (mainMenu.childs!.length > 0) {
   menu.push(mainMenu)
 }
 
-const opened = computed(() => menu.find(value => checkActiveLink(route.path, { href: value.href, childs: value.childs })))
+const opened = ref<string[]>([])
 </script>
 
 <template>
   <v-list
+    v-model:opened="opened"
     :aria-label="$t('mainMenu')"
     density="compact"
     nav
-    :opened="[opened ? `${opened.title}: ${opened.href}` : '']"
   >
     <SidebarMenuItem
       v-for="item of menu"

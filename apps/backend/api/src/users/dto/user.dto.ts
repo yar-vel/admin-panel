@@ -25,61 +25,61 @@ export class UserDto implements IUser {
     example: '00000000-0000-0000-0000-000000000000',
   })
   @IsUUID()
-  id: string;
+  id!: string;
 
   @ApiProperty({ type: String, example: 'example@mail.com' })
   @Matches(EMAIL_REGEX)
-  email: string;
+  email!: string;
 
   @ApiProperty({ type: String, example: '!Q1q2w3e4r' })
   @Matches(PASSWORD_REGEX)
-  password: string;
+  password!: string;
 
   @ApiProperty({ type: String, example: 'Linus Torvalds' })
   @Matches(NAME_REGEX)
-  name: string;
+  name!: string;
 
   @ApiProperty({ type: String, example: '000000000000000000000' })
   @IsString()
-  googleId: string;
+  googleId!: string;
 
   @ApiProperty({ type: Boolean, example: true })
   @Transform(({ value }) => toBoolean(value))
   @IsBoolean()
-  enabled: boolean;
+  enabled!: boolean;
 
   @ApiProperty({ type: Boolean, example: true })
   @Transform(({ value }) => toBoolean(value))
   @IsBoolean()
-  verified: boolean;
+  verified!: boolean;
 
   @ApiProperty({ type: String, example: '1234' })
   @IsString()
-  verificationCode: string;
+  verificationCode!: string;
 
   @ApiProperty({ type: String, example: '1234' })
   @IsString()
-  resetPasswordCode: string;
+  resetPasswordCode!: string;
 
   @ApiProperty({ type: String, example: '1234' })
   @IsString()
-  changeEmailCode: string;
+  changeEmailCode!: string;
 
   @ApiProperty({ type: String, example: '1234' })
   @IsString()
-  temporaryEmail: string;
+  temporaryEmail!: string;
 
   @ApiProperty({ type: [RoleExternalDto] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => RoleExternalDto)
-  roles: RoleExternalDto[];
+  roles!: RoleExternalDto[];
 
   @ApiProperty({ type: Date, example: new Date() })
   @IsDate()
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({ type: Date, example: new Date() })
   @IsDate()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

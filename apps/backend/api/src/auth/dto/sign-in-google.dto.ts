@@ -6,5 +6,5 @@ import { ISignInGoogle } from '@workspace/shared';
 export class SignInGoogleDto implements ISignInGoogle {
   @ApiProperty({ type: String, example: 'googleAccessToken' })
   @IsString()
-  googleAccessToken: string;
+  googleAccessToken!: string;
 }

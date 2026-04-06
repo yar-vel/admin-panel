@@ -6,5 +6,5 @@ import { IChangeEmailConfirm } from '@workspace/shared';
 export class ChangeEmailConfirmDto implements IChangeEmailConfirm {
   @ApiProperty({ type: String, example: '1234' })
   @IsString()
-  code: string;
+  code!: string;
 }

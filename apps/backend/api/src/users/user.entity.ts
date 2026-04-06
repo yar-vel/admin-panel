@@ -16,7 +16,7 @@ import { EmptyStringToNull } from 'src/database/database.utils';
 @Entity('users')
 export class UserEntity implements IUser {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({
     type: 'varchar',
@@ -36,7 +36,7 @@ export class UserEntity implements IUser {
   password?: string | null;
 
   @Column({ type: 'varchar', length: 100 })
-  name: string;
+  name!: string;
 
   @Column({
     type: 'varchar',
@@ -48,10 +48,10 @@ export class UserEntity implements IUser {
   googleId?: string | null;
 
   @Column({ type: 'boolean', default: false })
-  enabled: boolean;
+  enabled!: boolean;
 
   @Column({ type: 'boolean', default: false })
-  verified: boolean;
+  verified!: boolean;
 
   @Column({
     type: 'varchar',

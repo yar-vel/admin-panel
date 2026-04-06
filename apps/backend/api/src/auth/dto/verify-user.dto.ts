@@ -6,9 +6,9 @@ import { IVerifyUser } from '@workspace/shared';
 export class VerifyUserDto implements IVerifyUser {
   @ApiProperty({ type: String, example: 'example@mail.com' })
   @IsString()
-  email: string;
+  email!: string;
 
   @ApiProperty({ type: String, example: '1234' })
   @IsString()
-  code: string;
+  code!: string;
 }

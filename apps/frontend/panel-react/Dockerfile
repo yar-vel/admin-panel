@@ -27,8 +27,10 @@ ARG PANEL_REACT_URL
 ARG API_HOST
 ARG API_PORT
 ARG API_URL
+ARG NGINX_PORT
+ARG NGINX_URL
 ARG GOOGLE_CLIENT_ID
-RUN npm run build -w @workspace/shared -w panel-react
+RUN npm run build -w panel-react
 
 FROM base AS production
 ENV NODE_ENV=production

@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -17,6 +18,7 @@ import { AppModule } from 'src/app.module';
 import { MAIL_SERVER, REDIS } from 'libs/constants';
 import { SignUpDto } from 'src/auth/dto/sign-up.dto';
 import { cfg } from 'config/configuration';
+import { API_ROUTES, buildRoutes } from '@workspace/shared';
 
 let pgContainer: StartedPostgreSqlContainer;
 export let app: NestFastifyApplication;
@@ -33,9 +35,10 @@ export const user: SignUpDto = {
   email: 'test2@mail.com',
   password: 'r4e3w2q1Q!',
 };
-export const adminCookies: string[] = [];
-export const userCookies: string[] = [];
+export const adminCookies = { value: '' };
+export const userCookies = { value: '' };
 export const timeout = 60000;
+export const ROUTES = buildRoutes(API_ROUTES);
 
 export const createApp = async () => {
   pgContainer = await new PostgreSqlContainer('postgres:alpine')
@@ -75,7 +78,7 @@ export const createApp = async () => {
       }
       return true;
     }),
-    quit: jest.fn().mockResolvedValue(true),
+    quit: jest.fn(() => Promise.resolve()),
   };
 
   const mockClientProxy = {
@@ -88,7 +91,7 @@ export const createApp = async () => {
     close: jest.fn(() => Promise.resolve()),
   };
 
-  const moduleFixture = await Test.createTestingModule({
+  const moduleRef = await Test.createTestingModule({
     imports: [AppModule],
   })
     .overrideProvider(REDIS)
@@ -99,7 +102,7 @@ export const createApp = async () => {
     .useValue(mockClientProxy)
     .compile();
 
-  app = moduleFixture.createNestApplication<NestFastifyApplication>(
+  app = moduleRef.createNestApplication<NestFastifyApplication>(
     new FastifyAdapter(),
   );
 

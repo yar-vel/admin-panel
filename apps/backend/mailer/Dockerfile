@@ -22,8 +22,8 @@ WORKDIR ${ROOT_DIR}/${APP_DIR}
 CMD ["npm", "run", "start:dev"]
 
 FROM code AS builder
-RUN npm run build -w @workspace/shared -w mailer
-RUN npm ci --omit=dev -w mailer
+RUN npm run build -w mailer
+RUN npm ci --ignore-scripts --omit=dev -w mailer
 
 FROM base AS production
 ENV NODE_ENV=production

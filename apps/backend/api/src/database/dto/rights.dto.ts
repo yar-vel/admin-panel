@@ -12,7 +12,7 @@ export class RightsDto implements IRights {
     example: '00000000-0000-0000-0000-000000000000',
   })
   @IsUUID()
-  roleId: IRole['id'];
+  roleId!: IRole['id'];
 
   @ApiPropertyOptional({ type: () => RoleDto })
   @IsOptional()
@@ -25,7 +25,7 @@ export class RightsDto implements IRights {
     example: '00000000-0000-0000-0000-000000000000',
   })
   @IsUUID()
-  resourceId: IResource['id'];
+  resourceId!: IResource['id'];
 
   @ApiPropertyOptional({ type: () => ResourceDto })
   @IsOptional()
@@ -35,17 +35,17 @@ export class RightsDto implements IRights {
 
   @ApiProperty({ type: Boolean, example: false })
   @IsBoolean()
-  creating: boolean;
+  creating!: boolean;
 
   @ApiProperty({ type: Boolean, example: false })
   @IsBoolean()
-  reading: boolean;
+  reading!: boolean;
 
   @ApiProperty({ type: Boolean, example: false })
   @IsBoolean()
-  updating: boolean;
+  updating!: boolean;
 
   @ApiProperty({ type: Boolean, example: false })
   @IsBoolean()
-  deleting: boolean;
+  deleting!: boolean;
 }

@@ -1,11 +1,5 @@
 services:
-  grafana:
-    image: ${IMAGE_TAG}/grafana
-  prometheus:
-    image: ${IMAGE_TAG}/prometheus
-
-  rabbitmq:
-    image: ${IMAGE_TAG}/rabbitmq
+  # --- CORE LAYER ---
 
   postgres:
     image: ${IMAGE_TAG}/postgres
@@ -13,14 +7,40 @@ services:
   redis:
     image: ${IMAGE_TAG}/redis
 
-  nginx:
-    image: ${IMAGE_TAG}/nginx
+  rabbitmq:
+    image: ${IMAGE_TAG}/rabbitmq
+
+  # --- OBSERVABILITY LAYER ---
+
+  prometheus:
+    image: ${IMAGE_TAG}/prometheus
+
+  grafana:
+    image: ${IMAGE_TAG}/grafana
+
+  alloy:
+    image: ${IMAGE_TAG}/alloy
+
+  tempo:
+    image: ${IMAGE_TAG}/tempo
+
+  # --- APPLICATION LAYER (BACKEND) ---
 
   api:
     image: ${IMAGE_TAG}/api
+
   mailer:
     image: ${IMAGE_TAG}/mailer
+
+  # --- APPLICATION LAYER (FRONTEND) ---
+
   panel-react:
     image: ${IMAGE_TAG}/panel-react
+
   panel-vue:
     image: ${IMAGE_TAG}/panel-vue
+
+  # --- GATEWAY LAYER ---
+
+  nginx:
+    image: ${IMAGE_TAG}/nginx
