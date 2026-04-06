@@ -19,11 +19,11 @@ server {
     }
 
     # panel-vue
-    location ${PANEL_VUE_URL} {
-        include snippets/proxy_common.conf;
-        rewrite ^/?(.*)$ /$1 break;
-        proxy_pass http://${PANEL_VUE_HOST}:${PANEL_VUE_PORT}/;
-    }
+    # location ${PANEL_VUE_URL} {
+    #     include snippets/proxy_common.conf;
+    #     rewrite ^/?(.*)$ /$1 break;
+    #     proxy_pass http://${PANEL_VUE_HOST}:${PANEL_VUE_PORT}/;
+    # }
 
     # panel-react
     location ${PANEL_REACT_URL} {
