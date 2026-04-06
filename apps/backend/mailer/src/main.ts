@@ -1,5 +1,4 @@
 import './tracing';
-import { startOtel } from './tracing';
 
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
@@ -8,8 +7,6 @@ import { MicroserviceModule } from './microservice.module';
 import { cfg } from 'config/configuration';
 
 async function bootstrap() {
-  startOtel();
-
   const microservice =
     await NestFactory.createMicroservice<MicroserviceOptions>(
       MicroserviceModule,

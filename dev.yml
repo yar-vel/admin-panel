@@ -137,24 +137,24 @@ services:
           memory: 1G
     restart: no
 
-  panel-vue:
-    build:
-      target: development
-    volumes:
-      - ./shared:/usr/src/app/shared
-      - ./apps/frontend/panel-vue:/usr/src/app/apps/frontend/panel-vue
-      - panel-vue-node-modules:/usr/src/app/node_modules
-    env_file:
-      - .env
-    deploy:
-      resources:
-        limits:
-          cpus: '4.0'
-          memory: 4G
-        reservations:
-          cpus: '1.0'
-          memory: 1G
-    restart: no
+  # panel-vue:
+  #   build:
+  #     target: development
+  #   volumes:
+  #     - ./shared:/usr/src/app/shared
+  #     - ./apps/frontend/panel-vue:/usr/src/app/apps/frontend/panel-vue
+  #     - panel-vue-node-modules:/usr/src/app/node_modules
+  #   env_file:
+  #     - .env
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '4.0'
+  #         memory: 4G
+  #       reservations:
+  #         cpus: '1.0'
+  #         memory: 1G
+  #   restart: no
 
   # --- GATEWAY LAYER ---
 

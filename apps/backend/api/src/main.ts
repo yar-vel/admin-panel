@@ -1,5 +1,4 @@
 import './tracing';
-import { startOtel } from './tracing';
 
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -17,8 +16,6 @@ import { cfg } from 'config/configuration';
 import { getT } from '@workspace/shared';
 
 async function bootstrap() {
-  startOtel();
-
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({ trustProxy: true }),

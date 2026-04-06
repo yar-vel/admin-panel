@@ -86,7 +86,6 @@ and [TypeScript](https://github.com/microsoft/TypeScript) with FSD-like structur
 [Material UI](https://github.com/mui/material-ui) is used as the UI kit.
 [Zustand](https://github.com/pmndrs/zustand) is used as the application state manager.
 [TanStack Query](https://github.com/TanStack/query) is used for API requests.
-
 Service folder: `apps/frontend/panel-react`.
 
 ##### Vue
@@ -96,8 +95,9 @@ and instead of Next.js, [Nuxt](https://github.com/nuxt/nuxt) is used.
 Instead of [Node.js](https://github.com/nodejs), the container uses [Bun](https://github.com/oven-sh/bun).
 State manager - [Pinia](https://github.com/vuejs/pinia).
 UI kit - [Vuetify](https://github.com/vuetifyjs/vuetify).
-
 Service folder: `apps/frontend/panel-vue`.
+Since this UI variant is a functional copy of the React version, it is disabled by default to save resources.
+If you want to use this variant, you will need to uncomment it in the Docker Compose and Nginx files.
 
 #### Backend
 
@@ -108,16 +108,14 @@ authorization (JWT), creation of requests for sending emails.
 When registering the first user, creates standard API-endpoints,
 roles and assigns administrator role to the first registered user.
 Written in [NestJS](https://github.com/nestjs/nest).
-
 Service folder: `apps/backend/api`.
 
 ##### Mail Server
 
 This service is engaged in sending emails.
-It is built using the same technologies as the main server.
+It is built using the same technologies as the main API-server.
 If the mailer is running in testing mode, then links to view the contents
 of sent emails are available in the container console.
-
 Service folder: `apps/backend/mailer`.
 
 ### Infrastructure
@@ -125,43 +123,48 @@ Service folder: `apps/backend/mailer`.
 #### Proxy
 
 [Nginx](https://github.com/nginx/agent) is used as a proxy server and provides the HTTPS protocol.
-
-Service folder: `infrastructure/nginx`.
-In the `./html` folder you can change the default nginx response pages.
-The `./ssl` folder is used to store the SSL certificate files.
-Reusable blocks (do not support environment variables) are located in the `./snippets` folder.
-In the file `./templates/default.conf.template` you can set routing rules.
+In the `infrastructure/nginx/html` folder you can change the default nginx response pages.
+The `infrastructure/nginx/ssl` folder is used to store the SSL certificate files.
+Reusable blocks (do not support environment variables) are located in the `infrastructure/nginx/snippets` folder.
+In the file `infrastructure/nginx/templates/default.conf.template` you can set routing rules.
 
 #### Database
 
 [PostgreSQL](https://github.com/postgres/postgres) is used as the main database of the project.
-
-Service folder: `infrastructure/postgres`.
-In the file `./postgresql.conf` you can set the parameters of PostgreSQL.
+In the file `infrastructure/postgres/postgresql.conf` you can set the parameters of PostgreSQL.
 
 #### Cache Store
 
 [Redis](https://github.com/redis/redis) is used to store user sessions.
-
-Service folder: `infrastructure/redis`.
-In the file `./redis.conf` you can set the parameters of Redis.
+In the file `infrastructure/redis/redis.conf` you can set the parameters of Redis.
 
 #### Message Broker
 
 [RabbitMQ](https://github.com/rabbitmq/rabbitmq-tutorials) is used to send requests for sending emails.
-
-Service folder: `infrastructure/rabbitmq`.
-In the file `./rabbitmq.conf` you can set the parameters of RabbitMQ.
+In the file `infrastructure/rabbitmq/rabbitmq.conf` you can set the parameters of RabbitMQ.
 
 #### Monitoring
 
-[Prometheus](https://github.com/prometheus/prometheus) and
-[Grafana](https://github.com/grafana/grafana) is used for monitoring.
+[Prometheus](https://github.com/prometheus/prometheus) collects metrics from infrastructure services
+(RabbitMQ, PostgreSQL, Redis, Nginx) via their respective exporters.
+Parameters can be set in `infrastructure/prometheus/prometheus.yml`.
 
-Service folders: `infrastructure/prometheus` and `infrastructure/grafana`.
-Prometheus parameters can be set in `infrastructure/prometheus/prometheus.yml`.
-The `infrastructure/grafana/provisioning` folder contains settings for Grafana,
-and `infrastructure/grafana/dashboards` contains pre-installed Grafana dashboards.
+[Grafana](https://github.com/grafana/grafana) provides a unified UI for metrics and traces.
+The `infrastructure/grafana/provisioning` folder contains datasource and dashboard settings,
+and `infrastructure/grafana/dashboards` contains pre-installed dashboards.
+
+[Alloy](https://github.com/grafana/alloy) receives OTLP data (traces and metrics) from all application containers.
+Its configuration is in `infrastructure/alloy/config.alloy`.
+
+[Tempo](https://github.com/grafana/tempo) stores distributed traces from applications.
+Frontend (Next.js) and backend (NestJS API, Mailer) sends traces to Alloy, which forwards them to Tempo.
+You can search traces in Grafana Explore using the Tempo datasource.
+Parameters can be set in `infrastructure/tempo/tempo.yaml`.
+
+> **Note:** Distributed tracing for the Nuxt frontend (`panel-vue`) is currently not working
+> because Bun does not have full OpenTelemetry support — its native HTTP implementation
+> bypasses the Node.js instrumentation hooks used by `@opentelemetry/auto-instrumentations-node`.
+> A workaround is being explored.
 
 #### Custom Entry Points
 

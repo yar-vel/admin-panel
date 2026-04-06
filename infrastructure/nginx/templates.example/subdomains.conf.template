@@ -44,18 +44,18 @@ server {
 }
 
 # panel-vue
-server {
-    listen ${NGINX_SSL_PORT} ssl;
-    listen [::]:${NGINX_SSL_PORT} ssl;
-    server_name ${PANEL_VUE_URL};
-    ssl_certificate /usr/share/nginx/ssl/${NGINX_URL}.crt;
-    ssl_certificate_key /usr/share/nginx/ssl/${NGINX_URL}.key;
-
-    include snippets/client_common.conf;
-    include snippets/gzip_common.conf;
-
-    location / {
-        include snippets/proxy_common.conf;
-        proxy_pass http://${PANEL_VUE_HOST}:${PANEL_VUE_PORT}/;
-    }
-}
+# server {
+#     listen ${NGINX_SSL_PORT} ssl;
+#     listen [::]:${NGINX_SSL_PORT} ssl;
+#     server_name ${PANEL_VUE_URL};
+#     ssl_certificate /usr/share/nginx/ssl/${NGINX_URL}.crt;
+#     ssl_certificate_key /usr/share/nginx/ssl/${NGINX_URL}.key;
+# 
+#     include snippets/client_common.conf;
+#     include snippets/gzip_common.conf;
+# 
+#     location / {
+#         include snippets/proxy_common.conf;
+#         proxy_pass http://${PANEL_VUE_HOST}:${PANEL_VUE_PORT}/;
+#     }
+# }

@@ -133,6 +133,10 @@ services:
       - 9090
     volumes:
       - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.enable-remote-write-receiver"
+      - "--web.enable-lifecycle"
     depends_on:
       rabbitmq:
         condition: service_healthy
