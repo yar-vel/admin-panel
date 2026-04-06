@@ -37,8 +37,8 @@ services:
   panel-react:
     image: ${IMAGE_TAG}/panel-react
 
-  panel-vue:
-    image: ${IMAGE_TAG}/panel-vue
+  # panel-vue:
+  #   image: ${IMAGE_TAG}/panel-vue
 
   # --- GATEWAY LAYER ---
 

@@ -10,17 +10,10 @@ const sdk = new NodeSDK({
   resource: resourceFromAttributes({
     [ATTR_SERVICE_NAME]: process.env.OTEL_SERVICE_NAME || 'api',
   }),
-
-  traceExporter: new OTLPTraceExporter({
-    url: `http://${process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'alloy:4318'}/v1/traces`,
-  }),
-
+  traceExporter: new OTLPTraceExporter(),
   metricReader: new PeriodicExportingMetricReader({
-    exporter: new OTLPMetricExporter({
-      url: `http://${process.env.OTEL_EXPORTER_OTLP_ENDPOINT || 'alloy:4318'}/v1/metrics`,
-    }),
+    exporter: new OTLPMetricExporter(),
   }),
-
   instrumentations: [
     getNodeAutoInstrumentations({
       '@opentelemetry/instrumentation-fs': { enabled: false },
@@ -61,3 +54,5 @@ export function startOtel() {
   process.on('SIGTERM', shutdown);
   process.on('SIGINT', shutdown);
 }
+
+startOtel();
