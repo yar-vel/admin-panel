@@ -20,7 +20,7 @@ export class CacheHealthService {
       return indicator.up();
     } catch (error) {
       Logger.error(error);
-      return indicator.down(error);
+      return indicator.down(String(error));
     }
   }
 }

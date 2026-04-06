@@ -11,15 +11,15 @@ export class SessionExternalDto implements TSessionExternal {
       'sessions:00000000-0000-0000-0000-000000000000:00000000-0000-0000-0000-000000000000',
   })
   @IsString()
-  id: string;
+  id!: string;
 
   @ApiProperty({ type: Boolean, example: true })
   @IsBoolean()
-  current: boolean;
+  current!: boolean;
 
   @ApiProperty({ type: String, example: '127.0.0.1' })
   @IsString()
-  ip: string;
+  ip!: string;
 
   @ApiPropertyOptional({
     type: String,
@@ -32,8 +32,8 @@ export class SessionExternalDto implements TSessionExternal {
 
   @ApiProperty({ type: Date, example: new Date() })
   @IsDate()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @Exclude()
-  sign: string;
+  sign!: string;
 }

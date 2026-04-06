@@ -31,5 +31,5 @@ export class ReqItemsDto<T> implements IReqItems<T> {
 
     return value.every((item) => typeof item === firstType);
   })
-  items: T[];
+  items!: T[];
 }

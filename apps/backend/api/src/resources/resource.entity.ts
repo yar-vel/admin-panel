@@ -14,13 +14,13 @@ import { EmptyStringToNull } from 'src/database/database.utils';
 @Entity('resources')
 export class ResourceEntity implements IResource {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'varchar', length: 100, unique: true })
-  name: string;
+  name!: string;
 
   @Column({ type: 'varchar', length: 100, unique: true })
-  path: string;
+  path!: string;
 
   @Column({
     type: 'varchar',
@@ -31,10 +31,10 @@ export class ResourceEntity implements IResource {
   description?: string | null;
 
   @Column({ type: 'boolean', default: false })
-  enabled: boolean;
+  enabled!: boolean;
 
   @Column({ type: 'boolean', default: false })
-  default: boolean;
+  default!: boolean;
 
   @OneToMany(() => RightsEntity, (right) => right.resource)
   rights?: RightsEntity[];

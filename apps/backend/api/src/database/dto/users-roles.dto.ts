@@ -9,12 +9,12 @@ export class UsersRolesDto implements IUsersRoles {
     example: '00000000-0000-0000-0000-000000000000',
   })
   @IsUUID()
-  userId: IUser['id'];
+  userId!: IUser['id'];
 
   @ApiProperty({
     type: String,
     example: '00000000-0000-0000-0000-000000000000',
   })
   @IsUUID()
-  roleId: IRole['id'];
+  roleId!: IRole['id'];
 }

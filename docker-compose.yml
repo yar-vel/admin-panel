@@ -4,91 +4,92 @@ x-logging: &default-logging
     max-size: "10m"
     max-file: "3"
 
+x-otel-env: &otel-env
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://alloy:4318
+
 networks:
   main:
     name: ${PROJECT_TAG}-main
     driver: bridge
 
 volumes:
-  rabbitmq-data:
-    name: ${PROJECT_TAG}-rabbitmq-data
   postgres-data:
     name: ${PROJECT_TAG}-postgres-data
+  redis-data:
+    name: ${PROJECT_TAG}-redis-data
+  rabbitmq-data:
+    name: ${PROJECT_TAG}-rabbitmq-data
   prometheus-data:
     name: ${PROJECT_TAG}-prometheus-data
   grafana-storage:
     name: ${PROJECT_TAG}-grafana-storage
-  redis-data:
-    name: ${PROJECT_TAG}-redis-data
 
 secrets:
-  grafana:
-    file: ./secrets/grafana.txt
-  smtp:
-    file: ./secrets/smtp.txt
   access-token:
     file: ./secrets/access-token.txt
   refresh-token:
     file: ./secrets/refresh-token.txt
+  grafana:
+    file: ./secrets/grafana.txt
+  smtp:
+    file: ./secrets/smtp.txt
 
 services:
-  grafana:
+  # --- CORE LAYER ---
+
+  postgres:
     build:
-      context: ./infrastructure/grafana
-    container_name: ${PROJECT_TAG}-grafana
+      context: ./infrastructure/postgres
+    container_name: ${PROJECT_TAG}-postgres
     networks:
-      - main
-    ports:
-      - 9000:3000
+      main:
+        aliases:
+          - ${POSTGRES_HOST:-postgres}
+    expose:
+      - ${POSTGRES_PORT}
     volumes:
-      - grafana-storage:/var/lib/grafana
-    secrets:
-      - grafana
-    depends_on:
-      prometheus:
-        condition: service_started
+      - postgres-data:/var/lib/postgresql
     deploy:
       resources:
         limits:
+          cpus: '1.5'
+          memory: 2G
+        reservations:
           cpus: '0.5'
           memory: 512M
-        reservations:
-          cpus: '0.125'
-          memory: 128M
-    logging: *default-logging
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
-      retries: 5
       start_period: 30s
-  prometheus:
+    logging: *default-logging
+
+  redis:
     build:
-      context: ./infrastructure/prometheus
-    container_name: ${PROJECT_TAG}-prometheus
+      context: ./infrastructure/redis
+    container_name: ${PROJECT_TAG}-redis
     networks:
-      - main
+      main:
+        aliases:
+          - ${REDIS_HOST:-redis}
     expose:
-      - 9090
+      - ${REDIS_PORT}
     volumes:
-      - prometheus-data:/prometheus
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      postgres-exporter:
-        condition: service_started
-      redis-exporter:
-        condition: service_started
-      nginx-exporter:
-        condition: service_started
+      - redis-data:/data
     deploy:
       resources:
         limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
           cpus: '0.25'
           memory: 256M
-        reservations:
-          cpus: '0.125'
-          memory: 64M
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
     logging: *default-logging
 
   rabbitmq:
@@ -112,52 +113,132 @@ services:
         reservations:
           cpus: '0.125'
           memory: 512MB
-    logging: *default-logging
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_running"]
       interval: 15s
       timeout: 5s
       retries: 5
       start_period: 40s
+    logging: *default-logging
 
-  postgres:
+  # --- OBSERVABILITY LAYER ---
+
+  prometheus:
     build:
-      context: ./infrastructure/postgres
-    container_name: ${PROJECT_TAG}-postgres
+      context: ./infrastructure/prometheus
+    container_name: ${PROJECT_TAG}-prometheus
     networks:
       main:
-        aliases:
-          - ${POSTGRES_HOST:-postgres}
     expose:
-      - ${POSTGRES_PORT}
+      - 9090
     volumes:
-      - postgres-data:/var/lib/postgresql
+      - prometheus-data:/prometheus
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres-exporter:
+        condition: service_started
+      redis-exporter:
+        condition: service_started
+      nginx-exporter:
+        condition: service_started
     deploy:
       resources:
         limits:
-          cpus: '1.5'
-          memory: 2G
+          cpus: '0.25'
+          memory: 256M
         reservations:
+          cpus: '0.125'
+          memory: 64M
+    logging: *default-logging
+
+  grafana:
+    build:
+      context: ./infrastructure/grafana
+    container_name: ${PROJECT_TAG}-grafana
+    networks:
+      main:
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    secrets:
+      - grafana
+    depends_on:
+      prometheus:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
           cpus: '0.5'
           memory: 512M
-    logging: *default-logging
+        reservations:
+          cpus: '0.125'
+          memory: 128M
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
       interval: 10s
       timeout: 5s
+      retries: 5
       start_period: 30s
+    logging: *default-logging
+
+  alloy:
+    build:
+      context: ./infrastructure/alloy
+    container_name: ${PROJECT_TAG}-alloy
+    networks:
+      main:
+    expose:
+      - 4317
+      - 4318
+      - 12345
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - /etc/alloy/config.alloy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.125'
+          memory: 64M
+    logging: *default-logging
+
+  tempo:
+    build:
+      context: ./infrastructure/tempo
+    container_name: ${PROJECT_TAG}-tempo
+    networks:
+      main:
+    expose:
+      - 4317
+      - 4318
+      - 3200
+    command:
+      - -config.file=/etc/tempo/tempo.yaml
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.125'
+          memory: 64M
+    logging: *default-logging
+
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter:v0
     container_name: ${PROJECT_TAG}-postgres-exporter
     networks:
-      - main
+      main:
     expose:
       - 9187
     environment:
-      - TZ
-      - DATA_SOURCE_URI=${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
-      - DATA_SOURCE_USER=${POSTGRES_USER}
-      - DATA_SOURCE_PASS=${POSTGRES_PASSWORD}
+      TZ: ${TZ}
+      DATA_SOURCE_URI: ${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
+      DATA_SOURCE_USER: ${POSTGRES_USER}
+      DATA_SOURCE_PASS: ${POSTGRES_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy
@@ -171,45 +252,18 @@ services:
           memory: 64M
     logging: *default-logging
 
-  redis:
-    build:
-      context: ./infrastructure/redis
-    container_name: ${PROJECT_TAG}-redis
-    networks:
-      main:
-        aliases:
-          - ${REDIS_HOST:-redis}
-    expose:
-      - ${REDIS_PORT}
-    volumes:
-      - redis-data:/data
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 256M
-    logging: *default-logging
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-      start_period: 10s
   redis-exporter:
     image: oliver006/redis_exporter:v1.82.0-alpine
     container_name: ${PROJECT_TAG}-redis-exporter
     networks:
-      - main
+      main:
     expose:
       - 9121
     environment:
-      - TZ
-      - REDIS_ADDR=redis://${REDIS_HOST}:${REDIS_PORT}
-      - REDIS_USER
-      - REDIS_PASSWORD
+      TZ: ${TZ}
+      REDIS_ADDR: redis://${REDIS_HOST}:${REDIS_PORT}
+      REDIS_USER: ${REDIS_USER}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     depends_on:
       redis:
         condition: service_healthy
@@ -223,45 +277,11 @@ services:
           memory: 64M
     logging: *default-logging
 
-  nginx:
-    build:
-      context: ./infrastructure/nginx
-    container_name: ${PROJECT_TAG}-nginx
-    networks:
-      main:
-        aliases:
-          - ${NGINX_HOST:-nginx}
-    expose:
-      - ${NGINX_PORT}
-      - 8080
-    ports:
-      - ${NGINX_PORT}:${NGINX_PORT}
-      - ${NGINX_SSL_PORT}:${NGINX_SSL_PORT}
-    depends_on:
-      api:
-        condition: service_started
-      mailer:
-        condition: service_started
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 256M
-        reservations:
-          cpus: '0.125'
-          memory: 64M
-    logging: *default-logging
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8008/health"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-      start_period: 10s
   nginx-exporter:
     image: nginx/nginx-prometheus-exporter:1.5
     container_name: ${PROJECT_TAG}-nginx-exporter
     networks:
-      - main
+      main:
     expose:
       - 9113
     command:
@@ -279,6 +299,8 @@ services:
           memory: 64M
     logging: *default-logging
 
+  # --- APPLICATION LAYER (BACKEND) ---
+
   api:
     build:
       context: .
@@ -290,6 +312,9 @@ services:
           - ${API_HOST:-api}
     expose:
       - ${API_PORT}
+    environment:
+      <<: *otel-env
+      OTEL_SERVICE_NAME: ${API_HOST}
     secrets:
       - access-token
       - refresh-token
@@ -308,13 +333,14 @@ services:
         reservations:
           cpus: '0.25'
           memory: 256M
-    logging: *default-logging
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://${API_HOST}:${API_PORT}/health"]
       interval: 10s
       timeout: 3s
       retries: 5
       start_period: 30s
+    logging: *default-logging
+
   mailer:
     build:
       context: .
@@ -326,6 +352,9 @@ services:
           - ${MAILER_HOST:-mailer}
     expose:
       - ${MAILER_PORT}
+    environment:
+      <<: *otel-env
+      OTEL_SERVICE_NAME: ${MAILER_HOST}
     secrets:
       - smtp
     depends_on:
@@ -340,6 +369,9 @@ services:
           cpus: '0.125'
           memory: 128M
     logging: *default-logging
+
+  # --- APPLICATION LAYER (FRONTEND) ---
+
   panel-react:
     build:
       context: .
@@ -352,9 +384,12 @@ services:
     expose:
       - ${PANEL_REACT_PORT}
     environment:
-      - HOSTNAME=${PANEL_REACT_HOST}
-      - PORT=${PANEL_REACT_PORT}
+      HOSTNAME: ${PANEL_REACT_HOST}
+      PORT: ${PANEL_REACT_PORT}
+      <<: *otel-env
+      OTEL_SERVICE_NAME: ${PANEL_REACT_HOST}
     logging: *default-logging
+
   panel-vue:
     build:
       context: .
@@ -367,6 +402,42 @@ services:
     expose:
       - ${PANEL_VUE_PORT}
     environment:
-      - HOST=${PANEL_VUE_HOST}
-      - PORT=${PANEL_VUE_PORT}
+      HOST: ${PANEL_VUE_HOST}
+      PORT: ${PANEL_VUE_PORT}
+      <<: *otel-env
+      OTEL_SERVICE_NAME: ${PANEL_VUE_HOST}
+    logging: *default-logging
+
+  # --- GATEWAY LAYER ---
+
+  nginx:
+    build:
+      context: ./infrastructure/nginx
+    container_name: ${PROJECT_TAG}-nginx
+    networks:
+      main:
+        aliases:
+          - ${NGINX_HOST:-nginx}
+    expose:
+      - ${NGINX_PORT}
+      - 8080
+    depends_on:
+      api:
+        condition: service_started
+      mailer:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.125'
+          memory: 64M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8008/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
     logging: *default-logging

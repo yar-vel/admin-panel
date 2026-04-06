@@ -94,11 +94,11 @@ watch(data, () => {
       {{ $t('signUp') }}
     </FormButton>
     <FormLink
-      :href="ROUTES.ui.signIn"
+      :to="ROUTES.ui.signIn"
       :text="$t('signInText')"
     />
     <FormLink
-      :href="ROUTES.ui.forgotPassword"
+      :to="ROUTES.ui.forgotPassword"
       :text="$t('forgotPasswordText')"
     />
     <CustomModal

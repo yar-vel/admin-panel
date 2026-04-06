@@ -15,14 +15,14 @@ import { IResource, IRights, IRole } from '@workspace/shared';
 @Entity('rights')
 export class RightsEntity implements IRights {
   @PrimaryColumn('uuid')
-  roleId: IRole['id'];
+  roleId!: IRole['id'];
 
   @ManyToOne(() => RoleEntity, (role) => role.rights, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'roleId' })
   role?: RoleEntity;
 
   @PrimaryColumn('uuid')
-  resourceId: IResource['id'];
+  resourceId!: IResource['id'];
 
   @ManyToOne(() => ResourceEntity, (resource) => resource.rights, {
     onDelete: 'CASCADE',
@@ -31,16 +31,16 @@ export class RightsEntity implements IRights {
   resource?: ResourceEntity;
 
   @Column({ type: 'boolean', default: false })
-  creating: boolean;
+  creating!: boolean;
 
   @Column({ type: 'boolean', default: false })
-  reading: boolean;
+  reading!: boolean;
 
   @Column({ type: 'boolean', default: false })
-  updating: boolean;
+  updating!: boolean;
 
   @Column({ type: 'boolean', default: false })
-  deleting: boolean;
+  deleting!: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt?: Date;

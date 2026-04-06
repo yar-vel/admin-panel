@@ -6,11 +6,11 @@ import { IRole, IUser, IUsersRoles } from '@workspace/shared';
 @Entity(USERS_ROLES_TABLE)
 export class UsersRolesEntity implements IUsersRoles {
   @PrimaryColumn('uuid')
-  userId: IUser['id'];
+  userId!: IUser['id'];
 
   @PrimaryColumn('uuid')
-  roleId: IRole['id'];
+  roleId!: IRole['id'];
 
   @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
+  createdAt!: Date;
 }

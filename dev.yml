@@ -9,116 +9,164 @@ volumes:
     name: ${PROJECT_TAG}-panel-vue-node-modules
 
 services:
-  grafana:
-    restart: no
-    env_file:
-      - .env
-    volumes:
-      - ./infrastructure/grafana/provisioning:/etc/grafana/provisioning
-      - ./infrastructure/grafana/dashboards:/var/lib/grafana/dashboards
-  prometheus:
-    restart: no
-    env_file:
-      - .env
-    volumes:
-      - ./infrastructure/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-
-  rabbitmq:
-    restart: no
-    ports:
-      - 127.0.0.1:15672:15672
-    env_file:
-      - .env
-    volumes:
-      - ./infrastructure/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+  # --- CORE LAYER ---
 
   postgres:
-    restart: no
     ports:
       - 127.0.0.1:${POSTGRES_PORT}:${POSTGRES_PORT}
-    env_file:
-      - .env
     volumes:
       - ./infrastructure/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
-  postgres-exporter:
+    env_file:
+      - .env
     restart: no
 
   redis:
-    restart: no
     ports:
       - 127.0.0.1:${REDIS_PORT}:${REDIS_PORT}
-    env_file:
-      - .env
     volumes:
       - ./infrastructure/redis/redis-stack.conf:/redis-stack.conf
-  redis-exporter:
-    restart: no
-
-  nginx:
-    restart: no
     env_file:
       - .env
+    restart: no
+
+  rabbitmq:
+    ports:
+      - 127.0.0.1:15672:15672
+    volumes:
+      - ./infrastructure/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    env_file:
+      - .env
+    restart: no
+
+  # --- OBSERVABILITY LAYER ---
+
+  prometheus:
+    ports:
+      - 127.0.0.1:9090:9090
+    volumes:
+      - ./infrastructure/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    env_file:
+      - .env
+    restart: no
+
+  grafana:
+    ports:
+      - 127.0.0.1:9000:3000
+    volumes:
+      - ./infrastructure/grafana/provisioning:/etc/grafana/provisioning
+      - ./infrastructure/grafana/dashboards:/var/lib/grafana/dashboards
+    env_file:
+      - .env
+    restart: no
+
+  alloy:
+    ports:
+      - 127.0.0.1:12345:12345
+    volumes:
+      - ./infrastructure/alloy/config.alloy:/etc/alloy/config.alloy
+    env_file:
+      - .env
+    restart: no
+
+  tempo:
+    ports:
+      - 127.0.0.1:3200:3200
+    volumes:
+      - ./infrastructure/tempo/tempo.yaml:/etc/tempo/tempo.yaml
+    env_file:
+      - .env
+    restart: no
+
+  postgres-exporter:
+    env_file:
+      - .env
+    restart: no
+
+  redis-exporter:
+    env_file:
+      - .env
+    restart: no
+
+  nginx-exporter:
+    env_file:
+      - .env
+    restart: no
+
+  # --- APPLICATION LAYER (BACKEND) ---
+
+  api:
+    build:
+      target: development
+    volumes:
+      - ./shared:/usr/src/app/shared
+      - ./apps/backend/api:/usr/src/app/apps/backend/api
+      - api-node-modules:/usr/src/app/node_modules
+    env_file:
+      - .env
+    restart: no
+
+  mailer:
+    build:
+      target: development
+    volumes:
+      - ./shared:/usr/src/app/shared
+      - ./apps/backend/mailer:/usr/src/app/apps/backend/mailer
+      - mailer-node-modules:/usr/src/app/node_modules
+    env_file:
+      - .env
+    restart: no
+
+  # --- APPLICATION LAYER (FRONTEND) ---
+
+  panel-react:
+    build:
+      target: development
+    volumes:
+      - ./shared:/usr/src/app/shared
+      - ./apps/frontend/panel-react:/usr/src/app/apps/frontend/panel-react
+      - panel-react-node-modules:/usr/src/app/node_modules
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    restart: no
+
+  panel-vue:
+    build:
+      target: development
+    volumes:
+      - ./shared:/usr/src/app/shared
+      - ./apps/frontend/panel-vue:/usr/src/app/apps/frontend/panel-vue
+      - panel-vue-node-modules:/usr/src/app/node_modules
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    restart: no
+
+  # --- GATEWAY LAYER ---
+
+  nginx:
+    ports:
+      - 127.0.0.1:${NGINX_PORT}:${NGINX_PORT}
+      - 127.0.0.1:${NGINX_SSL_PORT}:${NGINX_SSL_PORT}
     volumes:
       - ./infrastructure/nginx/html:/usr/share/nginx/html
       - ./infrastructure/nginx/ssl:/usr/share/nginx/ssl
       - ./infrastructure/nginx/snippets:/etc/nginx/snippets
       - ./infrastructure/nginx/templates:/etc/nginx/templates
-  nginx-exporter:
-    restart: no
-
-  api:
-    build:
-      target: development
-    restart: no
     env_file:
       - .env
-    volumes:
-      - ./shared:/usr/src/app/shared
-      - ./apps/backend/api:/usr/src/app/apps/backend/api
-      - api-node-modules:/usr/src/app/node_modules
-  mailer:
-    build:
-      target: development
     restart: no
-    env_file:
-      - .env
-    volumes:
-      - ./shared:/usr/src/app/shared
-      - ./apps/backend/mailer:/usr/src/app/apps/backend/mailer
-      - mailer-node-modules:/usr/src/app/node_modules
-  panel-react:
-    build:
-      target: development
-    restart: no
-    env_file:
-      - .env
-    volumes:
-      - ./shared:/usr/src/app/shared
-      - ./apps/frontend/panel-react:/usr/src/app/apps/frontend/panel-react
-      - panel-react-node-modules:/usr/src/app/node_modules
-    deploy:
-      resources:
-        limits:
-          cpus: '4.0'
-          memory: 4G
-        reservations:
-          cpus: '1.0'
-          memory: 1G
-  panel-vue:
-    build:
-      target: development
-    restart: no
-    env_file:
-      - .env
-    volumes:
-      - ./shared:/usr/src/app/shared
-      - ./apps/frontend/panel-vue:/usr/src/app/apps/frontend/panel-vue
-      - panel-vue-node-modules:/usr/src/app/node_modules
-    deploy:
-      resources:
-        limits:
-          cpus: '4.0'
-          memory: 4G
-        reservations:
-          cpus: '1.0'
-          memory: 1G

@@ -86,7 +86,7 @@ watch(dError, () => {
 
 <template>
   <div class="mb-3">
-    <NuxtLink :href="rights.creating ? ROUTES.ui.newUser : undefined">
+    <NuxtLink :to="rights.creating ? ROUTES.ui.newUser : undefined">
       <v-btn
         class="me-2"
         color="info"

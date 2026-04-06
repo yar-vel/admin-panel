@@ -15,11 +15,11 @@ import { ESortOrder, IResList, IResListMeta, ISort } from '@workspace/shared';
 class SortDto<T extends object> implements ISort<T> {
   @ApiProperty({ type: String, example: 'someField' })
   @IsString()
-  field: keyof T;
+  field!: keyof T;
 
   @ApiProperty({ enum: ESortOrder, example: ESortOrder.ASC })
   @IsEnum(ESortOrder)
-  order: ESortOrder;
+  order!: ESortOrder;
 }
 
 class MetaDto<T extends object> implements IResListMeta<T> {
@@ -58,7 +58,7 @@ class MetaDto<T extends object> implements IResListMeta<T> {
 export class ResListDto<T extends object> implements IResList<T> {
   @ApiProperty({ type: Array, example: [{ someField: 'someValue' }] })
   @IsArray()
-  rows: T[];
+  rows!: T[];
 
   @ApiPropertyOptional({ type: MetaDto<T> })
   @IsOptional()

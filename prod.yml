@@ -1,134 +1,149 @@
 services:
-  grafana:
-    restart: unless-stopped
-    environment:
-      - TZ
-      - GF_SECURITY_ADMIN_USER
-      - GF_SECURITY_ADMIN_PASSWORD__FILE
-      - GF_USERS_ALLOW_SIGN_UP
-      - GF_INSTALL_PLUGINS
-  prometheus:
-    restart: unless-stopped
-    environment:
-      - TZ
-
-  rabbitmq:
-    restart: unless-stopped
-    environment:
-      - TZ
-      - RABBITMQ_HOST
-      - RABBITMQ_PORT
-      - RABBITMQ_DEFAULT_USER
-      - RABBITMQ_DEFAULT_PASS
-      - RABBITMQ_PROMETHEUS_RETENTION_POLICY
+  # --- CORE LAYER ---
 
   postgres:
-    restart: unless-stopped
     environment:
-      - TZ
-      - POSTGRES_HOST
-      - POSTGRES_PORT
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
-  postgres-exporter:
+      TZ: ${TZ}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     restart: unless-stopped
 
   redis:
-    restart: unless-stopped
     environment:
-      - TZ
-      - REDIS_HOST
-      - REDIS_PORT
-      - REDIS_DB
-      - REDIS_ARGS
-  redis-exporter:
+      TZ: ${TZ}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_DB: ${REDIS_DB}
+      REDIS_ARGS: ${REDIS_ARGS}
     restart: unless-stopped
 
-  nginx:
-    restart: unless-stopped
+  rabbitmq:
     environment:
-      - TZ
-      - NGINX_URL
-      - NGINX_PORT
-      - NGINX_SSL_PORT
-      - API_HOST
-      - API_PORT
-      - API_URL
-      - PANEL_REACT_HOST
-      - PANEL_REACT_PORT
-      - PANEL_REACT_URL
-      - PANEL_VUE_HOST
-      - PANEL_VUE_PORT
-      - PANEL_VUE_URL
-  nginx-exporter:
+      TZ: ${TZ}
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_PROMETHEUS_RETENTION_POLICY: ${RABBITMQ_PROMETHEUS_RETENTION_POLICY}
     restart: unless-stopped
+
+  # --- OBSERVABILITY LAYER ---
+
+  prometheus:
+    environment:
+      TZ: ${TZ}
+    restart: unless-stopped
+
+  grafana:
+    ports:
+      - 9000:3000
+    environment:
+      TZ: ${TZ}
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD__FILE: ${GF_SECURITY_ADMIN_PASSWORD__FILE}
+      GF_USERS_ALLOW_SIGN_UP: ${GF_USERS_ALLOW_SIGN_UP}
+      GF_INSTALL_PLUGINS: ${GF_INSTALL_PLUGINS}
+    restart: unless-stopped
+
+  alloy:
+    environment:
+      TZ: ${TZ}
+    restart: unless-stopped
+
+  tempo:
+    environment:
+      TZ: ${TZ}
+    restart: unless-stopped
+
+  postgres-exporter:
+    environment:
+      TZ: ${TZ}
+    restart: unless-stopped
+
+  redis-exporter:
+    environment:
+      TZ: ${TZ}
+    restart: unless-stopped
+
+  nginx-exporter:
+    environment:
+      TZ: ${TZ}
+    restart: unless-stopped
+
+  # --- APPLICATION LAYER (BACKEND) ---
 
   api:
     build:
       target: production
-    restart: unless-stopped
     environment:
-      - TZ
-      - API_HOST
-      - API_PORT
-      - API_URL
-      - API_ACCESS_TOKEN_LIFETIME
-      - API_REFRESH_TOKEN_LIFETIME
-      - NGINX_URL
-      - PANEL_REACT_URL
-      - PANEL_VUE_URL
-      - RABBITMQ_HOST
-      - RABBITMQ_PORT
-      - RABBITMQ_DEFAULT_USER
-      - RABBITMQ_DEFAULT_PASS
-      - RABBITMQ_MAIL_QUEUE
-      - MAILER_CMD_REGISTRATION
-      - MAILER_CMD_FORGOT_PASSWORD
-      - MAILER_CMD_CHANGE_EMAIL
-      - POSTGRES_HOST
-      - POSTGRES_PORT
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
-      - REDIS_HOST
-      - REDIS_PORT
-      - REDIS_USER
-      - REDIS_PASSWORD
-      - REDIS_DB
+      TZ: ${TZ}
+      API_HOST: ${API_HOST}
+      API_PORT: ${API_PORT}
+      API_URL: ${API_URL}
+      API_ACCESS_TOKEN_LIFETIME: ${API_ACCESS_TOKEN_LIFETIME}
+      API_REFRESH_TOKEN_LIFETIME: ${API_REFRESH_TOKEN_LIFETIME}
+      NGINX_URL: ${NGINX_URL}
+      PANEL_REACT_URL: ${PANEL_REACT_URL}
+      PANEL_VUE_URL: ${PANEL_VUE_URL}
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_MAIL_QUEUE: ${RABBITMQ_MAIL_QUEUE}
+      MAILER_CMD_REGISTRATION: ${MAILER_CMD_REGISTRATION}
+      MAILER_CMD_FORGOT_PASSWORD: ${MAILER_CMD_FORGOT_PASSWORD}
+      MAILER_CMD_CHANGE_EMAIL: ${MAILER_CMD_CHANGE_EMAIL}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_USER: ${REDIS_USER}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_DB: ${REDIS_DB}
+    restart: unless-stopped
+
   mailer:
     build:
       target: production
-    restart: unless-stopped
     environment:
-      - TZ
-      - MAILER_HOST
-      - MAILER_PORT
-      - MAILER_SMTP_HOST
-      - MAILER_SMTP_PORT
-      - MAILER_SMTP_USER
-      - MAILER_CMD_REGISTRATION
-      - MAILER_CMD_FORGOT_PASSWORD
-      - MAILER_CMD_CHANGE_EMAIL
-      - PROJECT_TAG
-      - RABBITMQ_HOST
-      - RABBITMQ_PORT
-      - RABBITMQ_DEFAULT_USER
-      - RABBITMQ_DEFAULT_PASS
-      - RABBITMQ_MAIL_QUEUE
+      TZ: ${TZ}
+      MAILER_HOST: ${MAILER_HOST}
+      MAILER_PORT: ${MAILER_PORT}
+      MAILER_SMTP_HOST: ${MAILER_SMTP_HOST}
+      MAILER_SMTP_PORT: ${MAILER_SMTP_PORT}
+      MAILER_SMTP_USER: ${MAILER_SMTP_USER}
+      MAILER_CMD_REGISTRATION: ${MAILER_CMD_REGISTRATION}
+      MAILER_CMD_FORGOT_PASSWORD: ${MAILER_CMD_FORGOT_PASSWORD}
+      MAILER_CMD_CHANGE_EMAIL: ${MAILER_CMD_CHANGE_EMAIL}
+      PROJECT_TAG: ${PROJECT_TAG}
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_MAIL_QUEUE: ${RABBITMQ_MAIL_QUEUE}
+    restart: unless-stopped
+
+  # --- APPLICATION LAYER (FRONTEND) ---
+
   panel-react:
     build:
       target: production
       args:
-        - TZ
-        - PANEL_REACT_URL
-        - API_HOST
-        - API_PORT
-        - API_URL
-        - NGINX_PORT
-        - NGINX_URL
-        - GOOGLE_CLIENT_ID
-    restart: unless-stopped
+        PANEL_REACT_URL: ${PANEL_REACT_URL}
+        API_HOST: ${API_HOST}
+        API_PORT: ${API_PORT}
+        API_URL: ${API_URL}
+        NGINX_PORT: ${NGINX_PORT}
+        NGINX_URL: ${NGINX_URL}
+        GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+    environment:
+      TZ: ${TZ}
     deploy:
       resources:
         limits:
@@ -137,19 +152,21 @@ services:
         reservations:
           cpus: '0.25'
           memory: 256M
+    restart: unless-stopped
+
   panel-vue:
     build:
       target: production
       args:
-        - TZ
-        - PANEL_VUE_URL
-        - API_HOST
-        - API_PORT
-        - API_URL
-        - NGINX_PORT
-        - NGINX_URL
-        - GOOGLE_CLIENT_ID
-    restart: unless-stopped
+        PANEL_VUE_URL: ${PANEL_VUE_URL}
+        API_HOST: ${API_HOST}
+        API_PORT: ${API_PORT}
+        API_URL: ${API_URL}
+        NGINX_PORT: ${NGINX_PORT}
+        NGINX_URL: ${NGINX_URL}
+        GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+    environment:
+      TZ: ${TZ}
     deploy:
       resources:
         limits:
@@ -158,3 +175,26 @@ services:
         reservations:
           cpus: '0.25'
           memory: 256M
+    restart: unless-stopped
+
+  # --- GATEWAY LAYER ---
+
+  nginx:
+    ports:
+      - ${NGINX_PORT}:${NGINX_PORT}
+      - ${NGINX_SSL_PORT}:${NGINX_SSL_PORT}
+    environment:
+      TZ: ${TZ}
+      NGINX_URL: ${NGINX_URL}
+      NGINX_PORT: ${NGINX_PORT}
+      NGINX_SSL_PORT: ${NGINX_SSL_PORT}
+      API_HOST: ${API_HOST}
+      API_PORT: ${API_PORT}
+      API_URL: ${API_URL}
+      PANEL_REACT_HOST: ${PANEL_REACT_HOST}
+      PANEL_REACT_PORT: ${PANEL_REACT_PORT}
+      PANEL_REACT_URL: ${PANEL_REACT_URL}
+      PANEL_VUE_HOST: ${PANEL_VUE_HOST}
+      PANEL_VUE_PORT: ${PANEL_VUE_PORT}
+      PANEL_VUE_URL: ${PANEL_VUE_URL}
+    restart: unless-stopped

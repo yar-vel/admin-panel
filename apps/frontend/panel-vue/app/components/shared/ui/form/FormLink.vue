@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-  href?: string
+  to?: string
   text: string
 }>()
 defineEmits<{
@@ -11,7 +11,7 @@ defineEmits<{
 <template>
   <NuxtLink
     class="link d-block mb-6 text-center text-decoration-none"
-    :href="href"
+    :to="to"
     @click.capture="$emit('click', $event)"
   >
     {{ text }}

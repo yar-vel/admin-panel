@@ -37,7 +37,7 @@ const items = computed(() => props.rows?.map(value => ({ ...value, selectable: !
       :loading="loading"
     >
       <template #item.edit="{ item }">
-        <NuxtLink :href="item.default ? undefined : ROUTES.ui.role(item.id)">
+        <NuxtLink :to="item.default ? undefined : ROUTES.ui.role(item.id)">
           <v-btn
             color="white"
             :disabled="item.default"

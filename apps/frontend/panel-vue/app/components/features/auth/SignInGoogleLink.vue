@@ -59,7 +59,7 @@ onUnmounted(() => {
   <FormLink
     v-if="Boolean(config.public.googleClientId)"
     event=""
-    :href="ROUTES.ui.signInGoogle"
+    :to="ROUTES.ui.signInGoogle"
     :text="$t('signInWithGoogle')"
     @click="handleGoogle"
   />

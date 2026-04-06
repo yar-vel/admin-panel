@@ -11,5 +11,5 @@ export class UpdatePasswordDto implements IUpdatePassword {
 
   @ApiProperty({ type: String, example: 'r4e3w2q1Q!' })
   @Matches(PASSWORD_REGEX)
-  newPassword: string;
+  newPassword!: string;
 }

@@ -6,6 +6,6 @@ providers:
     folder: 'Imported Dashboards'
     type: file
     disableDeletion: false
-    updateIntervalSeconds: 10
+    updateIntervalSeconds: 30
     options:
       path: /var/lib/grafana/dashboards
