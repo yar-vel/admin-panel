@@ -394,23 +394,23 @@ services:
       OTEL_SERVICE_NAME: ${PANEL_REACT_HOST}
     logging: *default-logging
 
-  panel-vue:
-    build:
-      context: .
-      dockerfile: ./apps/frontend/panel-vue/Dockerfile
-    container_name: ${PROJECT_TAG}-panel-vue
-    networks:
-      main:
-        aliases:
-          - ${PANEL_VUE_HOST:-panel-vue}
-    expose:
-      - ${PANEL_VUE_PORT}
-    environment:
-      HOST: ${PANEL_VUE_HOST}
-      PORT: ${PANEL_VUE_PORT}
-      <<: *otel-env
-      OTEL_SERVICE_NAME: ${PANEL_VUE_HOST}
-    logging: *default-logging
+  # panel-vue:
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/frontend/panel-vue/Dockerfile
+  #   container_name: ${PROJECT_TAG}-panel-vue
+  #   networks:
+  #     main:
+  #       aliases:
+  #         - ${PANEL_VUE_HOST:-panel-vue}
+  #   expose:
+  #     - ${PANEL_VUE_PORT}
+  #   environment:
+  #     HOST: ${PANEL_VUE_HOST}
+  #     PORT: ${PANEL_VUE_PORT}
+  #     <<: *otel-env
+  #     OTEL_SERVICE_NAME: ${PANEL_VUE_HOST}
+  #   logging: *default-logging
 
   # --- GATEWAY LAYER ---
 

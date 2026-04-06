@@ -154,28 +154,28 @@ services:
           memory: 256M
     restart: unless-stopped
 
-  panel-vue:
-    build:
-      target: production
-      args:
-        PANEL_VUE_URL: ${PANEL_VUE_URL}
-        API_HOST: ${API_HOST}
-        API_PORT: ${API_PORT}
-        API_URL: ${API_URL}
-        NGINX_PORT: ${NGINX_PORT}
-        NGINX_URL: ${NGINX_URL}
-        GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-    environment:
-      TZ: ${TZ}
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 1G
-        reservations:
-          cpus: '0.25'
-          memory: 256M
-    restart: unless-stopped
+  # panel-vue:
+  #   build:
+  #     target: production
+  #     args:
+  #       PANEL_VUE_URL: ${PANEL_VUE_URL}
+  #       API_HOST: ${API_HOST}
+  #       API_PORT: ${API_PORT}
+  #       API_URL: ${API_URL}
+  #       NGINX_PORT: ${NGINX_PORT}
+  #       NGINX_URL: ${NGINX_URL}
+  #       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+  #   environment:
+  #     TZ: ${TZ}
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '1.0'
+  #         memory: 1G
+  #       reservations:
+  #         cpus: '0.25'
+  #         memory: 256M
+  #   restart: unless-stopped
 
   # --- GATEWAY LAYER ---
 
