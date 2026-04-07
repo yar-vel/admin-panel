@@ -12,10 +12,10 @@ import { FetchError } from "@/shared/api/FetchError";
 export const SignInGoogleForm: FC = () => {
   const { t, i18n } = useTranslation();
   const { mutate, error, data } = useSignInGoogleMutation();
-  const [hash] = useState(() => new URLSearchParams(location.hash.slice(1)));
+  const [hash, setHash] = useState<URLSearchParams | null>(null);
 
   const errorText = useMemo(() => {
-    if (!hash.has("access_token")) {
+    if (hash && !hash.has("access_token")) {
       return t("error");
     }
 
@@ -37,7 +37,7 @@ export const SignInGoogleForm: FC = () => {
         return;
       }
 
-      if (event.data.payload === hash.get("state")) {
+      if (event.data.payload === hash?.get("state")) {
         const message: IWindowMessage<IUser> = {
           type: ROUTES.ui.signInGoogle,
           payload: data,
@@ -59,10 +59,16 @@ export const SignInGoogleForm: FC = () => {
   }, [handleMessage]);
 
   useEffect(() => {
-    if (hash.has("access_token")) {
+    if (hash?.has("access_token")) {
       mutate({ googleAccessToken: hash.get("access_token")! });
     }
   }, [mutate, hash]);
+
+  useEffect(() => {
+    const handleHash = () =>
+      setHash(new URLSearchParams(location.hash.slice(1)));
+    handleHash();
+  }, []);
 
   return (
     <FormBase>
