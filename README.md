@@ -97,7 +97,8 @@ State manager - [Pinia](https://github.com/vuejs/pinia).
 UI kit - [Vuetify](https://github.com/vuetifyjs/vuetify).
 Service folder: `apps/frontend/panel-vue`.
 Since this UI variant is a functional copy of the React version, it is disabled by default to save resources.
-If you want to use this variant, you will need to uncomment it in the Docker Compose and Nginx files.
+If you want to use this option, you will need to uncomment `panel-vue` in the `docker-compose.yml`,
+`dev.yml`, `prod.yml`, and `infrastructure/nginx/templates/default.conf.template` files.
 
 #### Backend
 
