@@ -18,6 +18,7 @@ import { QueueService } from 'src/queue/queue.service';
 import { createHash, generateCode, verifyHash } from 'libs/utils';
 import { cfg } from 'config/configuration';
 import {
+  EQueueCmd,
   IEmailCode,
   IForgotPassword,
   IResetPassword,
@@ -122,8 +123,8 @@ export class AuthService {
   async forgotPassword(fields: IForgotPassword): Promise<void> {
     const code = generateCode();
     await this.usersService.updateResetPasswordCode(fields.email, code);
-    this.queueService.sendEmail<IEmailCode>(
-      { cmd: cfg.rmq.cmd.forgotPassword },
+    await this.queueService.sendEmail<IEmailCode>(
+      { cmd: EQueueCmd.ForgotPassword },
       { email: fields.email, code },
     );
   }
@@ -186,8 +187,8 @@ export class AuthService {
       if (user.email) {
         const code = generateCode();
         await this.usersService.updateVerificationCode(user.email, code);
-        this.queueService.sendEmail<IEmailCode>(
-          { cmd: cfg.rmq.cmd.registration },
+        await this.queueService.sendEmail<IEmailCode>(
+          { cmd: EQueueCmd.Registration },
           { email: user.email, code },
         );
       }

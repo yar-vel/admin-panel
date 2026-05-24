@@ -18,7 +18,12 @@ import { cfg } from 'config/configuration';
             ],
             queue: cfg.rmq.mailQueue,
             queueOptions: {
-              durable: false,
+              durable: true,
+            },
+            persistent: true,
+            socketOptions: {
+              heartbeatIntervalInSeconds: 60,
+              reconnectTimeInSeconds: 5,
             },
           },
         });

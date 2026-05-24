@@ -37,12 +37,6 @@ export const cfg = {
     user: process.env.RABBITMQ_DEFAULT_USER || 'user',
     password: process.env.RABBITMQ_DEFAULT_PASS || 'password',
     mailQueue: process.env.RABBITMQ_MAIL_QUEUE || 'mailQueue',
-    cmd: {
-      registration: process.env.MAILER_CMD_REGISTRATION || 'registration',
-      forgotPassword:
-        process.env.MAILER_CMD_FORGOT_PASSWORD || 'forgotPassword',
-      changeEmail: process.env.MAILER_CMD_CHANGE_EMAIL || 'changeEmail',
-    },
   },
   postgres: {
     host: process.env.POSTGRES_HOST || 'localhost',

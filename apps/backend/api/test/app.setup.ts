@@ -7,7 +7,7 @@ import { Test } from '@nestjs/testing';
 import fastifyCookie from '@fastify/cookie';
 import fastifyHelmet from '@fastify/helmet';
 import { ValidationPipe } from '@nestjs/common';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   PostgreSqlContainer,
@@ -18,7 +18,7 @@ import { AppModule } from 'src/app.module';
 import { MAIL_SERVER, REDIS } from 'libs/constants';
 import { SignUpDto } from 'src/auth/dto/sign-up.dto';
 import { cfg } from 'config/configuration';
-import { API_ROUTES, buildRoutes } from '@workspace/shared';
+import { API_ROUTES, buildRoutes, IQueueResponse } from '@workspace/shared';
 
 let pgContainer: StartedPostgreSqlContainer;
 export let app: NestFastifyApplication;
@@ -82,11 +82,18 @@ export const createApp = async () => {
   };
 
   const mockClientProxy = {
-    send: jest.fn((_, data: Record<string, string>) => {
-      queue.push(data);
-      return of();
-    }),
-    emit: jest.fn(() => of(true)),
+    send: jest.fn(
+      (_, data: Record<string, string>): Observable<IQueueResponse> => {
+        queue.push(data);
+        return of({ success: true });
+      },
+    ),
+    emit: jest.fn(
+      (_, data: Record<string, string>): Observable<IQueueResponse> => {
+        queue.push(data);
+        return of({ success: true });
+      },
+    ),
     connect: jest.fn(() => Promise.resolve()),
     close: jest.fn(() => Promise.resolve()),
   };

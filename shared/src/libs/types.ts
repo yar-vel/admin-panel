@@ -5,3 +5,7 @@ export type TRoutes<T> = {
       ? string
       : TRoutes<T[K]>;
 };
+
+export type WithoutNulls<T> = {
+  [K in keyof T]: NonNullable<T[K]>;
+};

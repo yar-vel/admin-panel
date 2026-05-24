@@ -1,3 +1,5 @@
+import { ESortOrder } from './constants';
+
 export interface IReqList<T extends object> {
   reqLimit?: number;
   reqPage?: number;
@@ -30,11 +32,6 @@ export interface IResListMeta<
 export interface ISort<T extends object> {
   field: keyof T;
   order: ESortOrder;
-}
-
-export enum ESortOrder {
-  ASC = 'ASC',
-  DESC = 'DESC',
 }
 
 export interface IReqItems<T = string | number> {

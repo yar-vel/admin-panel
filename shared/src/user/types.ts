@@ -1,6 +1,6 @@
-import { IReqList, IResList } from './api';
-import type { IRole } from './role';
-import type { WithoutNulls } from './utils';
+import { IReqList, IResList } from '../api';
+import { WithoutNulls } from '../libs';
+import { IRole } from '../role';
 
 export interface IUser {
   id: string;

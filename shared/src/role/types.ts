@@ -1,6 +1,6 @@
-import { IReqList, IResList } from './api';
-import type { IRights } from './database';
-import type { IUser } from './user';
+import { IReqList, IResList } from '../api';
+import { IRights } from '../database';
+import { IUser } from '../user';
 
 export interface IRole {
   id: string;

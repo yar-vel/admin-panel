@@ -31,6 +31,7 @@ export class MailService {
       })) as SMTPTransport.SentMessageInfo;
 
       if (cfg.smtp.test) {
+        Logger.log(code);
         Logger.log(nodemailer.getTestMessageUrl(info));
       }
     } catch (error) {
@@ -55,6 +56,7 @@ export class MailService {
       })) as SMTPTransport.SentMessageInfo;
 
       if (cfg.smtp.test) {
+        Logger.log(code);
         Logger.log(nodemailer.getTestMessageUrl(info));
       }
     } catch (error) {
@@ -79,6 +81,7 @@ export class MailService {
       })) as SMTPTransport.SentMessageInfo;
 
       if (cfg.smtp.test) {
+        Logger.log(code);
         Logger.log(nodemailer.getTestMessageUrl(info));
       }
     } catch (error) {

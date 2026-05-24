@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { IRole, TRoleReqListParams, TRoleReqList } from '../types/role';
-import { getReqListSchema } from './api';
+import { IRole, TRoleReqListParams, TRoleReqList } from './types';
+import { getReqListSchema } from '../api';
 
 export const roleSchema = z.object({
   id: z.uuid(),

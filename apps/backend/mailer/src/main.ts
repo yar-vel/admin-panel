@@ -18,8 +18,10 @@ async function bootstrap() {
           ],
           queue: cfg.rmq.mailQueue,
           queueOptions: {
-            durable: false,
+            durable: true,
           },
+          noAck: false,
+          prefetchCount: 1,
         },
       },
     );

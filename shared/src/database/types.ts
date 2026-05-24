@@ -1,6 +1,6 @@
-import type { IResource } from './resource';
-import type { IRole } from './role';
-import type { IUser } from './user';
+import { IResource } from '../resource';
+import { IRole } from '../role';
+import { IUser } from '../user';
 
 export interface IRights {
   roleId: IRole['id'];

@@ -1,11 +1,7 @@
 import { z } from 'zod';
 
-import {
-  IResource,
-  TResourceReqListParams,
-  TResourceReqList,
-} from '../types/resource';
-import { getReqListSchema } from './api';
+import { getReqListSchema } from '../api';
+import { IResource, TResourceReqList, TResourceReqListParams } from './types';
 
 export const resourceSchema = z.object({
   id: z.uuid(),

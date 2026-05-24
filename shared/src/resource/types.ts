@@ -1,5 +1,5 @@
-import { IReqList, IResList } from './api';
-import type { IRights } from './database';
+import { IReqList, IResList } from '../api';
+import { IRights } from '../database';
 
 export interface IResource {
   id: string;

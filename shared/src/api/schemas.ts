@@ -1,11 +1,12 @@
 import { z } from 'zod';
 
-import { ESortOrder, IReqList } from '../types';
 import {
   REQ_LIST_DEFAULT_LIMIT,
   REQ_LIST_DEFAULT_PAGE,
   REQ_LIST_MAX_LIMIT,
 } from '../libs';
+import { IReqList } from './types';
+import { ESortOrder } from './constants';
 
 export const getReqListSchema = <T extends object>() =>
   z.object({

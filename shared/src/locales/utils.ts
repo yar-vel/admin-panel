@@ -1,6 +1,6 @@
 import { dictionary } from './dictionary';
 import { en } from './list/en';
-import type { TLangDictionary, TLangList } from './types';
+import { TLangDictionary, TLangList } from './types';
 
 /**
  * @param {LangList} lang Desired language

@@ -1,6 +1,6 @@
-import { getT } from '../locales/utils';
-import { IReqList, IResListMeta } from '../types';
-import type { IMenuItem } from '../types/ui';
+import { IReqList, IResListMeta } from '../api';
+import { getT } from '../locales';
+import { IMenuItem } from '../ui';
 import { TRoutes } from './types';
 
 /**

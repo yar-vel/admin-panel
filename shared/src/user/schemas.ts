@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { IUser, TUserReqListParams, TUserReqList } from '../types/user';
-import { getReqListSchema } from './api';
+import { IUser, TUserReqListParams, TUserReqList } from './types';
+import { getReqListSchema } from '../api';
 
 export const userSchema = z.object({
   id: z.uuid(),

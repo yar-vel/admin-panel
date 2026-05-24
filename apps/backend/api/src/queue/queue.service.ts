@@ -5,9 +5,10 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 import { MAIL_SERVER } from 'libs/constants';
-import { IQueuePattern } from '@workspace/shared';
+import { IQueuePattern, IQueueResponse } from '@workspace/shared';
 
 @Injectable()
 export class QueueService {
@@ -16,12 +17,12 @@ export class QueueService {
     private mailClient: ClientProxy,
   ) {}
 
-  sendEmail<T = Record<string, unknown>>(
+  async sendEmail<T = unknown>(
     pattern: IQueuePattern,
     payload: T,
-  ): void {
+  ): Promise<IQueueResponse> {
     try {
-      this.mailClient.send<IQueuePattern, T>(pattern, payload).subscribe();
+      return await firstValueFrom(this.mailClient.send(pattern, payload));
     } catch (error) {
       Logger.error(error);
       throw new InternalServerErrorException();

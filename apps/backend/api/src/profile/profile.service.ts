@@ -4,8 +4,8 @@ import { UsersService } from '../users/users.service';
 import { CacheService } from 'src/cache/cache.service';
 import { QueueService } from 'src/queue/queue.service';
 import { generateCode, verifyHash } from 'libs/utils';
-import { cfg } from 'config/configuration';
 import {
+  EQueueCmd,
   IChangeEmailConfirm,
   IChangeEmailRequest,
   IEmailCode,
@@ -51,8 +51,8 @@ export class ProfileService {
       code,
       fields.newEmail,
     );
-    this.queueService.sendEmail<IEmailCode>(
-      { cmd: cfg.rmq.cmd.changeEmail },
+    await this.queueService.sendEmail<IEmailCode>(
+      { cmd: EQueueCmd.ChangeEmail },
       { email: fields.newEmail, code },
     );
   }
