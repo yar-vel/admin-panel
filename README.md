@@ -30,6 +30,12 @@ docker compose -f docker-compose.yml -f dev.yml up -d
 This launch option allows you to associate microservice folders with containers
 and opens ports for monitoring Postgres, Redis, and RabbitMQ.
 
+To debug the `api` container on port `9229` and the `mailer` container on port `9239` using VS Code:
+
+```sh
+docker compose -f docker-compose.yml -f dev.yml -f debug.yml up -d
+```
+
 ### Production
 
 If this is your first time running a project using this command, you'll need to temporarily enable

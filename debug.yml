@@ -1,0 +1,12 @@
+services:
+  # --- APPLICATION LAYER (BACKEND) ---
+
+  api:
+    ports:
+      - 127.0.0.1:9229:9229
+    command: npm run start:debug
+
+  mailer:
+    ports:
+      - 127.0.0.1:9239:9229
+    command: npm run start:debug
